@@ -164,6 +164,14 @@ describe("rules", () => {
     expect(validation.test("abcd")).toBeTruthy();
   });
 
+  test("maxLength", () => {
+    const validation = v8n().maxLength(3);
+    expect(validation.test("a")).toBeTruthy();
+    expect(validation.test("ab")).toBeTruthy();
+    expect(validation.test("abc")).toBeTruthy();
+    expect(validation.test("abcd")).toBeFalsy();
+  });
+
   test("between", () => {
     const number = v8n().between(3, 5);
     expect(number.test(2)).toBeFalsy();

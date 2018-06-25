@@ -93,6 +93,10 @@ const rules = {
     return value => value < 0;
   },
 
+  positive() {
+    return value => value >= 0;
+  },
+
   boolean() {
     return this.type("boolean");
   },

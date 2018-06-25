@@ -133,6 +133,13 @@ describe("rules", () => {
     expect(validation.test(1)).toBeFalsy();
   });
 
+  test("positive", () => {
+    const validation = v8n().positive();
+    expect(validation.test(-1)).toBeFalsy();
+    expect(validation.test(0)).toBeTruthy();
+    expect(validation.test(1)).toBeTruthy();
+  });
+
   test("boolean", () => {
     const validation = v8n().boolean();
     expect(validation.test(true)).toBeTruthy();

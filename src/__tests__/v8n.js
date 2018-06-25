@@ -127,15 +127,23 @@ describe("rules", () => {
   });
 
   test("length", () => {
-    const validation = v8n().length(3, 4);
-    expect(validation.test("ab")).toBeFalsy();
-    expect(validation.test("abc")).toBeTruthy();
-    expect(validation.test("abcd")).toBeTruthy();
-    expect(validation.test("abcde")).toBeFalsy();
-    expect(validation.test([1, 2])).toBeFalsy();
-    expect(validation.test([1, 2, 3])).toBeTruthy();
-    expect(validation.test([1, 2, 3, 4])).toBeTruthy();
-    expect(validation.test([1, 2, 3, 4, 5])).toBeFalsy();
+    const minAndMax = v8n().length(3, 4);
+    expect(minAndMax.test("ab")).toBeFalsy();
+    expect(minAndMax.test("abc")).toBeTruthy();
+    expect(minAndMax.test("abcd")).toBeTruthy();
+    expect(minAndMax.test("abcde")).toBeFalsy();
+    expect(minAndMax.test([1, 2])).toBeFalsy();
+    expect(minAndMax.test([1, 2, 3])).toBeTruthy();
+    expect(minAndMax.test([1, 2, 3, 4])).toBeTruthy();
+    expect(minAndMax.test([1, 2, 3, 4, 5])).toBeFalsy();
+
+    const exact = v8n().length(3);
+    expect(exact.test("ab")).toBeFalsy();
+    expect(exact.test("abc")).toBeTruthy();
+    expect(exact.test("abcd")).toBeFalsy();
+    expect(exact.test([1, 2])).toBeFalsy();
+    expect(exact.test([1, 2, 3])).toBeTruthy();
+    expect(exact.test([1, 2, 3, 4])).toBeFalsy();
   });
 
   test("between", () => {

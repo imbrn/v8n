@@ -77,6 +77,10 @@ const rules = {
     return value => /^[a-z]+$/.test(value);
   },
 
+  uppercase() {
+    return value => /[A-Z]+$/.test(value);
+  },
+
   first(expected) {
     return value => {
       if (isArray(value)) return isFirstItem(value, expected);

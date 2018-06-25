@@ -87,6 +87,15 @@ describe("rules", () => {
     expect(validation.test(1)).toBeFalsy();
   });
 
+  test("uppercase", () => {
+    const validation = v8n().uppercase();
+    expect(validation.test("")).toBeFalsy();
+    expect(validation.test("A")).toBeTruthy();
+    expect(validation.test("ABC")).toBeTruthy();
+    expect(validation.test("abc")).toBeFalsy();
+    expect(validation.test("Abc")).toBeFalsy();
+  });
+
   test("first", () => {
     const letter = v8n().first("n");
     expect(letter.test("n")).toBeTruthy();

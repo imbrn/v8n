@@ -106,13 +106,19 @@ describe("rules", () => {
   });
 
   test("last", () => {
-    const validation = v8n().last("d");
-    expect(validation.test("d")).toBeTruthy();
-    expect(validation.test("old")).toBeTruthy();
-    expect(validation.test(undefined)).toBeTruthy();
-    expect(validation.test("D")).toBeFalsy();
-    expect(validation.test("don't")).toBeFalsy();
-    expect(validation.test(null)).toBeFalsy();
+    const letter = v8n().last("d");
+    expect(letter.test("d")).toBeTruthy();
+    expect(letter.test("old")).toBeTruthy();
+    expect(letter.test(undefined)).toBeTruthy();
+    expect(letter.test("D")).toBeFalsy();
+    expect(letter.test("don't")).toBeFalsy();
+    expect(letter.test(null)).toBeFalsy();
+
+    const number = v8n().last(2);
+    expect(number.test(32)).toBeTruthy();
+    expect(number.test(23)).toBeFalsy();
+    expect(number.test([3, 2])).toBeTruthy();
+    expect(number.test([2, 3])).toBeFalsy();
   });
 
   test("array", () => {

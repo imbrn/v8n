@@ -89,6 +89,10 @@ const rules = {
     return this.type("number");
   },
 
+  negative() {
+    return value => value < 0;
+  },
+
   boolean() {
     return this.type("boolean");
   },

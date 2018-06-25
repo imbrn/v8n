@@ -126,6 +126,16 @@ describe("rules", () => {
     expect(validation.test(undefined)).toBeFalsy();
   });
 
+  test("boolean", () => {
+    const validation = v8n().boolean();
+    expect(validation.test(true)).toBeTruthy();
+    expect(validation.test(false)).toBeTruthy();
+    expect(validation.test(1)).toBeFalsy();
+    expect(validation.test(0)).toBeFalsy();
+    expect(validation.test(null)).toBeFalsy();
+    expect(validation.test(undefined)).toBeFalsy();
+  });
+
   test("length", () => {
     const minAndMax = v8n().length(3, 4);
     expect(minAndMax.test("ab")).toBeFalsy();

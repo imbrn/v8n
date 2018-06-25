@@ -89,6 +89,10 @@ const rules = {
     return this.type("number");
   },
 
+  boolean() {
+    return this.type("boolean");
+  },
+
   length(min, max = min) {
     return value => value.length >= min && value.length <= max;
   },

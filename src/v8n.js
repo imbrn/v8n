@@ -91,6 +91,10 @@ const rules = {
     };
   },
 
+  vowel() {
+    return value => /^[aeiou]+$/i.test(value);
+  },
+
   array() {
     return value => Array.isArray(value);
   },

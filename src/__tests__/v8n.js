@@ -121,6 +121,14 @@ describe("rules", () => {
     expect(number.test([2, 3])).toBeFalsy();
   });
 
+  test("vowel", () => {
+    const validation = v8n().vowel();
+    expect(validation.test("aeiou")).toBeTruthy();
+    expect(validation.test("AEIOU")).toBeTruthy();
+    expect(validation.test("abcde")).toBeFalsy();
+    expect(validation.test("ABCDE")).toBeFalsy();
+  });
+
   test("array", () => {
     const validation = v8n().array();
     expect(validation.test([])).toBeTruthy();

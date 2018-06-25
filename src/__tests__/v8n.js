@@ -138,6 +138,22 @@ describe("rules", () => {
     expect(validation.test([1, 2, 3, 4, 5])).toBeFalsy();
   });
 
+  test("between", () => {
+    const number = v8n().between(3, 5);
+    expect(number.test(2)).toBeFalsy();
+    expect(number.test(3)).toBeTruthy();
+    expect(number.test(4)).toBeTruthy();
+    expect(number.test(5)).toBeTruthy();
+    expect(number.test(6)).toBeFalsy();
+
+    const text = v8n().between("b", "d");
+    expect(text.test("a")).toBeFalsy();
+    expect(text.test("b")).toBeTruthy();
+    expect(text.test("c")).toBeTruthy();
+    expect(text.test("d")).toBeTruthy();
+    expect(text.test("e")).toBeFalsy();
+  });
+
   test("type", () => {
     expect(
       v8n()

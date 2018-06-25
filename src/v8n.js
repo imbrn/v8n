@@ -93,6 +93,10 @@ const rules = {
     return value => value.length >= min && value.length <= max;
   },
 
+  between(min, max) {
+    return value => value >= min && value <= max;
+  },
+
   type(type) {
     return value => typeof value === type;
   }

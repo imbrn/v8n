@@ -101,6 +101,10 @@ const rules = {
     return value => value % 2 === 0;
   },
 
+  odd() {
+    return value => value % 2 !== 0;
+  },
+
   boolean() {
     return this.type("boolean");
   },

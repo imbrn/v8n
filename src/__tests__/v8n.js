@@ -149,6 +149,15 @@ describe("rules", () => {
     expect(validation.test(2)).toBeTruthy();
   });
 
+  test("odd", () => {
+    const validation = v8n().odd();
+    expect(validation.test(-2)).toBeFalsy();
+    expect(validation.test(-1)).toBeTruthy();
+    expect(validation.test(0)).toBeFalsy();
+    expect(validation.test(1)).toBeTruthy();
+    expect(validation.test(2)).toBeFalsy();
+  });
+
   test("boolean", () => {
     const validation = v8n().boolean();
     expect(validation.test(true)).toBeTruthy();

@@ -103,6 +103,10 @@ const rules = {
     return value => /^(?=[^aeiou])([a-z]+)$/i.test(value);
   },
 
+  notEmpty() {
+    return value => value.length > 0;
+  },
+
   array() {
     return value => Array.isArray(value);
   },

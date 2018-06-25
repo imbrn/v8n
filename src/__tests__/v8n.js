@@ -151,6 +151,16 @@ describe("rules", () => {
     expect(validation.test("ç")).toBeFalsy();
   });
 
+  test("notEmpty", () => {
+    const validation = v8n().notEmpty();
+    expect(validation.test("")).toBeFalsy();
+    expect(validation.test(" ")).toBeTruthy();
+    expect(validation.test("ab")).toBeTruthy();
+    expect(validation.test([])).toBeFalsy();
+    expect(validation.test([, ,])).toBeTruthy();
+    expect(validation.test([1, 2])).toBeTruthy();
+  });
+
   test("array", () => {
     const validation = v8n().array();
     expect(validation.test([])).toBeTruthy();

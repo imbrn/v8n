@@ -69,6 +69,15 @@ describe("execution functions", () => {
 });
 
 describe("rules", () => {
+  test("pattern", () => {
+    const validation = v8n().pattern(/^[a-z]+$/);
+    expect(validation.test("a")).toBeTruthy();
+    expect(validation.test("ab")).toBeTruthy();
+    expect(validation.test(" ")).toBeFalsy();
+    expect(validation.test("A")).toBeFalsy();
+    expect(validation.test("Ab")).toBeFalsy();
+  });
+
   test("string", () => {
     const validation = v8n().string();
     expect(validation.test(123)).toBeFalsy();

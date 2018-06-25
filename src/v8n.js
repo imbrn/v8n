@@ -69,6 +69,10 @@ function parseArg(arg) {
 }
 
 const rules = {
+  pattern(pattern) {
+    return value => pattern.test(value);
+  },
+
   string() {
     return this.type("string");
   },

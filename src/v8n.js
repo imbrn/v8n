@@ -97,6 +97,10 @@ const rules = {
     return value => value.length >= min && value.length <= max;
   },
 
+  minLength(min) {
+    return value => value.length >= min;
+  },
+
   between(min, max) {
     return value => value >= min && value <= max;
   },

@@ -156,6 +156,14 @@ describe("rules", () => {
     expect(exact.test([1, 2, 3, 4])).toBeFalsy();
   });
 
+  test("minLength", () => {
+    const validation = v8n().minLength(2);
+    expect(validation.test("a")).toBeFalsy();
+    expect(validation.test("ab")).toBeTruthy();
+    expect(validation.test("abc")).toBeTruthy();
+    expect(validation.test("abcd")).toBeTruthy();
+  });
+
   test("between", () => {
     const number = v8n().between(3, 5);
     expect(number.test(2)).toBeFalsy();

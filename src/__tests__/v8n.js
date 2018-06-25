@@ -88,13 +88,21 @@ describe("rules", () => {
   });
 
   test("first", () => {
-    const validation = v8n().first("n");
-    expect(validation.test("n")).toBeTruthy();
-    expect(validation.test("nice")).toBeTruthy();
-    expect(validation.test(null)).toBeTruthy();
-    expect(validation.test("N")).toBeFalsy();
-    expect(validation.test("wrong")).toBeFalsy();
-    expect(validation.test(undefined)).toBeFalsy();
+    const letter = v8n().first("n");
+    expect(letter.test("n")).toBeTruthy();
+    expect(letter.test("nice")).toBeTruthy();
+    expect(letter.test(null)).toBeTruthy();
+    expect(letter.test("N")).toBeFalsy();
+    expect(letter.test("wrong")).toBeFalsy();
+    expect(letter.test(undefined)).toBeFalsy();
+    expect(letter.test(["n", "i", "c", "e"])).toBeTruthy();
+    expect(letter.test(["a", "b", "c"])).toBeFalsy();
+
+    const number = v8n().first(2);
+    expect(number.test(20)).toBeTruthy();
+    expect(number.test(12)).toBeFalsy();
+    expect(number.test([2, 3])).toBeTruthy();
+    expect(number.test([1, 2])).toBeFalsy();
   });
 
   test("last", () => {

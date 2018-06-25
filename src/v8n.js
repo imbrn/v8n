@@ -97,6 +97,10 @@ const rules = {
     return value => value >= 0;
   },
 
+  even() {
+    return value => value % 2 === 0;
+  },
+
   boolean() {
     return this.type("boolean");
   },

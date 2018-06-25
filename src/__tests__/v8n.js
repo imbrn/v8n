@@ -140,6 +140,15 @@ describe("rules", () => {
     expect(validation.test(1)).toBeTruthy();
   });
 
+  test("even", () => {
+    const validation = v8n().even();
+    expect(validation.test(-2)).toBeTruthy();
+    expect(validation.test(-1)).toBeFalsy();
+    expect(validation.test(0)).toBeTruthy();
+    expect(validation.test(1)).toBeFalsy();
+    expect(validation.test(2)).toBeTruthy();
+  });
+
   test("boolean", () => {
     const validation = v8n().boolean();
     expect(validation.test(true)).toBeTruthy();

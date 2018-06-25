@@ -74,11 +74,11 @@ const rules = {
   },
 
   lowercase() {
-    return value => /^[a-z]+$/.test(value);
+    return value => /^([a-z]+\s*)+$/.test(value);
   },
 
   uppercase() {
-    return value => /[A-Z]+$/.test(value);
+    return value => /^([A-Z]+\s*)+$/.test(value);
   },
 
   first(expected) {

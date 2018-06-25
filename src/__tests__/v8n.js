@@ -81,8 +81,11 @@ describe("rules", () => {
 
   test("lowercase", () => {
     const validation = v8n().lowercase();
+    expect(validation.test("")).toBeFalsy();
+    expect(validation.test(" ")).toBeFalsy();
     expect(validation.test("aBc")).toBeFalsy();
     expect(validation.test("abc")).toBeTruthy();
+    expect(validation.test("abc def g")).toBeTruthy();
     expect(validation.test(true)).toBeTruthy();
     expect(validation.test(1)).toBeFalsy();
   });
@@ -90,8 +93,10 @@ describe("rules", () => {
   test("uppercase", () => {
     const validation = v8n().uppercase();
     expect(validation.test("")).toBeFalsy();
+    expect(validation.test(" ")).toBeFalsy();
     expect(validation.test("A")).toBeTruthy();
     expect(validation.test("ABC")).toBeTruthy();
+    expect(validation.test("ABC DEF G")).toBeTruthy();
     expect(validation.test("abc")).toBeFalsy();
     expect(validation.test("Abc")).toBeFalsy();
   });

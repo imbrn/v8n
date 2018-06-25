@@ -280,3 +280,50 @@ describe("custom rules", () => {
     expect(validation.test("hello")).toBeFalsy();
   });
 });
+
+describe("random tests", () => {
+  test("random test 1", () => {
+    const validation = v8n()
+      .number()
+      .even()
+      .positive();
+
+    expect(validation.test(-2)).toBeFalsy();
+    expect(validation.test(-1)).toBeFalsy();
+    expect(validation.test(0)).toBeTruthy();
+    expect(validation.test(1)).toBeFalsy();
+    expect(validation.test(2)).toBeTruthy();
+  });
+
+  test("random test 2", () => {
+    const validation = v8n()
+      .string()
+      .minLength(2)
+      .maxLength(5)
+      .lowercase()
+      .first("b")
+      .last("o");
+
+    expect(validation.test("bruno")).toBeTruthy();
+    expect(validation.test("bruna")).toBeFalsy();
+    expect(validation.test("druno")).toBeFalsy();
+    expect(validation.test("Bruno")).toBeFalsy();
+    expect(validation.test("Bruno")).toBeFalsy();
+    expect(validation.test("brunno")).toBeFalsy();
+  });
+
+  test("random test 3", () => {
+    const validation = v8n()
+      .array()
+      .minLength(3)
+      .maxLength(4)
+      .first(2)
+      .last("o");
+
+    expect(validation.test([2, "tree", "four", "lo"])).toBeFalsy();
+    expect(validation.test([2, "tree", "four", "o"])).toBeTruthy();
+    expect(validation.test([2, "tree", "four", "five", "o"])).toBeFalsy();
+    expect(validation.test([2, "o"])).toBeFalsy();
+    expect(validation.test("234o")).toBeFalsy();
+  });
+});

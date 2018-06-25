@@ -40,7 +40,11 @@ const ruleProxyHandler = {
 
 const core = {
   test(value) {
-    return this.rulesChain.every(rule => rule.fn.call(this, value));
+    try {
+      return this.rulesChain.every(rule => rule.fn.call(this, value));
+    } catch (e) {
+      return false;
+    }
   },
 
   check(value) {
@@ -74,11 +78,17 @@ const rules = {
   },
 
   first(expected) {
-    return value => new RegExp(`^${expected}`).test(value);
+    return value => {
+      if (isArray(value)) return isFirstItem(value, expected);
+      return isFirstLetter(value, expected);
+    };
   },
 
   last(expected) {
-    return value => new RegExp(`${expected}$`).test(value);
+    return value => {
+      if (isArray(value)) return isLastItem(value, expected);
+      return isLastLetter(value, expected);
+    };
   },
 
   array() {
@@ -129,6 +139,26 @@ const rules = {
     return value => typeof value === type;
   }
 };
+
+function isArray(value) {
+  return Array.isArray(value);
+}
+
+function isFirstLetter(value, letter) {
+  return new RegExp(`^${letter}`).test(value);
+}
+
+function isLastLetter(value, letter) {
+  return new RegExp(`${letter}$`).test(value);
+}
+
+function isFirstItem(value, item) {
+  return value[0] === item;
+}
+
+function isLastItem(value, item) {
+  return value[value.length - 1] === item;
+}
 
 export class CheckException extends Error {
   constructor(rule, value) {

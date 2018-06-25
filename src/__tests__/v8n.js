@@ -129,6 +129,14 @@ describe("rules", () => {
     expect(validation.test("ABCDE")).toBeFalsy();
   });
 
+  test("consonant", () => {
+    const validation = v8n().consonant();
+    expect(validation.test("abcde")).toBeFalsy();
+    expect(validation.test("bcdf")).toBeTruthy();
+    expect(validation.test("^")).toBeFalsy();
+    expect(validation.test("ç")).toBeFalsy();
+  });
+
   test("array", () => {
     const validation = v8n().array();
     expect(validation.test([])).toBeTruthy();

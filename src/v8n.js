@@ -95,6 +95,10 @@ const rules = {
     return value => /^[aeiou]+$/i.test(value);
   },
 
+  consonant() {
+    return value => /^(?=[^aeiou])([a-z]+)$/i.test(value);
+  },
+
   array() {
     return value => Array.isArray(value);
   },

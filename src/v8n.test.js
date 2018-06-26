@@ -1,4 +1,4 @@
-import v8n, { CheckException } from "../v8n";
+import v8n, { CheckException } from "./v8n";
 
 describe("rules chain", () => {
   const validation = v8n()

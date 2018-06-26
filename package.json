@@ -11,6 +11,9 @@
   "license": "ISC",
   "devDependencies": {
     "babel-preset-env": "^1.7.0",
-    "jest": "^23.1.0"
-  }
+    "jest": "^23.1.0",
+    "rollup-plugin-babel": "^3.0.5",
+    "rollup-plugin-uglify": "^4.0.0"
+  },
+  "dependencies": {}
 }

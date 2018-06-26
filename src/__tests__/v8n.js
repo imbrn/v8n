@@ -330,6 +330,7 @@ describe("custom rules", () => {
 
   it("should be use in validation", () => {
     expect(validation.test("hello")).toBeFalsy();
+    expect(validation.test("cba")).toBeTruthy();
   });
 });
 

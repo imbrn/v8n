@@ -1,4 +1,4 @@
-import v8n, { CheckException } from "./v8n";
+import v8n from "./v8n";
 
 describe("rules chain", () => {
   const validation = v8n()
@@ -9,7 +9,7 @@ describe("rules chain", () => {
     .length(3, 5);
 
   it("should chain rules", () => {
-    expect(validation.rulesIds()).toEqual([
+    expect(debugRules(validation)).toEqual([
       "string()",
       "lowercase()",
       'first("a")',
@@ -117,7 +117,7 @@ describe("rules", () => {
     const letter = v8n().first("n");
     expect(letter.test("n")).toBeTruthy();
     expect(letter.test("nice")).toBeTruthy();
-    expect(letter.test(null)).toBeTruthy();
+    expect(letter.test(null)).toBeFalsy();
     expect(letter.test("N")).toBeFalsy();
     expect(letter.test("wrong")).toBeFalsy();
     expect(letter.test(undefined)).toBeFalsy();
@@ -125,7 +125,7 @@ describe("rules", () => {
     expect(letter.test(["a", "b", "c"])).toBeFalsy();
 
     const number = v8n().first(2);
-    expect(number.test(20)).toBeTruthy();
+    expect(number.test(20)).toBeFalsy();
     expect(number.test(12)).toBeFalsy();
     expect(number.test([2, 3])).toBeTruthy();
     expect(number.test([1, 2])).toBeFalsy();
@@ -135,13 +135,13 @@ describe("rules", () => {
     const letter = v8n().last("d");
     expect(letter.test("d")).toBeTruthy();
     expect(letter.test("old")).toBeTruthy();
-    expect(letter.test(undefined)).toBeTruthy();
+    expect(letter.test(undefined)).toBeFalsy();
     expect(letter.test("D")).toBeFalsy();
     expect(letter.test("don't")).toBeFalsy();
     expect(letter.test(null)).toBeFalsy();
 
     const number = v8n().last(2);
-    expect(number.test(32)).toBeTruthy();
+    expect(number.test(32)).toBeFalsy();
     expect(number.test(23)).toBeFalsy();
     expect(number.test([3, 2])).toBeTruthy();
     expect(number.test([2, 3])).toBeFalsy();
@@ -285,26 +285,6 @@ describe("rules", () => {
     expect(text.test("d")).toBeTruthy();
     expect(text.test("e")).toBeFalsy();
   });
-
-  test("type", () => {
-    expect(
-      v8n()
-        .type("number")
-        .test(1)
-    ).toBeTruthy();
-
-    expect(
-      v8n()
-        .type("object")
-        .test([])
-    ).toBeTruthy();
-
-    expect(
-      v8n()
-        .type("boolean")
-        .test("hey")
-    ).toBeFalsy();
-  });
 });
 
 describe("custom rules", () => {
@@ -321,7 +301,7 @@ describe("custom rules", () => {
     .lowercase();
 
   it("should be chainable", () => {
-    expect(validation.rulesIds()).toEqual([
+    expect(debugRules(validation)).toEqual([
       "string()",
       'myCustomRule("abc", "cba")',
       "lowercase()"
@@ -380,3 +360,15 @@ describe("random tests", () => {
     expect(validation.test("234o")).toBeFalsy();
   });
 });
+
+function debugRules(validation) {
+  return validation.chain.map(ruleId);
+}
+
+function ruleId({ name, args }) {
+  return `${name}(${args.map(parseArg).join(", ")})`;
+}
+
+function parseArg(arg) {
+  return typeof arg === "string" ? `"${arg}"` : `${arg}`;
+}

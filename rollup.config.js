@@ -5,7 +5,15 @@ import { uglify } from "rollup-plugin-uglify";
 function buildBabelConfig() {
   return {
     babelrc: false,
-    presets: [["env", { modules: false }]]
+    presets: [
+      [
+        "env",
+        {
+          modules: false,
+          exclude: ["transform-es2015-typeof-symbol"]
+        }
+      ]
+    ]
   };
 }
 

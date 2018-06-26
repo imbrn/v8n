@@ -1,6 +1,6 @@
 function v8n() {
   const context = {
-    rulesChain: []
+    chain: []
   };
 
   return new Proxy(context, contextProxyHandler);
@@ -29,7 +29,7 @@ const contextProxyHandler = {
 const ruleProxyHandler = {
   apply: function(target, thisArg, args) {
     const fn = target.apply(rules, args);
-    thisArg.rulesChain.push({
+    thisArg.chain.push({
       name: target.name,
       fn,
       args
@@ -41,74 +41,54 @@ const ruleProxyHandler = {
 const core = {
   test(value) {
     try {
-      return this.rulesChain.every(rule => rule.fn.call(this, value));
+      return this.chain.every(rule => rule.fn(value));
     } catch (e) {
       return false;
     }
   },
 
   check(value) {
-    this.rulesChain.forEach(rule => {
-      if (!rule.fn.call(this, value)) {
-        throw new CheckException(rule, value);
+    this.chain.forEach(rule => {
+      if (!rule.fn(value)) {
+        throw { rule, value };
       }
     });
-  },
-
-  rulesIds() {
-    return this.rulesChain.map(ruleId);
   }
 };
 
-function ruleId({ name, args }) {
-  return `${name}(${args.map(parseArg).join(", ")})`;
-}
-
-function parseArg(arg) {
-  return typeof arg === "string" ? `"${arg}"` : `${arg}`;
-}
-
 const rules = {
-  pattern(pattern) {
-    return value => pattern.test(value);
-  },
+  pattern: testPattern,
 
   string() {
-    return this.type("string");
+    return testType("string");
   },
 
   lowercase() {
-    return value => /^([a-z]+\s*)+$/.test(value);
+    return testPattern(/^([a-z]+\s*)+$/);
   },
 
   uppercase() {
-    return value => /^([A-Z]+\s*)+$/.test(value);
+    return testPattern(/^([A-Z]+\s*)+$/);
   },
 
   first(expected) {
-    return value => {
-      if (isArray(value)) return isFirstItem(value, expected);
-      return isFirstLetter(value, expected);
-    };
+    return testValueAt(0, expected);
   },
 
   last(expected) {
-    return value => {
-      if (isArray(value)) return isLastItem(value, expected);
-      return isLastLetter(value, expected);
-    };
+    return testValueAt(-1, expected);
   },
 
   vowel() {
-    return value => /^[aeiou]+$/i.test(value);
+    return testPattern(/^[aeiou]+$/i);
   },
 
   consonant() {
-    return value => /^(?=[^aeiou])([a-z]+)$/i.test(value);
+    return testPattern(/^(?=[^aeiou])([a-z]+)$/i);
   },
 
   notEmpty() {
-    return value => value.length > 0;
+    return testLength(0, 0, false);
   },
 
   array() {
@@ -116,76 +96,75 @@ const rules = {
   },
 
   number() {
-    return this.type("number");
+    return testType("number");
   },
 
   negative() {
-    return value => value < 0;
+    return testRange(undefined, -1, true);
   },
 
   positive() {
-    return value => value >= 0;
+    return testRange(0, undefined, true);
   },
 
   even() {
-    return value => value % 2 === 0;
+    return testDivisible(2, true);
   },
 
   odd() {
-    return value => value % 2 !== 0;
+    return testDivisible(2, false);
   },
 
   boolean() {
-    return this.type("boolean");
+    return testType("boolean");
   },
 
   length(min, max = min) {
-    return value => value.length >= min && value.length <= max;
+    return testLength(min, max, 1);
   },
 
   minLength(min) {
-    return value => value.length >= min;
+    return testLength(min, undefined, true);
   },
 
   maxLength(max) {
-    return value => value.length <= max;
+    return testLength(undefined, max, true);
   },
 
   between(min, max) {
-    return value => value >= min && value <= max;
-  },
-
-  type(type) {
-    return value => typeof value === type;
+    return testRange(min, max, true);
   }
 };
 
-function isArray(value) {
-  return Array.isArray(value);
+function testDivisible(num, result) {
+  return value => (value % num === 0) == result;
 }
 
-function isFirstLetter(value, letter) {
-  return new RegExp(`^${letter}`).test(value);
+function testValueAt(index, expectedValue) {
+  return value => {
+    const i = index < 0 ? value.length + index : index;
+    return value[i] == expectedValue;
+  };
 }
 
-function isLastLetter(value, letter) {
-  return new RegExp(`${letter}$`).test(value);
+function testPattern(pattern) {
+  return value => pattern.test(value);
 }
 
-function isFirstItem(value, item) {
-  return value[0] === item;
+function testType(type) {
+  return value => typeof value === type;
 }
 
-function isLastItem(value, item) {
-  return value[value.length - 1] === item;
+function testLength(min, max, result) {
+  return value =>
+    ((min === undefined || value.length >= min) &&
+      (max === undefined || value.length <= max)) == result;
 }
 
-export class CheckException extends Error {
-  constructor(rule, value) {
-    super();
-    this.rule = rule;
-    this.value = value;
-  }
+function testRange(a, b, result) {
+  return value =>
+    ((a === undefined || value >= a) && (b === undefined || value <= b)) ==
+    result;
 }
 
 export default v8n;

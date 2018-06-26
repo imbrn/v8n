@@ -80,6 +80,9 @@ describe("rules", () => {
 
   test("string", () => {
     const validation = v8n().string();
+    expect(validation.test("hello")).toBeTruthy();
+    expect(validation.test("")).toBeTruthy();
+    expect(validation.test(" ")).toBeTruthy();
     expect(validation.test(123)).toBeFalsy();
     expect(validation.test(true)).toBeFalsy();
     expect(validation.test(false)).toBeFalsy();

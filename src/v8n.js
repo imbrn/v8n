@@ -47,18 +47,23 @@ const ruleProxyHandler = {
 
 const core = {
   test(value) {
-    try {
-      this.check(value);
-      return true;
-    } catch (e) {
-      return false;
-    }
+    return this.chain.every(rule => {
+      try {
+        return rule.fn(value) !== rule.invert;
+      } catch (ex) {
+        return rule.invert;
+      }
+    });
   },
 
   check(value) {
     this.chain.forEach(rule => {
-      if (rule.fn(value) === rule.invert) {
-        throw { rule, value };
+      try {
+        if (rule.fn(value) === rule.invert) {
+          throw new Error("Rule has failed");
+        }
+      } catch (ex) {
+        throw { rule, value, cause: ex };
       }
     });
   }
@@ -141,6 +146,10 @@ const rules = {
 
   between(min, max) {
     return testRange(min, max, true);
+  },
+
+  includes(expected) {
+    return testIncludes(expected);
   }
 };
 
@@ -173,6 +182,10 @@ function testRange(a, b, result) {
   return value =>
     ((a === undefined || value >= a) && (b === undefined || value <= b)) ==
     result;
+}
+
+function testIncludes(expected) {
+  return value => value.indexOf(expected) !== -1;
 }
 
 export default v8n;

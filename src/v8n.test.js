@@ -302,6 +302,26 @@ describe("rules", () => {
     expect(text.test("d")).toBeTruthy();
     expect(text.test("e")).toBeFalsy();
   });
+
+  test("includes", () => {
+    const is = v8n().includes("2");
+    expect(is.test(["1", "2", "3"])).toBeTruthy();
+    expect(is.test(["1", "3"])).toBeFalsy();
+    expect(is.test(["1", "2"])).toBeTruthy();
+    expect(is.test("123")).toBeTruthy();
+    expect(is.test("13")).toBeFalsy();
+    expect(is.test([1, 2, 3])).toBeFalsy();
+    expect(is.test(2)).toBeFalsy();
+
+    const not = v8n().not.includes("2");
+    expect(not.test(["1", "2", "3"])).toBeFalsy();
+    expect(not.test(["1", "3"])).toBeTruthy();
+    expect(not.test(["1", "2"])).toBeFalsy();
+    expect(not.test("123")).toBeFalsy();
+    expect(not.test("13")).toBeTruthy();
+    expect(not.test([1, 2, 3])).toBeTruthy();
+    expect(not.test(2)).toBeTruthy();
+  });
 });
 
 describe("custom rules", () => {

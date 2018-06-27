@@ -104,6 +104,7 @@ const rules = {
   positive: makeTestRange(0, undefined),
   between: makeTestRange(),
 
+  // Divisible
   even: makeTestDivisible(2, true),
   odd: makeTestDivisible(2, false),
 

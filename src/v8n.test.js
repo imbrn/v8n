@@ -1,9 +1,11 @@
 import v8n from "./v8n";
 
 describe("rules chain", () => {
+  // TODO: make sure '.not' is included in debug
   const validation = v8n()
     .string()
     .lowercase()
+    .null()
     .first("a")
     .last("e")
     .length(3, 5);
@@ -12,6 +14,7 @@ describe("rules chain", () => {
     expect(debugRules(validation)).toEqual([
       "string()",
       "lowercase()",
+      "null()",
       'first("a")',
       'last("e")',
       "length(3, 5)"

@@ -17,10 +17,10 @@ const contextProxyHandler = {
     }
     // TODO: check if make a function to build new Proxy(<rule>, ruleProxyHandler) is better;
     if (prop in v8n.customRules) {
-      return new Proxy(v8n.customRules[prop], ruleProxyHandler);
+      return new Proxy(v8n.customRules[prop], ruleProxyHandler(prop));
     }
     if (prop in rules) {
-      return new Proxy(rules[prop], ruleProxyHandler);
+      return new Proxy(rules[prop], ruleProxyHandler(prop));
     }
     if (prop in core) {
       return core[prop];
@@ -31,11 +31,11 @@ const contextProxyHandler = {
   }
 };
 
-const ruleProxyHandler = {
+const ruleProxyHandler = name => ({
   apply: function(target, thisArg, args) {
     const fn = target.apply(rules, args);
     thisArg.chain.push({
-      name: target.name,
+      name,
       fn,
       args,
       invert: !!thisArg.invert
@@ -43,7 +43,7 @@ const ruleProxyHandler = {
     delete thisArg.invert;
     return thisArg;
   }
-};
+});
 
 const core = {
   test(value) {
@@ -72,116 +72,87 @@ const core = {
 const rules = {
   pattern: testPattern,
 
-  string() {
-    return testType("string");
-  },
+  // Types
+  string: makeTestType("string"),
+  number: makeTestType("number"),
+  boolean: makeTestType("boolean"),
+  undefined: makeTestType("undefined"),
+  null: makeTestType("null"),
+  array: makeTestType("array"),
 
-  lowercase() {
-    return testPattern(/^([a-z]+\s*)+$/);
-  },
+  // Pattern
+  lowercase: makeTestPattern(/^([a-z]+\s*)+$/),
+  uppercase: makeTestPattern(/^([A-Z]+\s*)+$/),
+  vowel: makeTestPattern(/^[aeiou]+$/i),
+  consonant: makeTestPattern(/^(?=[^aeiou])([a-z]+)$/i),
 
-  uppercase() {
-    return testPattern(/^([A-Z]+\s*)+$/);
-  },
+  // Value at
+  first: makeTestValueAt(0),
+  last: makeTestValueAt(-1),
 
-  first(expected) {
-    return testValueAt(0, expected);
-  },
+  // Length
+  empty: makeTestLength(true, true),
+  length: makeTestLength(true, true),
+  minLength: makeTestLength(true, false),
+  maxLength: makeTestLength(false, true),
 
-  last(expected) {
-    return testValueAt(-1, expected);
-  },
+  // Range
+  negative: makeTestRange(undefined, -1),
+  positive: makeTestRange(0, undefined),
+  between: makeTestRange(),
 
-  vowel() {
-    return testPattern(/^[aeiou]+$/i);
-  },
-
-  consonant() {
-    return testPattern(/^(?=[^aeiou])([a-z]+)$/i);
-  },
-
-  empty() {
-    return testLength(0, 0, true);
-  },
-
-  array() {
-    return value => Array.isArray(value);
-  },
-
-  number() {
-    return testType("number");
-  },
-
-  negative() {
-    return testRange(undefined, -1, true);
-  },
-
-  positive() {
-    return testRange(0, undefined, true);
-  },
-
-  even() {
-    return testDivisible(2, true);
-  },
-
-  odd() {
-    return testDivisible(2, false);
-  },
-
-  boolean() {
-    return testType("boolean");
-  },
-
-  length(min, max = min) {
-    return testLength(min, max, 1);
-  },
-
-  minLength(min) {
-    return testLength(min, undefined, true);
-  },
-
-  maxLength(max) {
-    return testLength(undefined, max, true);
-  },
-
-  between(min, max) {
-    return testRange(min, max, true);
-  },
+  even: makeTestDivisible(2, true),
+  odd: makeTestDivisible(2, false),
 
   includes(expected) {
     return testIncludes(expected);
   }
 };
 
-function testDivisible(num, result) {
-  return value => (value % num === 0) == result;
-}
-
-function testValueAt(index, expectedValue) {
-  return value => {
-    const i = index < 0 ? value.length + index : index;
-    return value[i] == expectedValue;
-  };
-}
-
 function testPattern(pattern) {
   return value => pattern.test(value);
 }
 
-function testType(type) {
-  return value => typeof value === type;
+function makeTestPattern(pattern) {
+  return () => testPattern(pattern);
 }
 
-function testLength(min, max, result) {
-  return value =>
-    ((min === undefined || value.length >= min) &&
-      (max === undefined || value.length <= max)) == result;
+function makeTestType(type) {
+  return () => value =>
+    typeof value === type || (Array.isArray(value) && type === "array");
 }
 
-function testRange(a, b, result) {
-  return value =>
-    ((a === undefined || value >= a) && (b === undefined || value <= b)) ==
-    result;
+function makeTestValueAt(index) {
+  return expected => value => {
+    const i = index < 0 ? value.length + index : index;
+    return value[i] == expected;
+  };
+}
+
+function makeTestLength(useMin, useMax) {
+  return (min, max) => value => {
+    let valid = true;
+    if (useMin) valid = valid && value.length >= (min || 0);
+    if (useMax) valid = valid && value.length <= (max || min || 0);
+    return valid;
+  };
+}
+
+function makeTestRange(defaultMin, defaultMax) {
+  return (min, max) => value => {
+    min = min || defaultMin;
+    max = max || defaultMax;
+
+    let valid = true;
+    if (min !== undefined) valid = valid && value >= min;
+    if (max !== undefined) valid = valid && value <= max;
+
+    return valid;
+  };
+}
+
+function makeTestDivisible(by, expected) {
+  return () => value => (value % by === 0) === expected;
 }
 
 function testIncludes(expected) {

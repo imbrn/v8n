@@ -46,7 +46,6 @@ function buildConfigBuilder({ name, input, dist = "dist" }) {
         format,
         file: buildFileName(),
         dir: dist,
-        exports: "named",
         sourcemap: sourceMap
       },
       plugins: buildPlugins()
@@ -54,11 +53,16 @@ function buildConfigBuilder({ name, input, dist = "dist" }) {
   };
 }
 
-const buildConfig = buildConfigBuilder({ name: "v8n", input: "./src/v8n.js" });
+const buildConfig = buildConfigBuilder({
+  name: project.name,
+  input: "./src/v8n.js"
+});
 
 const configs = [
   buildConfig({ format: "amd" }),
   buildConfig({ format: "amd", minified: true }),
+  buildConfig({ format: "cjs" }),
+  buildConfig({ format: "cjs", minified: true }),
   buildConfig({ format: "umd" }),
   buildConfig({ format: "umd", minified: true }),
   buildConfig({ format: "umd", minified: true, includeExtension: false }),

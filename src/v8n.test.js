@@ -180,14 +180,14 @@ describe("rules", () => {
     expect(validation.test("ç")).toBeFalsy();
   });
 
-  test("notEmpty", () => {
-    const validation = v8n().notEmpty();
-    expect(validation.test("")).toBeFalsy();
-    expect(validation.test(" ")).toBeTruthy();
-    expect(validation.test("ab")).toBeTruthy();
-    expect(validation.test([])).toBeFalsy();
-    expect(validation.test([, ,])).toBeTruthy();
-    expect(validation.test([1, 2])).toBeTruthy();
+  test("empty", () => {
+    const validation = v8n().empty();
+    expect(validation.test("")).toBeTruthy();
+    expect(validation.test(" ")).toBeFalsy();
+    expect(validation.test("ab")).toBeFalsy();
+    expect(validation.test([])).toBeTruthy();
+    expect(validation.test([, ,])).toBeFalsy();
+    expect(validation.test([1, 2])).toBeFalsy();
   });
 
   test("array", () => {

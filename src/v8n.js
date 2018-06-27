@@ -95,8 +95,8 @@ const rules = {
     return testPattern(/^(?=[^aeiou])([a-z]+)$/i);
   },
 
-  notEmpty() {
-    return testLength(0, 0, false);
+  empty() {
+    return testLength(0, 0, true);
   },
 
   array() {

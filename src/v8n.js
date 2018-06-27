@@ -3,7 +3,7 @@ function v8n() {
     chain: []
   };
 
-  return new Proxy(context, contextProxyHandler);
+  return buildProxy(context, contextProxyHandler);
 }
 
 // Storage for user defined rules
@@ -15,12 +15,11 @@ const contextProxyHandler = {
       receiver.invert = true;
       return receiver;
     }
-    // TODO: check if make a function to build new Proxy(<rule>, ruleProxyHandler) is better;
     if (prop in v8n.customRules) {
-      return new Proxy(v8n.customRules[prop], ruleProxyHandler(prop));
+      return buildProxy(v8n.customRules[prop], ruleProxyHandler(prop));
     }
     if (prop in rules) {
-      return new Proxy(rules[prop], ruleProxyHandler(prop));
+      return buildProxy(rules[prop], ruleProxyHandler(prop));
     }
     if (prop in core) {
       return core[prop];
@@ -44,6 +43,10 @@ const ruleProxyHandler = name => ({
     return thisArg;
   }
 });
+
+function buildProxy(target, handler) {
+  return new Proxy(target, handler);
+}
 
 const core = {
   test(value) {

@@ -111,6 +111,61 @@ describe("rules", () => {
     expect(validation.test(null)).toBeFalsy();
   });
 
+  test("undefined", () => {
+    const is = v8n().undefined();
+    expect(is.test()).toBeTruthy();
+    expect(is.test(undefined)).toBeTruthy();
+    expect(is.test(null)).toBeFalsy();
+    expect(is.test("")).toBeFalsy();
+    expect(is.test(0)).toBeFalsy();
+    expect(is.test(false)).toBeFalsy();
+
+    const not = v8n().not.undefined();
+    expect(not.test()).toBeFalsy();
+    expect(not.test(undefined)).toBeFalsy();
+    expect(not.test(null)).toBeTruthy();
+    expect(not.test("")).toBeTruthy();
+    expect(not.test(0)).toBeTruthy();
+    expect(not.test(false)).toBeTruthy();
+  });
+
+  test("null", () => {
+    const is = v8n().null();
+    expect(is.test(null)).toBeTruthy();
+    expect(is.test()).toBeFalsy();
+    expect(is.test(undefined)).toBeFalsy();
+    expect(is.test("")).toBeFalsy();
+    expect(is.test(0)).toBeFalsy();
+    expect(is.test(false)).toBeFalsy();
+
+    const not = v8n().not.null();
+    expect(not.test(null)).toBeFalsy();
+    expect(not.test()).toBeTruthy();
+    expect(not.test(undefined)).toBeTruthy();
+    expect(not.test("")).toBeTruthy();
+    expect(not.test(0)).toBeTruthy();
+    expect(not.test(false)).toBeTruthy();
+  });
+
+  test("array", () => {
+    const validation = v8n().array();
+    expect(validation.test([])).toBeTruthy();
+    expect(validation.test([1, 2])).toBeTruthy();
+    expect(validation.test(new Array())).toBeTruthy();
+    expect(validation.test(null)).toBeFalsy();
+    expect(validation.test(undefined)).toBeFalsy();
+    expect(validation.test("string")).toBeFalsy();
+  });
+
+  test("number", () => {
+    const validation = v8n().number();
+    expect(validation.test(34)).toBeTruthy();
+    expect(validation.test(-10)).toBeTruthy();
+    expect(validation.test("1")).toBeFalsy();
+    expect(validation.test(null)).toBeFalsy();
+    expect(validation.test(undefined)).toBeFalsy();
+  });
+
   test("lowercase", () => {
     const validation = v8n().lowercase();
     expect(validation.test("")).toBeFalsy();
@@ -193,23 +248,40 @@ describe("rules", () => {
     expect(validation.test([1, 2])).toBeFalsy();
   });
 
-  test("array", () => {
-    const validation = v8n().array();
-    expect(validation.test([])).toBeTruthy();
-    expect(validation.test([1, 2])).toBeTruthy();
-    expect(validation.test(new Array())).toBeTruthy();
-    expect(validation.test(null)).toBeFalsy();
-    expect(validation.test(undefined)).toBeFalsy();
-    expect(validation.test("string")).toBeFalsy();
+  test("length", () => {
+    const minAndMax = v8n().length(3, 4);
+    expect(minAndMax.test("ab")).toBeFalsy();
+    expect(minAndMax.test("abc")).toBeTruthy();
+    expect(minAndMax.test("abcd")).toBeTruthy();
+    expect(minAndMax.test("abcde")).toBeFalsy();
+    expect(minAndMax.test([1, 2])).toBeFalsy();
+    expect(minAndMax.test([1, 2, 3])).toBeTruthy();
+    expect(minAndMax.test([1, 2, 3, 4])).toBeTruthy();
+    expect(minAndMax.test([1, 2, 3, 4, 5])).toBeFalsy();
+
+    const exact = v8n().length(3);
+    expect(exact.test("ab")).toBeFalsy();
+    expect(exact.test("abc")).toBeTruthy();
+    expect(exact.test("abcd")).toBeFalsy();
+    expect(exact.test([1, 2])).toBeFalsy();
+    expect(exact.test([1, 2, 3])).toBeTruthy();
+    expect(exact.test([1, 2, 3, 4])).toBeFalsy();
   });
 
-  test("number", () => {
-    const validation = v8n().number();
-    expect(validation.test(34)).toBeTruthy();
-    expect(validation.test(-10)).toBeTruthy();
-    expect(validation.test("1")).toBeFalsy();
-    expect(validation.test(null)).toBeFalsy();
-    expect(validation.test(undefined)).toBeFalsy();
+  test("minLength", () => {
+    const validation = v8n().minLength(2);
+    expect(validation.test("a")).toBeFalsy();
+    expect(validation.test("ab")).toBeTruthy();
+    expect(validation.test("abc")).toBeTruthy();
+    expect(validation.test("abcd")).toBeTruthy();
+  });
+
+  test("maxLength", () => {
+    const validation = v8n().maxLength(3);
+    expect(validation.test("a")).toBeTruthy();
+    expect(validation.test("ab")).toBeTruthy();
+    expect(validation.test("abc")).toBeTruthy();
+    expect(validation.test("abcd")).toBeFalsy();
   });
 
   test("negative", () => {
@@ -252,42 +324,6 @@ describe("rules", () => {
     expect(validation.test(0)).toBeFalsy();
     expect(validation.test(null)).toBeFalsy();
     expect(validation.test(undefined)).toBeFalsy();
-  });
-
-  test("length", () => {
-    const minAndMax = v8n().length(3, 4);
-    expect(minAndMax.test("ab")).toBeFalsy();
-    expect(minAndMax.test("abc")).toBeTruthy();
-    expect(minAndMax.test("abcd")).toBeTruthy();
-    expect(minAndMax.test("abcde")).toBeFalsy();
-    expect(minAndMax.test([1, 2])).toBeFalsy();
-    expect(minAndMax.test([1, 2, 3])).toBeTruthy();
-    expect(minAndMax.test([1, 2, 3, 4])).toBeTruthy();
-    expect(minAndMax.test([1, 2, 3, 4, 5])).toBeFalsy();
-
-    const exact = v8n().length(3);
-    expect(exact.test("ab")).toBeFalsy();
-    expect(exact.test("abc")).toBeTruthy();
-    expect(exact.test("abcd")).toBeFalsy();
-    expect(exact.test([1, 2])).toBeFalsy();
-    expect(exact.test([1, 2, 3])).toBeTruthy();
-    expect(exact.test([1, 2, 3, 4])).toBeFalsy();
-  });
-
-  test("minLength", () => {
-    const validation = v8n().minLength(2);
-    expect(validation.test("a")).toBeFalsy();
-    expect(validation.test("ab")).toBeTruthy();
-    expect(validation.test("abc")).toBeTruthy();
-    expect(validation.test("abcd")).toBeTruthy();
-  });
-
-  test("maxLength", () => {
-    const validation = v8n().maxLength(3);
-    expect(validation.test("a")).toBeTruthy();
-    expect(validation.test("ab")).toBeTruthy();
-    expect(validation.test("abc")).toBeTruthy();
-    expect(validation.test("abcd")).toBeFalsy();
   });
 
   test("between", () => {

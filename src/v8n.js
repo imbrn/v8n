@@ -10,7 +10,12 @@ function v8n() {
 v8n.customRules = {};
 
 const contextProxyHandler = {
-  get: function(obj, prop) {
+  get: function(obj, prop, receiver) {
+    if (prop === "not") {
+      receiver.invert = true;
+      return receiver;
+    }
+    // TODO: check if make a function to build new Proxy(<rule>, ruleProxyHandler) is better;
     if (prop in v8n.customRules) {
       return new Proxy(v8n.customRules[prop], ruleProxyHandler);
     }
@@ -32,8 +37,10 @@ const ruleProxyHandler = {
     thisArg.chain.push({
       name: target.name,
       fn,
-      args
+      args,
+      invert: !!thisArg.invert
     });
+    delete thisArg.invert;
     return thisArg;
   }
 };
@@ -41,7 +48,8 @@ const ruleProxyHandler = {
 const core = {
   test(value) {
     try {
-      return this.chain.every(rule => rule.fn(value));
+      this.check(value);
+      return true;
     } catch (e) {
       return false;
     }
@@ -49,7 +57,7 @@ const core = {
 
   check(value) {
     this.chain.forEach(rule => {
-      if (!rule.fn(value)) {
+      if (rule.fn(value) === rule.invert) {
         throw { rule, value };
       }
     });

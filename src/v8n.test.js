@@ -68,6 +68,23 @@ describe("execution functions", () => {
   });
 });
 
+describe("the 'not' modifier", () => {
+  it("should invert the next rule meaning", () => {
+    const validation = v8n()
+      .number()
+      .not.between(2, 8)
+      .not.even();
+
+    expect(validation.test(4)).toBeFalsy();
+    expect(validation.test(6)).toBeFalsy();
+    expect(validation.test(11)).toBeTruthy();
+
+    expect(() => validation.check(4)).toThrow();
+    expect(() => validation.check(6)).toThrow();
+    expect(() => validation.check(11)).not.toThrow();
+  });
+});
+
 describe("rules", () => {
   test("pattern", () => {
     const validation = v8n().pattern(/^[a-z]+$/);
@@ -312,6 +329,14 @@ describe("custom rules", () => {
     expect(validation.test("hello")).toBeFalsy();
     expect(validation.test("cba")).toBeTruthy();
   });
+
+  it("should be inverted by 'not' modifier", () => {
+    const validation = v8n().not.myCustomRule("abc", "cba");
+    expect(validation.test("abc")).toBeFalsy();
+    expect(validation.test("cba")).toBeFalsy();
+    expect(validation.test("hello")).toBeTruthy();
+    expect(validation.test(123)).toBeTruthy();
+  });
 });
 
 describe("random tests", () => {
@@ -358,6 +383,56 @@ describe("random tests", () => {
     expect(validation.test([2, "tree", "four", "five", "o"])).toBeFalsy();
     expect(validation.test([2, "o"])).toBeFalsy();
     expect(validation.test("234o")).toBeFalsy();
+  });
+
+  test("random test 4", () => {
+    const validation = v8n()
+      .between(10, 20)
+      .not.between(12, 14)
+      .not.between(16, 18);
+
+    expect(validation.test(9)).toBeFalsy();
+    expect(validation.test(10)).toBeTruthy();
+    expect(validation.test(11)).toBeTruthy();
+    expect(validation.test(12)).toBeFalsy();
+    expect(validation.test(13)).toBeFalsy();
+    expect(validation.test(14)).toBeFalsy();
+    expect(validation.test(15)).toBeTruthy();
+    expect(validation.test(16)).toBeFalsy();
+    expect(validation.test(17)).toBeFalsy();
+    expect(validation.test(18)).toBeFalsy();
+    expect(validation.test(19)).toBeTruthy();
+    expect(validation.test(20)).toBeTruthy();
+    expect(validation.test(21)).toBeFalsy();
+  });
+
+  test("random test 5", () => {
+    const validation = v8n()
+      .number()
+      .not.maxLength(5) // Have no max length
+      .not.minLength(3); // Have no min length
+
+    expect(validation.test(2)).toBeTruthy();
+    expect(validation.test(3)).toBeTruthy();
+    expect(validation.test(4)).toBeTruthy();
+    expect(validation.test(5)).toBeTruthy();
+    expect(validation.test(6)).toBeTruthy();
+  });
+
+  test("random test 6", () => {
+    const validation = v8n()
+      .not.number()
+      .not.string();
+
+    expect(validation.test(1)).toBeFalsy();
+    expect(validation.test("hello")).toBeFalsy();
+    expect(validation.test(undefined)).toBeTruthy();
+    expect(validation.test(null)).toBeTruthy();
+    expect(validation.test(true)).toBeTruthy();
+    expect(validation.test(false)).toBeTruthy();
+    expect(validation.test({})).toBeTruthy();
+    expect(validation.test([])).toBeTruthy();
+    expect(validation.test(Symbol())).toBeTruthy();
   });
 });
 

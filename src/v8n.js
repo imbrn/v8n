@@ -121,8 +121,13 @@ function makeTestPattern(pattern) {
 }
 
 function makeTestType(type) {
-  return () => value =>
-    typeof value === type || (Array.isArray(value) && type === "array");
+  return () => value => {
+    return (
+      typeof value === type ||
+      (value === null && type === "null") ||
+      (Array.isArray(value) && type === "array")
+    );
+  };
 }
 
 function makeTestValueAt(index) {

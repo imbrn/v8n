@@ -493,6 +493,21 @@ describe("random tests", () => {
     expect(validation.test([])).toBeTruthy();
     expect(validation.test(Symbol())).toBeTruthy();
   });
+
+  test("random test 7", () => {
+    const validation = v8n()
+      .not.null()
+      .not.undefined()
+      .not.between("c", "d")
+      .not.between(2, 3);
+
+    expect(validation.test(null)).toBeFalsy();
+    expect(validation.test(undefined)).toBeFalsy();
+    expect(validation.test("c")).toBeFalsy();
+    expect(validation.test(3)).toBeFalsy();
+    expect(validation.test(5)).toBeTruthy();
+    expect(validation.test("f")).toBeTruthy();
+  });
 });
 
 function debugRules(validation) {

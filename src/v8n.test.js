@@ -166,6 +166,16 @@ describe("rules", () => {
     expect(validation.test(undefined)).toBeFalsy();
   });
 
+  test("boolean", () => {
+    const validation = v8n().boolean();
+    expect(validation.test(true)).toBeTruthy();
+    expect(validation.test(false)).toBeTruthy();
+    expect(validation.test(1)).toBeFalsy();
+    expect(validation.test(0)).toBeFalsy();
+    expect(validation.test(null)).toBeFalsy();
+    expect(validation.test(undefined)).toBeFalsy();
+  });
+
   test("lowercase", () => {
     const validation = v8n().lowercase();
     expect(validation.test("")).toBeFalsy();
@@ -314,16 +324,6 @@ describe("rules", () => {
     expect(validation.test(0)).toBeFalsy();
     expect(validation.test(1)).toBeTruthy();
     expect(validation.test(2)).toBeFalsy();
-  });
-
-  test("boolean", () => {
-    const validation = v8n().boolean();
-    expect(validation.test(true)).toBeTruthy();
-    expect(validation.test(false)).toBeTruthy();
-    expect(validation.test(1)).toBeFalsy();
-    expect(validation.test(0)).toBeFalsy();
-    expect(validation.test(null)).toBeFalsy();
-    expect(validation.test(undefined)).toBeFalsy();
   });
 
   test("between", () => {

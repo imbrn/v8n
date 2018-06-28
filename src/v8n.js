@@ -103,8 +103,10 @@ const rules = {
   negative: makeTestRange(false, false, undefined, -1),
   positive: makeTestRange(false, false, 0, undefined),
   between: makeTestRange(true, true),
-  lessThan: makeTestRange(false, true, undefined, undefined, 0, -1),
-  lessThanOrEqual: makeTestRange(false, true, undefined, undefined),
+  lessThan: makeTestRange(false, true, undefined, 0, 0, -1),
+  lessThanOrEqual: makeTestRange(false, true, undefined, 0),
+  greaterThan: makeTestRange(true, false, 0, undefined, 1),
+  greaterThanOrEqual: makeTestRange(true, false, 0, undefined),
 
   // Divisible
   even: makeTestDivisible(2, true),

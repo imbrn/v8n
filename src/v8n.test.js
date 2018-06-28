@@ -342,6 +342,34 @@ describe("rules", () => {
     expect(not.test(4)).toBeTruthy();
   });
 
+  test("greaterThan", () => {
+    const is = v8n().greaterThan(3);
+    expect(is.test(2)).toBeFalsy();
+    expect(is.test(-3)).toBeFalsy();
+    expect(is.test(3)).toBeFalsy();
+    expect(is.test(4)).toBeTruthy();
+
+    const not = v8n().not.greaterThan(3);
+    expect(not.test(2)).toBeTruthy();
+    expect(not.test(-3)).toBeTruthy();
+    expect(not.test(3)).toBeTruthy();
+    expect(not.test(4)).toBeFalsy();
+  });
+
+  test("greaterThanOrEqual", () => {
+    const is = v8n().greaterThanOrEqual(3);
+    expect(is.test(2)).toBeFalsy();
+    expect(is.test(-3)).toBeFalsy();
+    expect(is.test(3)).toBeTruthy();
+    expect(is.test(4)).toBeTruthy();
+
+    const not = v8n().not.greaterThanOrEqual(3);
+    expect(not.test(2)).toBeTruthy();
+    expect(not.test(-3)).toBeTruthy();
+    expect(not.test(3)).toBeFalsy();
+    expect(not.test(4)).toBeFalsy();
+  });
+
   test("even", () => {
     const validation = v8n().even();
     expect(validation.test(-2)).toBeTruthy();

@@ -100,9 +100,11 @@ const rules = {
   maxLength: makeTestLength(false, true),
 
   // Range
-  negative: makeTestRange(undefined, -1),
-  positive: makeTestRange(0, undefined),
-  between: makeTestRange(),
+  negative: makeTestRange(false, false, undefined, -1),
+  positive: makeTestRange(false, false, 0, undefined),
+  between: makeTestRange(true, true),
+  lessThan: makeTestRange(false, true, undefined, undefined, 0, -1),
+  lessThanOrEqual: makeTestRange(false, true, undefined, undefined),
 
   // Divisible
   even: makeTestDivisible(2, true),
@@ -147,16 +149,21 @@ function makeTestLength(useMin, useMax) {
   };
 }
 
-function makeTestRange(defaultMin, defaultMax) {
+function makeTestRange(
+  useMin,
+  useMax,
+  defaultMin,
+  defaultMax,
+  adjustMin,
+  adjustMax
+) {
   return (min, max) => value => {
-    min = min || defaultMin;
-    max = max || defaultMax;
-
-    let valid = true;
-    if (min !== undefined) valid = valid && value >= min;
-    if (max !== undefined) valid = valid && value <= max;
-
-    return valid;
+    const finalMin = useMin ? min : defaultMin;
+    const finalMax = useMax ? max || min : defaultMax;
+    return (
+      (finalMin === undefined || value >= finalMin + (adjustMin || 0)) &&
+      (finalMax === undefined || value <= finalMax + (adjustMax || 0))
+    );
   };
 }
 

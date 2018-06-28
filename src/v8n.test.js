@@ -308,6 +308,40 @@ describe("rules", () => {
     expect(validation.test(1)).toBeTruthy();
   });
 
+  test("lessThan", () => {
+    const is = v8n().lessThan(3);
+    expect(is.test(1)).toBeTruthy();
+    expect(is.test(2)).toBeTruthy();
+    expect(is.test(-4)).toBeTruthy();
+    expect(is.test(3)).toBeFalsy();
+    expect(is.test(4)).toBeFalsy();
+
+    const not = v8n().not.lessThan(3);
+    expect(not.test(1)).toBeFalsy();
+    expect(not.test(2)).toBeFalsy();
+    expect(not.test(-4)).toBeFalsy();
+    expect(not.test(3)).toBeTruthy();
+    expect(not.test(4)).toBeTruthy();
+  });
+
+  test("lessThanOrEqualTo", () => {
+    const is = v8n().lessThanOrEqual(3);
+    expect(is.test(-4)).toBeTruthy();
+    expect(is.test(-3)).toBeTruthy();
+    expect(is.test(1)).toBeTruthy();
+    expect(is.test(2)).toBeTruthy();
+    expect(is.test(3)).toBeTruthy();
+    expect(is.test(4)).toBeFalsy();
+
+    const not = v8n().not.lessThanOrEqual(3);
+    expect(not.test(-4)).toBeFalsy();
+    expect(not.test(-3)).toBeFalsy();
+    expect(not.test(1)).toBeFalsy();
+    expect(not.test(2)).toBeFalsy();
+    expect(not.test(3)).toBeFalsy();
+    expect(not.test(4)).toBeTruthy();
+  });
+
   test("even", () => {
     const validation = v8n().even();
     expect(validation.test(-2)).toBeTruthy();
@@ -327,19 +361,19 @@ describe("rules", () => {
   });
 
   test("between", () => {
-    const number = v8n().between(3, 5);
-    expect(number.test(2)).toBeFalsy();
-    expect(number.test(3)).toBeTruthy();
-    expect(number.test(4)).toBeTruthy();
-    expect(number.test(5)).toBeTruthy();
-    expect(number.test(6)).toBeFalsy();
+    const is = v8n().between(3, 5);
+    expect(is.test(2)).toBeFalsy();
+    expect(is.test(3)).toBeTruthy();
+    expect(is.test(4)).toBeTruthy();
+    expect(is.test(5)).toBeTruthy();
+    expect(is.test(6)).toBeFalsy();
 
-    const text = v8n().between("b", "d");
-    expect(text.test("a")).toBeFalsy();
-    expect(text.test("b")).toBeTruthy();
-    expect(text.test("c")).toBeTruthy();
-    expect(text.test("d")).toBeTruthy();
-    expect(text.test("e")).toBeFalsy();
+    const not = v8n().not.between(3, 5);
+    expect(not.test(2)).toBeTruthy();
+    expect(not.test(3)).toBeFalsy();
+    expect(not.test(4)).toBeFalsy();
+    expect(not.test(5)).toBeFalsy();
+    expect(not.test(6)).toBeTruthy();
   });
 
   test("includes", () => {
@@ -496,17 +530,17 @@ describe("random tests", () => {
 
   test("random test 7", () => {
     const validation = v8n()
-      .not.null()
-      .not.undefined()
-      .not.between("c", "d")
-      .not.between(2, 3);
+      .array()
+      .not.empty()
+      .minLength(3)
+      .not.includes("a")
+      .not.includes("b");
 
-    expect(validation.test(null)).toBeFalsy();
-    expect(validation.test(undefined)).toBeFalsy();
-    expect(validation.test("c")).toBeFalsy();
-    expect(validation.test(3)).toBeFalsy();
-    expect(validation.test(5)).toBeTruthy();
-    expect(validation.test("f")).toBeTruthy();
+    expect(validation.test(["a", "b", "d"])).toBeFalsy();
+    expect(validation.test(["a", "c", "d"])).toBeFalsy();
+    expect(validation.test([])).toBeFalsy();
+    expect(validation.test(["d", "e"])).toBeFalsy();
+    expect(validation.test(["d", "e", "f"])).toBeTruthy();
   });
 });
 

@@ -63,7 +63,7 @@ const core = {
     this.chain.forEach(rule => {
       try {
         if (rule.fn(value) === rule.invert) {
-          throw new Error("Rule has failed");
+          throw "Rule failed";
         }
       } catch (ex) {
         throw { rule, value, cause: ex };

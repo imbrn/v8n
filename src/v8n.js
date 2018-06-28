@@ -103,6 +103,7 @@ const rules = {
   negative: makeTestRange(false, false, undefined, -1),
   positive: makeTestRange(false, false, 0, undefined),
   between: makeTestRange(true, true),
+  range: makeTestRange(true, true),
   lessThan: makeTestRange(false, true, undefined, 0, 0, -1),
   lessThanOrEqual: makeTestRange(false, true, undefined, 0),
   greaterThan: makeTestRange(true, false, 0, undefined, 1),

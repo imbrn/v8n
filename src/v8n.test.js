@@ -370,6 +370,22 @@ describe("rules", () => {
     expect(not.test(4)).toBeFalsy();
   });
 
+  test("range", () => {
+    const is = v8n().range(2, 4);
+    expect(is.test(1)).toBeFalsy();
+    expect(is.test(5)).toBeFalsy();
+    expect(is.test(2)).toBeTruthy();
+    expect(is.test(3)).toBeTruthy();
+    expect(is.test(4)).toBeTruthy();
+
+    const not = v8n().not.range(2, 4);
+    expect(not.test(1)).toBeTruthy();
+    expect(not.test(5)).toBeTruthy();
+    expect(not.test(2)).toBeFalsy();
+    expect(not.test(3)).toBeFalsy();
+    expect(not.test(4)).toBeFalsy();
+  });
+
   test("even", () => {
     const validation = v8n().even();
     expect(validation.test(-2)).toBeTruthy();

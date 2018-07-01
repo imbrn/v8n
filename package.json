@@ -4,14 +4,32 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint ./src"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn test && lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "babel-preset-env": "^1.7.0",
+    "eslint": "^5.0.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.1",
+    "husky": "^1.0.0-rc.9",
     "jest": "^23.1.0",
+    "lint-staged": "^7.2.0",
+    "prettier": "^1.13.7",
     "rollup-plugin-babel": "^3.0.5",
     "rollup-plugin-uglify": "^4.0.0"
   },

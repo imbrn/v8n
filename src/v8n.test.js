@@ -442,37 +442,70 @@ describe("rules", () => {
 });
 
 describe("custom rules", () => {
-  // Defines the custom rule
-  v8n.customRules.myCustomRule = function myCustomRule(a, b) {
-    return value => {
-      return value === a || value === b;
-    };
-  };
-
-  const validation = v8n()
-    .string()
-    .myCustomRule("abc", "cba")
-    .lowercase();
+  beforeEach(() => {
+    // Reset custom rules
+    v8n.customRules = {};
+  });
 
   it("should be chainable", () => {
+    v8n.extend({
+      newRule: () => value => true
+    });
+
+    const validation = v8n()
+      .string()
+      .newRule()
+      .lowercase();
+
     expect(debugRules(validation)).toEqual([
       "string()",
-      'myCustomRule("abc", "cba")',
+      "newRule()",
       "lowercase()"
     ]);
   });
 
-  it("should be use in validation", () => {
-    expect(validation.test("hello")).toBeFalsy();
-    expect(validation.test("cba")).toBeTruthy();
+  it("should be used in validation", () => {
+    v8n.extend({
+      or: (a, b) => value => value === a || value === b
+    });
+
+    const validation = v8n()
+      .string()
+      .or("one", "two");
+
+    expect(validation.test("one")).toBeTruthy();
+    expect(validation.test("two")).toBeTruthy();
+    expect(validation.test("three")).toBeFalsy();
   });
 
   it("should be inverted by 'not' modifier", () => {
-    const validation = v8n().not.myCustomRule("abc", "cba");
-    expect(validation.test("abc")).toBeFalsy();
-    expect(validation.test("cba")).toBeFalsy();
-    expect(validation.test("hello")).toBeTruthy();
-    expect(validation.test(123)).toBeTruthy();
+    v8n.extend({
+      exact: it => value => value === it
+    });
+
+    const validation = v8n()
+      .string()
+      .not.exact("hello");
+
+    expect(validation.test("hi")).toBeTruthy();
+    expect(validation.test("nice")).toBeTruthy();
+    expect(validation.test("hello")).toBeFalsy();
+  });
+
+  test("extend should be able to call multiple times", () => {
+    v8n.extend({
+      one: () => value => true
+    });
+
+    v8n.extend({
+      two: () => value => true
+    });
+
+    const validation = v8n()
+      .one()
+      .two();
+
+    expect(debugRules(validation)).toEqual(["one()", "two()"]);
   });
 });
 

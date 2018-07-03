@@ -6,8 +6,12 @@ function v8n() {
   return new Proxy(context, contextProxyHandler);
 }
 
-// Storage for user defined rules
-v8n.customRules = {};
+// Custom rules
+let customRules = {};
+
+v8n.extend = function(newRules) {
+  Object.assign(customRules, newRules);
+};
 
 const contextProxyHandler = {
   get: function(obj, prop, receiver) {
@@ -18,8 +22,8 @@ const contextProxyHandler = {
       modifiers[prop].call(receiver);
       return receiver;
     }
-    if (prop in v8n.customRules) {
-      return applyRule.call(receiver, v8n.customRules[prop], prop);
+    if (prop in customRules) {
+      return applyRule.call(receiver, customRules[prop], prop);
     }
     if (prop in rules) {
       return applyRule.call(receiver, rules[prop], prop);

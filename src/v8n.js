@@ -3,7 +3,7 @@ function v8n() {
     chain: []
   };
 
-  return buildProxy(context, contextProxyHandler);
+  return new Proxy(context, contextProxyHandler);
 }
 
 // Storage for user defined rules
@@ -41,10 +41,6 @@ function applyRule(rule, name) {
     this.invert = false;
     return this;
   };
-}
-
-function buildProxy(target, handler) {
-  return new Proxy(target, handler);
 }
 
 const core = {

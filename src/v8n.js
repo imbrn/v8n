@@ -80,6 +80,11 @@ const modifiers = {
 const rules = {
   pattern: testPattern,
 
+  // Value
+  equal(expected) {
+    return value => value === expected;
+  },
+
   // Types
   string: makeTestType("string"),
   number: makeTestType("number"),

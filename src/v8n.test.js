@@ -89,6 +89,20 @@ describe("the 'not' modifier", () => {
 });
 
 describe("rules", () => {
+  test("equal", () => {
+    const is = v8n().equal("hello");
+    expect(is.test("Hello")).toBeFalsy();
+    expect(is.test("HELLO")).toBeFalsy();
+    expect(is.test("Hi")).toBeFalsy();
+    expect(is.test("hello")).toBeTruthy();
+
+    const not = v8n().not.equal("hello");
+    expect(not.test("Hello")).toBeTruthy();
+    expect(not.test("HELLO")).toBeTruthy();
+    expect(not.test("Hi")).toBeTruthy();
+    expect(not.test("hello")).toBeFalsy();
+  });
+
   test("pattern", () => {
     const validation = v8n().pattern(/^[a-z]+$/);
     expect(validation.test("a")).toBeTruthy();
@@ -618,6 +632,21 @@ describe("random tests", () => {
     expect(validation.test([])).toBeFalsy();
     expect(validation.test(["d", "e"])).toBeFalsy();
     expect(validation.test(["d", "e", "f"])).toBeTruthy();
+  });
+
+  test("random test 8", () => {
+    const validation = v8n()
+      .not.null()
+      .between(10, 20)
+      .not.equal(15);
+
+    expect(validation.test(9)).toBeFalsy();
+    expect(validation.test(21)).toBeFalsy();
+    expect(validation.test(15)).toBeFalsy();
+    expect(validation.test(10)).toBeTruthy();
+    expect(validation.test(12)).toBeTruthy();
+    expect(validation.test(17)).toBeTruthy();
+    expect(validation.test(20)).toBeTruthy();
   });
 });
 

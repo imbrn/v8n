@@ -90,17 +90,27 @@ describe("the 'not' modifier", () => {
 
 describe("rules", () => {
   test("equal", () => {
-    const is = v8n().equal("hello");
+    const is = v8n().equal("123");
+    expect(is.test("123")).toBeTruthy();
+    expect(is.test(123)).toBeTruthy();
     expect(is.test("Hello")).toBeFalsy();
-    expect(is.test("HELLO")).toBeFalsy();
-    expect(is.test("Hi")).toBeFalsy();
-    expect(is.test("hello")).toBeTruthy();
 
-    const not = v8n().not.equal("hello");
+    const not = v8n().not.equal(123);
+    expect(not.test("123")).toBeFalsy();
+    expect(not.test(123)).toBeFalsy();
     expect(not.test("Hello")).toBeTruthy();
-    expect(not.test("HELLO")).toBeTruthy();
-    expect(not.test("Hi")).toBeTruthy();
-    expect(not.test("hello")).toBeFalsy();
+  });
+
+  test("exact", () => {
+    const is = v8n().exact("123");
+    expect(is.test("123")).toBeTruthy();
+    expect(is.test(123)).toBeFalsy();
+    expect(is.test("Hello")).toBeFalsy();
+
+    const not = v8n().not.exact(123);
+    expect(not.test(123)).toBeFalsy();
+    expect(not.test("123")).toBeTruthy();
+    expect(not.test("Hello")).toBeTruthy();
   });
 
   test("pattern", () => {

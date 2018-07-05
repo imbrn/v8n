@@ -82,6 +82,10 @@ const rules = {
 
   // Value
   equal(expected) {
+    return value => value == expected;
+  },
+
+  exact(expected) {
     return value => value === expected;
   },
 

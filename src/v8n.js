@@ -82,7 +82,7 @@ const rules = {
 
   // Value
   equal(expected) {
-    return value => value === expected;
+    return value => value == expected;
   },
 
   // Types

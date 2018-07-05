@@ -101,6 +101,18 @@ describe("rules", () => {
     expect(not.test("Hello")).toBeTruthy();
   });
 
+  test("exact", () => {
+    const is = v8n().exact("123");
+    expect(is.test("123")).toBeTruthy();
+    expect(is.test(123)).toBeFalsy();
+    expect(is.test("Hello")).toBeFalsy();
+
+    const not = v8n().not.exact(123);
+    expect(not.test(123)).toBeFalsy();
+    expect(not.test("123")).toBeTruthy();
+    expect(not.test("Hello")).toBeTruthy();
+  });
+
   test("pattern", () => {
     const validation = v8n().pattern(/^[a-z]+$/);
     expect(validation.test("a")).toBeTruthy();

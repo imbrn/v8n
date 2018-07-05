@@ -85,6 +85,10 @@ const rules = {
     return value => value == expected;
   },
 
+  exact(expected) {
+    return value => value === expected;
+  },
+
   // Types
   string: makeTestType("string"),
   number: makeTestType("number"),

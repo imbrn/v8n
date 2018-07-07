@@ -36,15 +36,19 @@ const contextProxyHandler = {
 
 function applyRule(rule, name) {
   return (...args) => {
-    this.chain.push({
-      name,
-      fn: rule.apply(this, args),
-      args,
-      invert: !!this.invert
-    });
+    this.chain.push(
+      new Rule(name, rule.apply(this, args), args, !!this.invert)
+    );
     this.invert = false;
     return this;
   };
+}
+
+function Rule(name, fn, args, invert) {
+  this.name = name;
+  this.fn = fn;
+  this.args = args;
+  this.invert = invert;
 }
 
 const core = {
@@ -65,11 +69,17 @@ const core = {
           throw "Rule failed";
         }
       } catch (ex) {
-        throw { rule, value, cause: ex };
+        throw new ValidationException(rule, value, ex);
       }
     });
   }
 };
+
+function ValidationException(rule, value, cause) {
+  this.rule = rule;
+  this.value = value;
+  this.cause = cause;
+}
 
 const modifiers = {
   not() {

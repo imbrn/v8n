@@ -60,11 +60,8 @@ const buildConfig = buildConfigBuilder({
 
 const configs = [
   buildConfig({ format: "amd" }),
-  buildConfig({ format: "amd", minified: true }),
   buildConfig({ format: "cjs" }),
-  buildConfig({ format: "cjs", minified: true }),
   buildConfig({ format: "umd" }),
-  buildConfig({ format: "umd", minified: true }),
   buildConfig({ format: "umd", minified: true, includeExtension: false }),
   buildConfig({ format: "iife", extension: "browser" }),
   buildConfig({ format: "iife", extension: "browser", minified: true }),

@@ -2,13 +2,20 @@
   "name": "v8n",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/v8n.js",
+  "files": [
+    "dist/",
+    "src/",
+    "docs/"
+  ],
   "scripts": {
     "test": "jest",
     "lint": "eslint ./src",
     "docs:serve": "documentation serve --watch src/v8n.js",
     "docs:readme": "documentation readme src/v8n.js --section=API",
-    "docs": "yarn docs:readme"
+    "docs": "yarn docs:readme",
+    "build": "rollup -c",
+    "publish": "yarn build && npm publish"
   },
   "husky": {
     "hooks": {
@@ -25,16 +32,18 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.5",
     "babel-preset-env": "^1.7.0",
+    "documentation": "^8.0.0",
     "eslint": "^5.0.1",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.1",
     "husky": "^1.0.0-rc.9",
-    "documentation": "^8.0.0",
     "jest": "^23.1.0",
     "lint-staged": "^7.2.0",
     "prettier": "^1.13.7",
+    "rollup": "^0.62.0",
     "rollup-plugin-babel": "^3.0.5",
     "rollup-plugin-uglify": "^4.0.0"
   },

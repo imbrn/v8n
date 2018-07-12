@@ -15,7 +15,7 @@
     "docs:readme": "documentation readme src/v8n.js --section=API",
     "docs": "yarn docs:readme",
     "build": "rollup -c",
-    "publish": "yarn build && npm publish"
+    "deploy": "yarn build && npm publish"
   },
   "husky": {
     "hooks": {

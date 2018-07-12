@@ -2,7 +2,8 @@
   "name": "v8n",
   "version": "0.0.1",
   "description": "",
-  "main": "./src/v8n.js",
+  "main": "./dist/v8n.cjs.js",
+  "module": "./dist/v8n.esm.js",
   "files": [
     "dist/",
     "src/",

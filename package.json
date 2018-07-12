@@ -28,9 +28,21 @@
       "git add"
     ]
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "javascript",
+    "validation",
+    "library"
+  ],
+  "author": "Bruno C. Couto <brunodev02221@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imbrn/v8n.git"
+  },
+  "bugs": {
+    "url": "https://github.com/imbrn/v8n/issues"
+  },
+  "homepage": "https://github.com/imbrn/v8n#readme",
+  "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.5",

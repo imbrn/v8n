@@ -7,6 +7,21 @@ The ultimate JavaScript validation library you've ever needed.<br/>
 Dead simple fluent API. Customizable. Reusable.
 </p>
 
+<p align="center">
+<a href="#usage">Usage</a> - 
+<a href="#installation">Installation</a> - 
+<a href="#api">Documentation</a> 
+</p>
+
+```javascript
+v8n()
+  .number()
+  .between(0, 100)
+  .even()
+  .not.equal(32)
+  .test(74); // true
+```
+
 ## Installation
 
 ```shell
@@ -20,7 +35,11 @@ yarn add v8n
 ### Or using a `script` tag:
 
 ```html
+<!-- From unpkg -->
 <script src="https://unpkg.com/v8n/dist/v8n.min.js"></script>
+
+<!-- or from jsdelivr -->
+<script src="https://cdn.jsdelivr.net/npm/v8n/dist/v8n.min.js"></script>
 ```
 
 ## Usage
@@ -107,7 +126,7 @@ v8n()
   .test("Hello World!"); // true
 ```
 
-Here, we're declaring a validation to check if the validated value contains a
+Here, we're declaring a validation to check if the validated value includes a
 `"World"` string. And the test returns `true`.
 
 But we could want a validation with the inverse meaning. With the `not`
@@ -119,7 +138,7 @@ v8n()
   .test("Hello World!"); // false
 ```
 
-Now, we have a validation to check if the value does not contain a `"World"`
+Now, we have a validation to check if the value **does not** include a `"World"`
 string. And the test returns `false`.
 
 > The `not` modifier inverts the meaning only of the next `rule`, the rule

@@ -4,6 +4,8 @@
   "description": "",
   "main": "./dist/v8n.cjs.js",
   "module": "./dist/v8n.esm.js",
+  "jsdelivr": "./dist/v8n.min.js",
+  "unpkg": "./dist/v8n.min.js",
   "files": [
     "dist/",
     "src/",
@@ -15,7 +17,7 @@
     "docs:serve": "documentation serve --watch src/v8n.js",
     "docs:readme": "documentation readme src/v8n.js --section=API",
     "docs": "yarn docs:readme",
-    "build": "rollup -c",
+    "build": "rimraf -r dist && rollup -c",
     "deploy": "yarn build && npm publish"
   },
   "husky": {
@@ -56,6 +58,7 @@
     "jest": "^23.1.0",
     "lint-staged": "^7.2.0",
     "prettier": "^1.13.7",
+    "rimraf": "^2.6.2",
     "rollup": "^0.62.0",
     "rollup-plugin-babel": "^3.0.5",
     "rollup-plugin-uglify": "^4.0.0"

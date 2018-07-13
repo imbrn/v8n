@@ -62,9 +62,19 @@ const configs = [
   buildConfig({ format: "amd" }),
   buildConfig({ format: "cjs" }),
   buildConfig({ format: "umd" }),
-  buildConfig({ format: "umd", minified: true, includeExtension: false }),
+  buildConfig({
+    format: "umd",
+    minified: true,
+    includeExtension: false,
+    sourceMap: true
+  }),
   buildConfig({ format: "iife", extension: "browser" }),
-  buildConfig({ format: "iife", extension: "browser", minified: true }),
+  buildConfig({
+    format: "iife",
+    extension: "browser",
+    minified: true,
+    sourceMap: true
+  }),
   buildConfig({ format: "esm", transpiled: false }),
   buildConfig({ format: "system", transpiled: false })
 ];

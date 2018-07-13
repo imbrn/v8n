@@ -82,10 +82,18 @@ try {
 }
 ```
 
+> The exception thrown by the `check` function contains useful information about
+> the rule which caused the validation fail, and it also has information about
+> the validation process. Look and the [ValidationException
+> docs](#validationexception) section to learn more about it.
+
+### And more...
+
 There are a lot of useful standard rules for you to use already implemented in
-the core. Look at the [API](#API) section of this document. But you can also
-[implement your own rules](#extend), and share them between your projects, or
-even with the community.
+the core. Look at the [API section](#api) of this document.
+
+You can also [implement your own rules](#extend), and share them between your
+projects, or even with the community.
 
 ## Custom validation rules
 

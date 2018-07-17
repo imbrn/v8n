@@ -8,9 +8,9 @@ Dead simple fluent API. Customizable. Reusable.
 </p>
 
 <p align="center">
-<a href="#usage">Usage</a> - 
-<a href="#installation">Installation</a> - 
-<a href="#api">Documentation</a> 
+<a href="#usage">Usage</a> -
+<a href="#installation">Installation</a> -
+<a href="#api">Documentation</a>
 </p>
 
 ```javascript
@@ -323,13 +323,14 @@ v8n()
     -   [even](#even)
     -   [odd](#odd)
     -   [includes](#includes)
+    -   [integer](#integer)
 
 ### v8n
 
 Function used to produce a [Validation](#validation) object. The Validation object
 is used to configure a validation strategy and perform the validation tests.
 
-Returns **[Validation](#validation)** 
+Returns **[Validation](#validation)**
 
 #### extend
 
@@ -2167,6 +2168,24 @@ v8n()
 v8n()
   .includes("a")
   .test("Hello"); // false
+```
+
+### integer
+
+Rule function for integer validation.
+
+It's used to check if the validated value is an integer (not a decimal).
+
+#### Examples
+
+```javascript
+v8n()
+  .integer()
+  .test(20); // true
+
+v8n()
+  .integer()
+  .test(2.2); // false
 ```
 
 ## Contribute

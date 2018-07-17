@@ -959,7 +959,25 @@ const rules = {
    */
   includes(expected) {
     return testIncludes(expected);
-  }
+  },
+
+  /**
+   * Rule function for integer validation.
+   *
+   * It's used to check if the validated value is an integer (not a decimal).
+   *
+   * @function
+   * @example
+   *
+   * v8n()
+   *  .integer()
+   *  .test(20); // true
+   *
+   * v8n()
+   *  .integer()
+   *  .test(2.2); // false
+   */
+  integer: () => value => Number.isInteger(value) || testIntegerPolyfill(value)
 };
 
 function testPattern(pattern) {
@@ -1020,6 +1038,12 @@ function makeTestDivisible(by, expected) {
 
 function testIncludes(expected) {
   return value => value.indexOf(expected) !== -1;
+}
+
+function testIntegerPolyfill(value) {
+  return (
+    typeof value === "number" && isFinite(value) && Math.floor(value) === value
+  );
 }
 
 export default v8n;

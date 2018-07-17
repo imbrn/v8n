@@ -323,6 +323,7 @@ v8n()
     -   [even](#even)
     -   [odd](#odd)
     -   [includes](#includes)
+    -   [integer](#integer)
 
 ### v8n
 
@@ -1245,6 +1246,24 @@ v8n()
 v8n()
  .includes("a")
  .test("Hello"); // false
+```
+
+#### integer
+
+Rule function for integer validation.
+
+It's used to check if the validated value is an integer (not a decimal).
+
+##### Examples
+
+```javascript
+v8n()
+ .integer()
+ .test(20); // true
+
+v8n()
+ .integer()
+ .test(2.2); // false
 ```
 
 ## v8n

@@ -2169,6 +2169,10 @@ v8n()
   .test("Hello"); // false
 ```
 
+## Contribute
+
+Contributions of any kind are welcome!
+
 ## License
 
 [MIT License](https://opensource.org/licenses/MIT)

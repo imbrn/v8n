@@ -463,6 +463,28 @@ describe("rules", () => {
     expect(not.test([1, 2, 3])).toBeTruthy();
     expect(not.test(2)).toBeTruthy();
   });
+
+  test("integer", () => {
+    const is = v8n().integer();
+    expect(is.test(0)).toBeTruthy();
+    expect(is.test(12)).toBeTruthy();
+    expect(is.test(99999999999)).toBeTruthy();
+    expect(is.test(-100000)).toBeTruthy();
+    expect(is.test("12")).toBeFalsy();
+    expect(is.test(3.14)).toBeFalsy();
+    expect(is.test(NaN)).toBeFalsy();
+    expect(is.test(Infinity)).toBeFalsy();
+
+    const not = v8n().not.integer();
+    expect(not.test(0)).toBeFalsy();
+    expect(not.test(12)).toBeFalsy();
+    expect(not.test(99999999999)).toBeFalsy();
+    expect(not.test(-100000)).toBeFalsy();
+    expect(not.test("12")).toBeTruthy();
+    expect(not.test(3.14)).toBeTruthy();
+    expect(not.test(NaN)).toBeTruthy();
+    expect(not.test(Infinity)).toBeTruthy();
+  });
 });
 
 describe("custom rules", () => {

@@ -200,6 +200,24 @@ const core = {
   },
 
   /**
+   * Performs array based validation.
+   *
+   * When this function is executed it performs the validation process and
+   * returns an array containing all failed rules. This will perform every
+   * validation regardless of failures.
+   *
+   * @param {any} value the value to be validated
+   * @returns {array} empty for successful validation
+   */
+  testAll(value) {
+    const err = [];
+    this.chain.forEach(rule => {
+      if (rule.fn(value) === rule.invert) err.push(rule);
+    });
+    return err;
+  },
+
+  /**
    * Performs exception based validation.
    *
    * When this function is executed it performs the validation process and

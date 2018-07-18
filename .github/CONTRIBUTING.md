@@ -13,8 +13,6 @@ After cloning the repo, run:
 $ npm install # or yarn
 ```
 
-If you use `npm` please do not commit the npm-lockfile. Keeping a lockfile for `yarn` and `npm` is not great to manage as versions may differ. ``package-lock.json`` is not specifically ignored, so please just do not add it to your commits.
-
 ### Important NPM scripts
 
 ``` bash

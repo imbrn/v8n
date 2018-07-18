@@ -86,6 +86,97 @@ describe("execution functions", () => {
       });
     });
   });
+
+  describe("the 'testAsync' function", () => {
+    function asyncRule(expected, delay = 50, exception) {
+      return value =>
+        new Promise(resolve => {
+          setTimeout(() => {
+            if (exception) throw exception;
+            resolve(value == expected);
+          }, delay);
+        });
+    }
+
+    beforeEach(() => {
+      v8n.extend({
+        asyncRule
+      });
+    });
+
+    it("should return a promise", () => {
+      expect(
+        v8n()
+          .minLength(2)
+          .asyncRule("Hello")
+          .testAsync("Hello")
+      ).toBeInstanceOf(Promise);
+    });
+
+    it("should execute rules in sequence", () => {
+      return expect(
+        v8n()
+          .minLength(2)
+          .asyncRule("Hello")
+          .testAsync("Hello")
+      ).resolves.toBe("Hello");
+    });
+
+    it("should work with the 'not' modifier", () => {
+      const validation = v8n()
+        .minLength(2)
+        .not.asyncRule("Hello");
+
+      return expect(validation.testAsync("Hello")).rejects.toMatchObject({
+        rule: validation.chain[1],
+        value: "Hello"
+      });
+    });
+
+    describe("the returned Promise", () => {
+      function asyncRule(expected, delay, exception) {
+        return value =>
+          new Promise(resolve => {
+            setTimeout(() => {
+              if (exception) throw exception;
+              resolve(value == expected);
+            }, delay);
+          });
+      }
+
+      it("should resolves when valid", () => {
+        return expect(
+          v8n()
+            .minLength(2)
+            .asyncRule("Hello")
+            .testAsync("Hello")
+        ).resolves.toBe("Hello");
+      });
+
+      it("should rejects with ValidationException when invalid", () => {
+        const validation = v8n()
+          .minLength(2)
+          .asyncRule("Hello");
+
+        return expect(validation.testAsync("Hi")).rejects.toMatchObject({
+          rule: validation.chain[1],
+          value: "Hi"
+        });
+      });
+
+      it("should rejects with with ValidationException when exception occurs", () => {
+        const validation = v8n()
+          .number()
+          .between(0, 50)
+          .includes("a");
+
+        return expect(validation.testAsync(10)).rejects.toMatchObject({
+          rule: validation.chain[2],
+          value: 10
+        });
+      });
+    });
+  });
 });
 
 describe("the 'not' modifier", () => {
@@ -745,6 +836,30 @@ describe("random tests", () => {
     expect(validation.test(12)).toBeTruthy();
     expect(validation.test(17)).toBeTruthy();
     expect(validation.test(20)).toBeTruthy();
+  });
+
+  test("random test 9", async () => {
+    v8n.extend({
+      asyncRule(min, max, delay = 50) {
+        return value =>
+          new Promise(resolve => {
+            setTimeout(() => {
+              resolve(value >= min && value <= max);
+            }, delay);
+          });
+      }
+    });
+
+    const validation = v8n()
+      .number()
+      .asyncRule(10, 20)
+      .not.even();
+
+    await expect(validation.testAsync("12")).rejects.toBeDefined();
+    await expect(validation.testAsync(12)).rejects.toBeDefined();
+    await expect(validation.testAsync(10)).rejects.toBeDefined();
+    await expect(validation.testAsync(20)).rejects.toBeDefined();
+    await expect(validation.testAsync(13)).resolves.toBe(13);
   });
 });
 

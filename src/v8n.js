@@ -235,16 +235,36 @@ const core = {
  *
  * It contains information about the {@link Rule} which was been performed
  * during the fail, the value been validated and the cause of the thrown
- * exception.
+ * exception. It also contains a stacktrace if one is available.
  *
  * @param {Rule} rule performing when the exception was thrown
  * @param {any} value been validated when the exception was thrown
  * @param {any} cause cause of the thrown exception
  */
 function ValidationException(rule, value, cause) {
-  this.rule = rule;
-  this.value = value;
-  this.cause = cause;
+  var instance = new Error(cause);
+  instance.rule = rule;
+  instance.value = value;
+  Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(instance, ValidationException);
+  }
+  return instance;
+}
+
+ValidationException.prototype = Object.create(Error.prototype, {
+  constructor: {
+    value: Error,
+    enumerable: false,
+    writable: true,
+    configurable: true
+  }
+});
+
+if (Object.setPrototypeOf) {
+  Object.setPrototypeOf(ValidationException, Error);
+} else {
+  ValidationException.__proto__ = Error;
 }
 
 /**

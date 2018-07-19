@@ -163,11 +163,13 @@ function applyRule(rule, name) {
  * @param {Array} args arguments list for the validation function
  * @param {boolean} invert indicates if the rule has its meaning inverted
  */
-function Rule(name, fn, args, invert) {
-  this.name = name;
-  this.fn = fn;
-  this.args = args;
-  this.invert = invert;
+class Rule {
+  constructor(name, fn, args, invert) {
+    this.name = name;
+    this.fn = fn;
+    this.args = args;
+    this.invert = invert;
+  }
 }
 
 /**
@@ -241,30 +243,15 @@ const core = {
  * @param {any} value been validated when the exception was thrown
  * @param {any} cause cause of the thrown exception
  */
-function ValidationException(rule, value, cause) {
-  var instance = new Error(cause);
-  instance.rule = rule;
-  instance.value = value;
-  Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(instance, ValidationException);
+class ValidationException extends Error {
+  constructor(rule, value, ...remaining) {
+    super(remaining);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ValidationException);
+    }
+    this.rule = rule;
+    this.value = value;
   }
-  return instance;
-}
-
-ValidationException.prototype = Object.create(Error.prototype, {
-  constructor: {
-    value: Error,
-    enumerable: false,
-    writable: true,
-    configurable: true
-  }
-});
-
-if (Object.setPrototypeOf) {
-  Object.setPrototypeOf(ValidationException, Error);
-} else {
-  ValidationException.__proto__ = Error;
 }
 
 /**

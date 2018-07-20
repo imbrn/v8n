@@ -13,10 +13,10 @@ declare namespace v8n {
     invert?: boolean;
   }
   export interface Rule {
-    name: string,
-    fn: Function,
-    args?: any,
-    invert?: boolean
+    name: string;
+    fn: Function;
+    args?: any;
+    invert?: boolean;
   }
 }
 

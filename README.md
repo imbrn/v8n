@@ -431,29 +431,19 @@ v8n() // Creates a validation object instance
 
 ### Rule
 
-Constructor function which produces a rule object.
+A Rule object instance stores information about a rule inside the validation
+process.
 
-> This constructor should not be used directly. It's used by the validation
-> engine when needed.
-
-**Rule object:**
-
-A rule object is composed by a name; a validation function, which will be
-performed against the validated value in the validation process; an arguments
-list, which is used by the validation function; and an invert property, which
-defines if the rule has to be inverted in its meaning.
-
-> To know more about the `invert` property, look a the
-> [not](#modifiersnot) modifier documentation section.
->
-> Look at [Validation](#validation) to know more about the validation process.
+> It's mostly used by the developer to handle validation results. It's
+> instantiated automatically by the library engine during the validation
+> process and this should not be done directly by the developer.
 
 #### Parameters
 
--   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** rule function name
--   `fn` **[function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** validation function executed by the rule
--   `args` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** arguments list for the validation function
--   `invert` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** indicates if the rule has its meaning inverted
+-   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** rule name
+-   `fn` **[function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** rule function used to perform the validation
+-   `args` **any** arguments used by the rule
+-   `invert` **any** indicates if the rule is inverted in its meaning
 
 ### core
 
@@ -497,23 +487,18 @@ throws a [ValidationException](#validationexception) when the value is not valid
 
 ### ValidationException
 
-Constructor function used to produce an object which contains information
-about a validation exception.
+**Extends Error**
 
-**Validation exception object:**
+Exception which represents a validation issue.
 
-A validation exception object is thrown by the [check](#corecheck)
-function when the validation fails.
-
-It contains information about the [Rule](#rule) which was been performed
-during the fail, the value been validated and the cause of the thrown
-exception.
+It contains information about the [Rule](#rule) which was being performed when
+the issue happened, and about the value which was being validated.
 
 #### Parameters
 
--   `rule` **[Rule](#rule)** performing when the exception was thrown
--   `value` **any** been validated when the exception was thrown
--   `cause` **any** cause of the thrown exception
+-   `rule` **[Rule](#rule)** the rule object which caused the validation
+-   `value` **any** the validated value
+-   `remaining` **...any** 
 
 ### modifiers
 

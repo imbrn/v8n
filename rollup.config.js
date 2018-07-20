@@ -75,8 +75,8 @@ const configs = [
     minified: true,
     sourceMap: true
   }),
-  buildConfig({ format: "esm", transpiled: false }),
-  buildConfig({ format: "system", transpiled: false })
+  buildConfig({ format: "esm" }),
+  buildConfig({ format: "system" })
 ];
 
 export default configs;

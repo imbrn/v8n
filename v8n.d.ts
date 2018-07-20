@@ -11,6 +11,7 @@ declare namespace v8n {
   export interface Validation {
     chain: Rule[];
     invert?: boolean;
+    extend(newRules: object): void;
     test(value: any): boolean;
     check(value: any): never;
     pattern(pattern: RegExp): Validation;
@@ -43,7 +44,6 @@ declare namespace v8n {
     odd(): Validation;
     includes(expected: any): Validation;
     integer(): Validation;
-    extend(newRules: object): void;
   }
   export interface Rule {
     name: string;

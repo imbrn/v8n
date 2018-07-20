@@ -485,6 +485,44 @@ describe("rules", () => {
     expect(not.test(NaN)).toBeTruthy();
     expect(not.test(Infinity)).toBeTruthy();
   });
+
+  test("schema", () => {
+    const is = v8n().schema({
+      one: v8n()
+        .string()
+        .minLength(3),
+      two: v8n()
+        .number()
+        .between(5, 10)
+    });
+
+    expect(is.test({ one: "Hello", two: 8 })).toBeTruthy();
+    expect(is.test({ one: "Hi", two: 8 })).toBeFalsy();
+    expect(is.test({ one: "Hello", two: 12 })).toBeFalsy();
+    expect(is.test({ one: 1, two: "Two" })).toBeFalsy();
+    expect(is.test({ one: "Hello" })).toBeFalsy();
+    expect(is.test({ two: 8 })).toBeFalsy();
+    expect(is.test({})).toBeFalsy();
+    expect(() => is.test({ one: "Hello", two: 8 })).not.toThrow();
+    expect(() => is.check({ one: "Hello", two: 12 })).toThrow();
+
+    const not = v8n().not.schema({
+      one: v8n()
+        .string()
+        .minLength(3),
+      two: v8n()
+        .number()
+        .between(5, 10)
+    });
+
+    expect(not.test({ one: "Hello", two: 8 })).toBeFalsy();
+    expect(not.test({ one: "Hi", two: 8 })).toBeTruthy();
+    expect(not.test({ one: "Hello", two: 12 })).toBeTruthy();
+    expect(not.test({ one: 1, two: "Two" })).toBeTruthy();
+    expect(not.test({ one: "Hello" })).toBeTruthy();
+    expect(not.test({ two: 8 })).toBeTruthy();
+    expect(not.test({})).toBeTruthy();
+  });
 });
 
 describe("custom rules", () => {

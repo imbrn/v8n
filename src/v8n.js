@@ -140,30 +140,6 @@ function applyRule(rule, name) {
   };
 }
 
-/*
- * Constructor function which produces a rule object.
- *
- * > This constructor should not be used directly. It's used by the validation
- * engine when needed.
- *
- * **Rule object:**
- *
- * A rule object is composed by a name; a validation function, which will be
- * performed against the validated value in the validation process; an arguments
- * list, which is used by the validation function; and an invert property, which
- * defines if the rule has to be inverted in its meaning.
- *
- * > To know more about the `invert` property, look a the
- * {@link modifiers.not not} modifier documentation section.
- *
- * > Look at {@link Validation} to know more about the validation process.
- *
- * @param {string} name rule function name
- * @param {function} fn validation function executed by the rule
- * @param {Array} args arguments list for the validation function
- * @param {boolean} invert indicates if the rule has its meaning inverted
- */
-
 /**
  * A Rule object instance stores information about a rule inside the validation
  * process.

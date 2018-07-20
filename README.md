@@ -324,6 +324,7 @@ v8n()
     -   [odd](#odd)
     -   [includes](#includes)
     -   [integer](#integer)
+    -   [schema](#schema)
 
 ### v8n
 
@@ -1249,6 +1250,40 @@ v8n()
 v8n()
  .integer()
  .test(2.2); // false
+```
+
+#### schema
+
+Rule function for object schema validation.
+
+It's used to check if the validated value matches the specified object
+schema.
+
+> An object schema is defined by recursively declaring the validation
+> strategy for each key of the schema.
+
+##### Parameters
+
+-   `schema`  
+
+##### Examples
+
+```javascript
+const validation = v8n()
+  .schema({
+    id: v8n().number().positive(),
+    name: v8n().string().minLength(4)
+  });
+
+validation.test({
+  id: 1,
+  name: "Luke"
+}); // true
+
+validation.test({
+  id: -1,
+  name: "Luke"
+}); // false
 ```
 
 ## v8n

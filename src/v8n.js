@@ -140,7 +140,7 @@ function applyRule(rule, name) {
   };
 }
 
-/**
+/*
  * Constructor function which produces a rule object.
  *
  * > This constructor should not be used directly. It's used by the validation
@@ -163,11 +163,30 @@ function applyRule(rule, name) {
  * @param {Array} args arguments list for the validation function
  * @param {boolean} invert indicates if the rule has its meaning inverted
  */
-function Rule(name, fn, args, invert) {
-  this.name = name;
-  this.fn = fn;
-  this.args = args;
-  this.invert = invert;
+
+/**
+ * A Rule object instance stores information about a rule inside the validation
+ * process.
+ *
+ * > It's mostly used by the developer to handle validation results. It's
+ * > instantiated automatically by the library engine during the validation
+ * > process and this should not be done directly by the developer.
+ */
+class Rule {
+  /**
+   * Constructs a Rule object instance.
+   *
+   * @param {string} name rule name
+   * @param {function} fn rule function used to perform the validation
+   * @param {*} args arguments used by the rule
+   * @param {*} invert indicates if the rule is inverted in its meaning
+   */
+  constructor(name, fn, args, invert) {
+    this.name = name;
+    this.fn = fn;
+    this.args = args;
+    this.invert = invert;
+  }
 }
 
 /**
@@ -225,46 +244,27 @@ const core = {
 };
 
 /**
- * Constructor function used to produce an object which contains information
- * about a validation exception.
+ * Exception which represents a validation issue.
  *
- * **Validation exception object:**
- *
- * A validation exception object is thrown by the {@link core.check check}
- * function when the validation fails.
- *
- * It contains information about the {@link Rule} which was been performed
- * during the fail, the value been validated and the cause of the thrown
- * exception. It also contains a stacktrace if one is available.
- *
- * @param {Rule} rule performing when the exception was thrown
- * @param {any} value been validated when the exception was thrown
- * @param {any} cause cause of the thrown exception
+ * It contains information about the {@link Rule} which was being performed when
+ * the issue happened, and about the value which was being validated.
  */
-function ValidationException(rule, value, cause) {
-  var instance = new Error(cause);
-  instance.rule = rule;
-  instance.value = value;
-  Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(instance, ValidationException);
+class ValidationException extends Error {
+  /**
+   * Constructs a validation exception with the rule which caused the issue and
+   * the value which was being validated when the issue happened.
+   *
+   * @param {Rule} rule the rule object which caused the validation
+   * @param {any} value the validated value
+   */
+  constructor(rule, value, ...remaining) {
+    super(remaining);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ValidationException);
+    }
+    this.rule = rule;
+    this.value = value;
   }
-  return instance;
-}
-
-ValidationException.prototype = Object.create(Error.prototype, {
-  constructor: {
-    value: Error,
-    enumerable: false,
-    writable: true,
-    configurable: true
-  }
-});
-
-if (Object.setPrototypeOf) {
-  Object.setPrototypeOf(ValidationException, Error);
-} else {
-  ValidationException.__proto__ = Error;
 }
 
 /**

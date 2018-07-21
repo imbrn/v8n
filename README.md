@@ -8,9 +8,9 @@ Dead simple fluent API. Customizable. Reusable.
 </p>
 
 <p align="center">
-<a href="#usage">Usage</a> - 
-<a href="#installation">Installation</a> - 
-<a href="#api">Documentation</a> 
+<a href="#usage">Usage</a> -
+<a href="#installation">Installation</a> -
+<a href="#api">Documentation</a>
 </p>
 
 ```javascript
@@ -282,14 +282,11 @@ v8n()
 -   [v8n](#v8n)
     -   [extend](#extend)
 -   [Validation](#validation)
-    -   [Examples](#examples-1)
 -   [Rule](#rule)
-    -   [Parameters](#parameters-1)
 -   [core](#core)
     -   [test](#test)
     -   [check](#check)
 -   [ValidationException](#validationexception)
-    -   [Parameters](#parameters-4)
 -   [modifiers](#modifiers)
     -   [not](#not)
 -   [rules](#rules)
@@ -302,6 +299,7 @@ v8n()
     -   [undefined](#undefined)
     -   [null](#null)
     -   [array](#array)
+    -   [object](#object)
     -   [lowercase](#lowercase)
     -   [uppercase](#uppercase)
     -   [vowel](#vowel)
@@ -330,7 +328,7 @@ v8n()
 Function used to produce a [Validation](#validation) object. The Validation object
 is used to configure a validation strategy and perform the validation tests.
 
-Returns **[Validation](#validation)** 
+Returns **[Validation](#validation)**
 
 #### extend
 
@@ -498,7 +496,7 @@ the issue happened, and about the value which was being validated.
 
 -   `rule` **[Rule](#rule)** the rule object which caused the validation
 -   `value` **any** the validated value
--   `remaining` **...any** 
+-   `remaining` **...any**
 
 ### modifiers
 
@@ -729,6 +727,24 @@ v8n()
 v8n()
    .array()
    .test([1, 2, 3]); // true
+```
+
+#### object
+
+Rule function for object value validation.
+
+This is used to check if the validated value is an object.
+
+##### Examples
+
+```javascript
+v8n()
+   .object()
+   .test("hello"); // false
+
+v8n()
+   .object()
+   .test({ key: "value" }); // true
 ```
 
 #### lowercase

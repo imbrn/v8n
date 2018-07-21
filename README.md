@@ -100,7 +100,7 @@ try {
 
 ### And more...
 
-There are a lot of useful standard rules for you to use already implemented in
+There are a lot of useful standard rules to use already implemented in
 the core. Look at the [API section](#api) of this document.
 
 You can also [implement your own rules](#extend), and share them between your
@@ -136,8 +136,8 @@ v8n()
 
 ## The `not` modifier
 
-The `not` modifier can be used to invert a validation rule meaning. Suppose we
-have a validation like that:
+The `not` modifier can be used to invert a validation rule. Suppose we
+have a validation like:
 
 ```javascript
 v8n()
@@ -145,11 +145,11 @@ v8n()
   .test("Hello World!"); // true
 ```
 
-Here, we're declaring a validation to check if the validated value includes a
+Here, we're declaring a validation to check if the value includes a
 `"World"` string. And the test returns `true`.
 
-But we could want a validation with the inverse meaning. With the `not`
-modifier, we can do that:
+But we could want a validation with the inverse meaning. We can do that
+with the `not` modifier:
 
 ```javascript
 v8n()
@@ -168,16 +168,15 @@ string. And the test returns `false`.
 
 ## Why another validation library?
 
-Although we have a lot of validation libraries, almost all of them are about
-input fields validation. That's great sometimes, but we often need something
-independent of the way we're going to use it.
+We have a lot of great libraries about input field validation. 
+But we often need something independent of the way we're going to use it.
 
-We usually need some kind of in-code validation, so that we can use that same
-validation in an input field, in a function call, in the server logic, whatever.
-Actually almost everytime, we need the same validation, that same logic, even
+We usually need some kind of in-code validation so we can use that same
+validation in an input field, in a function call, in the server logic, ect...
+Actually, we need the same validation and the same logic almost everytime, even
 between different projects.
 
-That's all about the `v8n` validation library. This is **not** another input field
+That's all about the `v8n` validation library. This is 'not' another input field
 validation library.
 
 This is a powerful engine for validation creation, reuse, and in-code validation
@@ -352,7 +351,7 @@ Extends the available rules with developer specified custom rules.
 
 **Custom rules:**
 
-Custom rules are rules functions defined by the developer.
+Custom rules are rule functions defined by the developer.
 
 A rule function works exactly the same way as a standard rule, and it can be
 called as a member function in a validation object instance.
@@ -407,7 +406,7 @@ point function [v8n](#v8n).
 A validation strategy is defined by calling `rules` functions on the
 validation object. Each call to a `rule` function will add that rule to the
 validation strategy chain and return the validation object instance for
-chaining `rules` functions calls together.
+chaining `rules` function calls together.
 
 All the rules functions that are available for use by a [Validation](#validation)
 object instance are actually declared  in the [rules](#rules) object. Those
@@ -500,7 +499,7 @@ Returns **[array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Gl
 
 Performs exception based validation.
 
-When this function is executed it performs the validation process and
+This function performs the validation process and
 throws a [ValidationException](#validationexception) when the value is not valid.
 
 > The exception thrown by this validation function contains a reference to
@@ -574,7 +573,7 @@ Group of standard rules that can be used to build a validation strategy.
 
 See more about how to use validation `rules` at [Validation](#validation).
 
-Also, each `rule` can have its meaning inverted by using the
+Each `rule` can have its meaning inverted by using the
 [not](#modifiersnot) modifier before it.
 
 #### pattern

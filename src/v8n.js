@@ -228,7 +228,7 @@ const core = {
     this.chain.forEach(rule => {
       try {
         if (rule.fn(value) === rule.invert) {
-          throw "Rule failed";
+          throw null;
         }
       } catch (ex) {
         throw new ValidationException(rule, value, ex);
@@ -242,6 +242,11 @@ const core = {
  *
  * It contains information about the {@link Rule} which was being performed when
  * the issue happened, and about the value which was being validated.
+ *
+ * > An exception object can be used as a chain for handling nested validation
+ * > results. If some validation is composed by other validations, the `cause`
+ * > property of the exception can be used to get the next deepest level in the
+ * > error chain.
  */
 class ValidationException extends Error {
   /**
@@ -250,14 +255,20 @@ class ValidationException extends Error {
    *
    * @param {Rule} rule the rule object which caused the validation
    * @param {any} value the validated value
+   * @param {Error} cause indicates which problem ocurred during the validation;
+   * it can be used as chain to detected deep validations
+   * @param {string} target? indicates the target which was being validated, it
+   * can be a key in a object validation, for example
    */
-  constructor(rule, value, ...remaining) {
+  constructor(rule, value, cause, target, ...remaining) {
     super(remaining);
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, ValidationException);
     }
     this.rule = rule;
     this.value = value;
+    this.cause = cause;
+    this.target = target;
   }
 }
 
@@ -1009,7 +1020,38 @@ const rules = {
    *  .integer()
    *  .test(2.2); // false
    */
-  integer: () => value => Number.isInteger(value) || testIntegerPolyfill(value)
+  integer: () => value => Number.isInteger(value) || testIntegerPolyfill(value),
+
+  /**
+   * Rule function for object schema validation.
+   *
+   * It's used to check if the validated value matches the specified object
+   * schema.
+   *
+   * > An object schema is defined by recursively declaring the validation
+   * > strategy for each key of the schema.
+   *
+   * @function
+   * @example
+   *
+   * const validation = v8n()
+   *   .schema({
+   *     id: v8n().number().positive(),
+   *     name: v8n().string().minLength(4)
+   *   });
+   *
+   * validation.test({
+   *   id: 1,
+   *   name: "Luke"
+   * }); // true
+   *
+   * validation.test({
+   *   id: -1,
+   *   name: "Luke"
+   * }); // false
+   *
+   */
+  schema: schema => testSchema(schema)
 };
 
 function testPattern(pattern) {
@@ -1076,6 +1118,26 @@ function testIntegerPolyfill(value) {
   return (
     typeof value === "number" && isFinite(value) && Math.floor(value) === value
   );
+}
+
+function testSchema(schema) {
+  return value => {
+    const causes = [];
+    Object.keys(schema).forEach(key => {
+      const nestedValidation = schema[key];
+      try {
+        nestedValidation.check(value[key]);
+      } catch (ex) {
+        ex.target = key;
+        ex.cause = null;
+        causes.push(ex);
+      }
+    });
+    if (causes.length > 0) {
+      throw causes;
+    }
+    return true;
+  };
 }
 
 export default v8n;

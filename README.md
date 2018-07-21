@@ -293,14 +293,11 @@ v8n()
 -   [v8n](#v8n)
     -   [extend](#extend)
 -   [Validation](#validation)
-    -   [Examples](#examples-1)
 -   [Rule](#rule)
-    -   [Parameters](#parameters-1)
 -   [core](#core)
     -   [test](#test)
     -   [check](#check)
 -   [ValidationException](#validationexception)
-    -   [Parameters](#parameters-4)
 -   [modifiers](#modifiers)
     -   [not](#not)
 -   [rules](#rules)
@@ -313,6 +310,7 @@ v8n()
     -   [undefined](#undefined)
     -   [null](#null)
     -   [array](#array)
+    -   [object](#object)
     -   [lowercase](#lowercase)
     -   [uppercase](#uppercase)
     -   [vowel](#vowel)
@@ -740,6 +738,24 @@ v8n()
 v8n()
    .array()
    .test([1, 2, 3]); // true
+```
+
+#### object
+
+Rule function for object value validation.
+
+This is used to check if the validated value is an object.
+
+##### Examples
+
+```javascript
+v8n()
+   .object()
+   .test("hello"); // false
+
+v8n()
+   .object()
+   .test({ key: "value" }); // true
 ```
 
 #### lowercase

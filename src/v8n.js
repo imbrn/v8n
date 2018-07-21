@@ -496,6 +496,24 @@ const rules = {
    */
   array: makeTestType("array"),
 
+  /**
+   * Rule function for object value validation.
+   *
+   * This is used to check if the validated value is an object.
+   *
+   * @function
+   * @example
+   *
+   * v8n()
+   *    .object()
+   *    .test("hello"); // false
+   *
+   * v8n()
+   *    .object()
+   *    .test({ key: "value" }); // true
+   */
+  object: makeTestType("object"),
+
   // Pattern
 
   /**

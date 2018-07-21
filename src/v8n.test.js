@@ -36,6 +36,23 @@ describe("execution functions", () => {
     });
   });
 
+  describe("the 'testAll' function", () => {
+    const validation2 = v8n()
+      .number()
+      .between(5, 10)
+      .not.even();
+
+    it("should return an array of rules that failed", () => {
+      expect(Array.isArray(validation2.testAll("test"))).toBeTruthy();
+      expect(validation2.testAll("11")).toHaveLength(2);
+      expect(validation2.testAll(11)).toHaveLength(1);
+    });
+
+    it("should return an empty array if all rules passed", () => {
+      expect(validation2.testAll(7)).toHaveLength(0);
+    });
+  });
+
   describe("the 'check' function", () => {
     it("should throw exception for invalid value", () => {
       expect(() => validation.check("abcd")).toThrow();

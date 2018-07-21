@@ -51,14 +51,25 @@ We use the function [test](#test) to perform boolean based validations:
 ```javascript
 import v8n from "v8n";
 
-const isValid = v8n()
+v8n()
   .not.null()
   .string()
   .first("H")
   .last("o")
-  .test("Hello");
+  .test("Hello"); // true
+```
 
-isValid; // true
+### Array based validation
+
+We use the function [testAll](#testAll) to perform array based validations. The
+returned array will contain all failed rules or none if the validation passes:
+
+```javascript
+import v8n from "v8n";
+
+v8n()
+  .number()
+  .testAll("Hello"); // [Rule{ name: 'number', ... }]
 ```
 
 ### Exception based validation

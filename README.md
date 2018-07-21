@@ -8,9 +8,9 @@ Dead simple fluent API. Customizable. Reusable.
 </p>
 
 <p align="center">
-<a href="#usage">Usage</a> - 
-<a href="#installation">Installation</a> - 
-<a href="#api">Documentation</a> 
+<a href="#usage">Usage</a> -
+<a href="#installation">Installation</a> -
+<a href="#api">Documentation</a>
 </p>
 
 ```javascript
@@ -51,14 +51,25 @@ We use the function [test](#test) to perform boolean based validations:
 ```javascript
 import v8n from "v8n";
 
-const isValid = v8n()
+v8n()
   .not.null()
   .string()
   .first("H")
   .last("o")
-  .test("Hello");
+  .test("Hello"); // true
+```
 
-isValid; // true
+### Array based validation
+
+We use the function [testAll](#testAll) to perform array based validations. The
+returned array will contain all failed rules or none if the validation passes:
+
+```javascript
+import v8n from "v8n";
+
+v8n()
+  .number()
+  .testAll("Hello"); // [Rule{ name: 'number', ... }]
 ```
 
 ### Exception based validation
@@ -330,7 +341,7 @@ v8n()
 Function used to produce a [Validation](#validation) object. The Validation object
 is used to configure a validation strategy and perform the validation tests.
 
-Returns **[Validation](#validation)** 
+Returns **[Validation](#validation)**
 
 #### extend
 
@@ -498,7 +509,7 @@ the issue happened, and about the value which was being validated.
 
 -   `rule` **[Rule](#rule)** the rule object which caused the validation
 -   `value` **any** the validated value
--   `remaining` **...any** 
+-   `remaining` **...any**
 
 ### modifiers
 

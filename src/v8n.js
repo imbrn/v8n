@@ -31,22 +31,39 @@ function v8n() {
    *
    * **Validating**
    *
-   * There are two ways to perform a validation: the functions
-   * {@link core.test test} and {@link core.check check}.
+   * There are two way to perform a validation: synchronous and asynchronous.
    *
-   * When the {@link core.test test} function is used, a validation based on a
-   * boolean return value is performed.
+   * When you have a validation strategy with promise-based rules, like a rule
+   * that performs an API check or any other kind of asynchronous test, you
+   * should use the {@link core.testAsync testAsync} function. This function
+   * produces a promise based validation.
    *
-   * When the {@link core.check check} function is used, a validation based on
-   * exception throw is performed.
+   * But, if your validation strategy contains **only** synchronous rules, like
+   * `.string()`, `.minLength(2)`, whatever, you'd better use the functions
+   * {@link core.test test} or {@link core.check check}.
    *
    * > Look at these functions documentation to know more about them.
    *
    * @example
+   * // Synchronous validation
+   *
    * v8n() // Creates a validation object instance
    *  .not.null()   // Inverting the `null` rule call to `not null`
    *  .minLength(3) // Chaining `rules` to the validation strategy
    *  .test("some value");  // Executes the validation test function
+   *
+   * @example
+   * // Asynchronous validation
+   *
+   * v8n()
+   *   .not.null()
+   *   .someAsyncRule() // some asynchronous rule
+   *   .testAsync("some value")
+   *   .then(value => {
+   *     // valid
+   *   }).catch(ex => {
+   *     // invalid!
+   *   });
    *
    * @module Validation
    */
@@ -73,7 +90,13 @@ let customRules = {};
  * > The validation engine will inject custom rules into validation object
  * instances when needed.
  *
- * **Custom rule structure:**
+ * > The new added rules can be used like any standard rule when building
+ * > validations.
+ *
+ * > To understand how validations works, see {@link Validation} and
+ * > {@link rules} sections.
+ *
+ * **Basic (synchronous) custom rule structure:**
  *
  * A custom rule is a function that returns another function. The custom rule
  * function can take parameters for its own configuration, and should return a
@@ -81,29 +104,42 @@ let customRules = {};
  * validated by this function and return `true` for valid value and `false` for
  * invalid value.
  *
- * > The new added rules can be used like any standard rule when building
- * > validations.
+ * **Asynchronous custom rule structure:***
  *
- * > To understand how validations works, see {@link Validation} and
- * > {@link rules} sections.
+ * A asynchronous custom rule looks like a basic custom rule, but instead of
+ * returning a function which returns `true` or `false`, it should return a
+ * function that returns a promise which resolves to `true` when the value is
+ * valid and to `false` when the value is invalid.
  *
  * @param {object} newRules an object containing named custom `rule functions`
  * @example
  *
+ * // A basic (synchronous) rule
  * function myCustomRule(expected) {
  *   return value => value === expected;
  * }
  *
+ * // An asynchronous rule
+ * function myAsyncCustomRule(expected) {
+ *   return value => {
+ *     // fetches data from an api, for example, and resolves with the result
+ *     const result = fetch("some API call")
+ *     return Promise.resolve(result == expected);
+ *   };
+ * }
+ *
  * // Adding a custom rule
  * v8n.extend({
- *   myCustomRule
+ *   myCustomRule,
+ *   myAsyncCustomRule
  * });
  *
  * // Using the custom rule in validation
  * v8n()
  *  .string()
- *  .myCustomRule("Awesome") // Used like any other rule
- *  .test("Awesome"); // true
+ *  .myCustomRule("Awesome")                   // Used like any other rule
+ *  .myAsyncCustomRule("Async is awesome too") // Asynchronous rules!
+ *  .testAsync("Awesome"); // Promise
  */
 v8n.extend = function(newRules) {
   Object.assign(customRules, newRules);
@@ -234,8 +270,57 @@ const core = {
         throw new ValidationException(rule, value, ex);
       }
     });
+  },
+
+  /**
+   * Performs asynchronous validation.
+   *
+   * When this function is used it performs the validation process
+   * asynchronously, and it returns a promise that resolves to the validated
+   * value when it's valid and rejects with a {@link ValidationException} when
+   * it's invalid or when an exception occurs.
+   *
+   * > To learn more about asynchronous validation, look at the
+   * > {@link Validation} documentation section.
+   *
+   * > For a validation strategy with non promise-based rules, you'd better use
+   * > the {@link core.test test} and {@link core.check check} functions.
+   *
+   * @see ValidationException
+   * @param {any} value the value to be validated
+   * @returns {Promise} promise that resolves to the validated value or rejects
+   * with a {@link ValidationException}
+   */
+  testAsync(value) {
+    return executeAsyncRules(value, this.chain);
   }
 };
+
+function executeAsyncRules(value, rules) {
+  return new Promise((resolve, reject) => {
+    executeAsyncRulesAux(value, rules.slice(), resolve, reject);
+  });
+}
+
+function executeAsyncRulesAux(value, rules, resolve, reject) {
+  if (rules.length > 0) {
+    const rule = rules.shift();
+    try {
+      const result = Promise.resolve(rule.fn(value));
+      result.then(valid => {
+        if (valid !== rule.invert) {
+          executeAsyncRulesAux(value, rules, resolve, reject);
+        } else {
+          reject(new ValidationException(rule, value, "Rule failed"));
+        }
+      });
+    } catch (cause) {
+      reject(new ValidationException(rule, value, cause));
+    }
+  } else {
+    resolve(value);
+  }
+}
 
 /**
  * Exception which represents a validation issue.

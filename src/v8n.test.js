@@ -523,6 +523,17 @@ describe("rules", () => {
     expect(() => is.test({ one: "Hello", two: 8 })).not.toThrow();
     expect(() => is.check({ one: "Hello", two: 12 })).toThrow();
 
+    try {
+      is.check({ one: "Hi", two: 12 });
+    } catch (ex) {
+      expect(ex).toMatchObject({
+        cause: [
+          { target: "one", value: "Hi", rule: { name: "minLength" } },
+          { target: "two", value: 12, rule: { name: "between" } }
+        ]
+      });
+    }
+
     const not = v8n().not.schema({
       one: v8n()
         .string()

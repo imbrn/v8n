@@ -293,11 +293,15 @@ v8n()
 -   [v8n](#v8n)
     -   [extend](#extend)
 -   [Validation](#validation)
+    -   [Examples](#examples-1)
 -   [Rule](#rule)
+    -   [Parameters](#parameters-1)
 -   [core](#core)
     -   [test](#test)
+    -   [testAll](#testall)
     -   [check](#check)
 -   [ValidationException](#validationexception)
+    -   [Parameters](#parameters-5)
 -   [modifiers](#modifiers)
     -   [not](#not)
 -   [rules](#rules)
@@ -340,7 +344,7 @@ v8n()
 Function used to produce a [Validation](#validation) object. The Validation object
 is used to configure a validation strategy and perform the validation tests.
 
-Returns **[Validation](#validation)**
+Returns **[Validation](#validation)** 
 
 #### extend
 
@@ -478,6 +482,20 @@ returns a `boolean` result.
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** true for valid and false for invalid
 
+#### testAll
+
+Performs array based validation.
+
+When this function is executed it performs the validation process and
+returns an array containing all failed rules. This will perform every
+validation regardless of failures.
+
+##### Parameters
+
+-   `value` **any** the value to be validated
+
+Returns **[array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** empty for successful validation
+
 #### check
 
 Performs exception based validation.
@@ -504,11 +522,20 @@ Exception which represents a validation issue.
 It contains information about the [Rule](#rule) which was being performed when
 the issue happened, and about the value which was being validated.
 
+> An exception object can be used as a chain for handling nested validation
+> results. If some validation is composed by other validations, the `cause`
+> property of the exception can be used to get the next deepest level in the
+> error chain.
+
 #### Parameters
 
 -   `rule` **[Rule](#rule)** the rule object which caused the validation
 -   `value` **any** the validated value
--   `remaining` **...any**
+-   `cause` **[Error](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error)** indicates which problem ocurred during the validation;
+    it can be used as chain to detected deep validations
+-   `target` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** ? indicates the target which was being validated, it
+    can be a key in a object validation, for example
+-   `remaining` **...any** 
 
 ### modifiers
 

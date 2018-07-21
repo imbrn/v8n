@@ -243,7 +243,7 @@ const core = {
  * It contains information about the {@link Rule} which was being performed when
  * the issue happened, and about the value which was being validated.
  *
- * > This exception object can be used as a chain for handling nested validation
+ * > An exception object can be used as a chain for handling nested validation
  * > results. If some validation is composed by other validations, the `cause`
  * > property of the exception can be used to get the next deepest level in the
  * > error chain.

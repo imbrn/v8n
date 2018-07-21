@@ -228,7 +228,7 @@ const core = {
     this.chain.forEach(rule => {
       try {
         if (rule.fn(value) === rule.invert) {
-          throw "Rule failed";
+          throw null;
         }
       } catch (ex) {
         throw new ValidationException(rule, value, ex);
@@ -242,6 +242,11 @@ const core = {
  *
  * It contains information about the {@link Rule} which was being performed when
  * the issue happened, and about the value which was being validated.
+ *
+ * > This exception object can be used as a chain for handling nested
+ * > validations. If some validation is composed by other validations, the
+ * > `cause` property of the exception can be used to get the next deepest level
+ * > in the error chain.
  */
 class ValidationException extends Error {
   /**
@@ -250,14 +255,18 @@ class ValidationException extends Error {
    *
    * @param {Rule} rule the rule object which caused the validation
    * @param {any} value the validated value
+   * @param {Error} error error which caused the validation exception
+   * @param {string} target? indicates the target which was being validated
    */
-  constructor(rule, value, ...remaining) {
+  constructor(rule, value, cause, target, ...remaining) {
     super(remaining);
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, ValidationException);
     }
     this.rule = rule;
     this.value = value;
+    this.cause = cause;
+    this.target = target;
   }
 }
 

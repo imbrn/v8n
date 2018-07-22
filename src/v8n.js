@@ -151,6 +151,10 @@ v8n.extend = function(newRules) {
   Object.assign(customRules, newRules);
 };
 
+v8n.clearCustomRules = function() {
+  customRules = {};
+};
+
 const contextProxyHandler = {
   get: function(obj, prop, receiver) {
     if (prop in obj) {

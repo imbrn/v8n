@@ -179,20 +179,35 @@ describe("execution functions", () => {
   });
 });
 
-describe("the 'not' modifier", () => {
-  it("should invert the next rule meaning", () => {
-    const validation = v8n()
-      .number()
-      .not.between(2, 8)
-      .not.even();
+describe("modifiers", () => {
+  describe("the 'not' modifier", () => {
+    it("should invert the next rule meaning", () => {
+      const validation = v8n()
+        .number()
+        .not.between(2, 8)
+        .not.even();
 
-    expect(validation.test(4)).toBeFalsy();
-    expect(validation.test(6)).toBeFalsy();
-    expect(validation.test(11)).toBeTruthy();
+      expect(validation.test(4)).toBeFalsy();
+      expect(validation.test(6)).toBeFalsy();
+      expect(validation.test(11)).toBeTruthy();
 
-    expect(() => validation.check(4)).toThrow();
-    expect(() => validation.check(6)).toThrow();
-    expect(() => validation.check(11)).not.toThrow();
+      expect(() => validation.check(4)).toThrow();
+      expect(() => validation.check(6)).toThrow();
+      expect(() => validation.check(11)).not.toThrow();
+    });
+
+    test("double negative", async () => {
+      const validation = v8n()
+        .not.not.number()
+        .not.not.positive();
+
+      expect(validation.test(1)).toBeTruthy();
+      expect(() => validation.check(12)).not.toThrow();
+      expect(validation.test("12")).toBeFalsy();
+      expect(() => validation.check(-1)).toThrow();
+      await expect(validation.testAsync(4)).resolves.toEqual(4);
+      await expect(validation.testAsync(-4)).rejects.toBeDefined();
+    });
   });
 });
 

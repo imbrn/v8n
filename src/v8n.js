@@ -213,7 +213,7 @@ class Rule {
 
       while (modifiers.length) {
         const modifier = modifiers.pop();
-        value = modifier.fork(passThrough, value);
+        value = modifier.fork(it => it, value);
         value = modifier.exec(value);
       }
       return value;
@@ -238,7 +238,7 @@ class Rule {
 
           while (modifiers.length) {
             const modifier = modifiers.pop();
-            value = modifier.fork(passThrough, value);
+            value = modifier.fork(it => it, value);
             value = modifier.exec(value);
           }
 
@@ -279,7 +279,7 @@ const core = {
       } catch (ex) {
         return rule.modifiers.reduce((val, modifier) => {
           try {
-            val = modifier.fork(passThrough, val);
+            val = modifier.fork(it => it, val);
             val = modifier.exec(val);
             return val;
           } catch (ex) {
@@ -457,13 +457,13 @@ const modifiers = {
   // TODO: write docs
   some: new Modifier(
     (fn, value) => value.map(fn),
-    value => value.some(passThrough)
+    value => value.some(it => it)
   ),
 
   // TODO: write docs
   every: new Modifier(
     (fn, value) => value.map(fn),
-    value => value.every(passThrough)
+    value => value.every(it => it)
   )
 };
 
@@ -1302,10 +1302,6 @@ function testSchema(schema) {
     }
     return true;
   };
-}
-
-function passThrough(value) {
-  return value;
 }
 
 export default v8n;

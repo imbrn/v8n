@@ -113,13 +113,19 @@ describe("execution functions", () => {
       ).toBeInstanceOf(Promise);
     });
 
-    it("should execute rules in sequence", () => {
-      return expect(
-        v8n()
-          .minLength(2)
-          .asyncRule("Hello")
-          .testAsync("Hello")
-      ).resolves.toBe("Hello");
+    it("should execute rules in sequence", async () => {
+      const validation = v8n()
+        .minLength(2)
+        .asyncRule("Hi")
+        .asyncRule("Hello");
+
+      await expect(validation.testAsync("Hello")).rejects.toMatchObject({
+        rule: validation.chain[1]
+      });
+
+      await expect(validation.testAsync("Hi")).rejects.toMatchObject({
+        rule: validation.chain[2]
+      });
     });
 
     it("should work with the 'not' modifier", () => {

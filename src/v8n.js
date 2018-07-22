@@ -70,7 +70,7 @@ function v8n() {
    */
   const context = {
     chain: [],
-    _modifiers: []
+    modifiers: []
   };
 
   return new Proxy(context, contextProxyHandler);
@@ -153,7 +153,7 @@ const contextProxyHandler = {
       return obj[prop];
     }
     if (prop in modifiers) {
-      receiver._modifiers.push(modifiers[prop]);
+      receiver.modifiers.push(modifiers[prop]);
       return receiver;
     }
     if (prop in customRules) {
@@ -171,9 +171,9 @@ const contextProxyHandler = {
 function applyRule(rule, name) {
   return (...args) => {
     this.chain.push(
-      new Rule(name, rule.apply(this, args), args, this._modifiers)
+      new Rule(name, rule.apply(this, args), args, this.modifiers)
     );
-    this._modifiers = [];
+    this.modifiers = [];
     return this;
   };
 }

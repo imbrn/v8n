@@ -235,17 +235,19 @@ describe("modifiers", () => {
     });
   });
 
-  describe("the 'every' modifier", async () => {
-    const validation = v8n().every.positive();
-    expect(validation.test([1, 2, 3, -1])).toBeFalsy();
-    expect(validation.test(10)).toBeFalsy();
-    expect(validation.test([1, 2, 3])).toBeTruthy();
+  describe("the 'every' modifier", () => {
+    it("expect that rule passes for every array value", async () => {
+      const validation = v8n().every.positive();
+      expect(validation.test([1, 2, 3, -1])).toBeFalsy();
+      expect(validation.test(10)).toBeFalsy();
+      expect(validation.test([1, 2, 3])).toBeTruthy();
 
-    await expect(validation.testAsync([1, 2, -3])).rejects.toMatchObject({
-      rule: validation.chain[0]
+      await expect(validation.testAsync([1, 2, -3])).rejects.toMatchObject({
+        rule: validation.chain[0]
+      });
+
+      await expect(validation.testAsync([1, 2, 3])).resolves.toEqual([1, 2, 3]);
     });
-
-    await expect(validation.testAsync([1, 2, 3])).resolves.toEqual([1, 2, 3]);
   });
 
   test("should be able to mix modifiers", async () => {

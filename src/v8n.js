@@ -156,15 +156,15 @@ const contextProxyHandler = {
     if (prop in obj) {
       return obj[prop];
     }
-    if (prop in modifiers) {
-      receiver.modifiers.push(modifiers[prop]);
+    if (prop in availableModifiers) {
+      receiver.modifiers.push(availableModifiers[prop]);
       return receiver;
     }
     if (prop in customRules) {
       return applyRule.call(receiver, customRules[prop], prop);
     }
-    if (prop in rules) {
-      return applyRule.call(receiver, rules[prop], prop);
+    if (prop in availableRules) {
+      return applyRule.call(receiver, availableRules[prop], prop);
     }
     if (prop in core) {
       return core[prop];
@@ -323,7 +323,7 @@ function executeAsyncRulesAux(value, rules, resolve, reject) {
  *
  * @namespace
  */
-const modifiers = {
+const availableModifiers = {
   /**
    * TODO: fix docs
    * Modifier for inverting of a rule meaning.
@@ -367,7 +367,7 @@ const modifiers = {
  * Also, each `rule` can have its meaning inverted by using the
  * {@link modifiers.not not} modifier before it.
  */
-const rules = {
+const availableRules = {
   /**
    * Rule function for regular expression based validation.
    *

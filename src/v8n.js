@@ -277,9 +277,13 @@ const core = {
         return rule._test(value);
       } catch (ex) {
         return rule.modifiers.reduce((val, modifier) => {
-          val = modifier.fork(passThrough, val);
-          val = modifier.exec(val);
-          return val;
+          try {
+            val = modifier.fork(passThrough, val);
+            val = modifier.exec(val);
+            return val;
+          } catch (ex) {
+            return val;
+          }
         }, false);
       }
     });
@@ -426,6 +430,7 @@ class ValidationException extends Error {
  */
 const modifiers = {
   /**
+   * TODO: fix docs
    * Modifier for inverting of a rule meaning.
    *
    * It's used before a `rule` function call and will invert that `rule`
@@ -442,6 +447,11 @@ const modifiers = {
   not: {
     fork: (fn, value) => fn(value),
     exec: value => !value
+  },
+
+  some: {
+    fork: (fn, value) => value.map(fn),
+    exec: value => value.some(passThrough)
   }
 };
 

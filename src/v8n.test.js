@@ -215,6 +215,39 @@ describe("modifiers", () => {
       await expect(validation.testAsync(-4)).rejects.toBeDefined();
     });
   });
+
+  describe("the 'some' modifier", () => {
+    it("expect that rule passes on some array value", async () => {
+      const validation = v8n().some.positive();
+      expect(validation.test([-1, -2, -3])).toBeFalsy();
+      expect(validation.test(10)).toBeFalsy();
+      expect(validation.test([-1, -2, 1])).toBeTruthy();
+
+      await expect(validation.testAsync([-1, 3, -2])).resolves.toEqual([
+        -1,
+        3,
+        -2
+      ]);
+
+      await expect(validation.testAsync([-2, -1])).rejects.toMatchObject({
+        rule: validation.chain[0]
+      });
+    });
+  });
+
+  test("should be able to mix modifiers", async () => {
+    await expect(
+      v8n()
+        .not.some.positive()
+        .testAsync(10)
+    ).rejects.toMatchObject({ rule: { name: "positive" } });
+
+    await expect(
+      v8n()
+        .some.not.positive()
+        .testAsync([1, 2, 3])
+    ).rejects.toMatchObject({ rule: { name: "positive" } });
+  });
 });
 
 describe("rules", () => {

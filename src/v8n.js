@@ -417,6 +417,13 @@ class ValidationException extends Error {
   }
 }
 
+class Modifier {
+  constructor(fork, exec) {
+    this.fork = fork;
+    this.exec = exec;
+  }
+}
+
 /**
  * Group of modifiers to be used along with `rules` to compose a validation
  * strategy.
@@ -445,22 +452,19 @@ const modifiers = {
    * v8n()
    *  .not.equal("three");
    */
-  not: {
-    fork: (fn, value) => fn(value),
-    exec: value => !value
-  },
+  not: new Modifier((fn, value) => fn(value), value => !value),
 
   // TODO: write docs
-  some: {
-    fork: (fn, value) => value.map(fn),
-    exec: value => value.some(passThrough)
-  },
+  some: new Modifier(
+    (fn, value) => value.map(fn),
+    value => value.some(passThrough)
+  ),
 
   // TODO: write docs
-  every: {
-    fork: (fn, value) => value.map(fn),
-    exec: value => value.every(passThrough)
-  }
+  every: new Modifier(
+    (fn, value) => value.map(fn),
+    value => value.every(passThrough)
+  )
 };
 
 /**

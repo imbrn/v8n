@@ -235,6 +235,19 @@ describe("modifiers", () => {
     });
   });
 
+  describe("the 'every' modifier", async () => {
+    const validation = v8n().every.positive();
+    expect(validation.test([1, 2, 3, -1])).toBeFalsy();
+    expect(validation.test(10)).toBeFalsy();
+    expect(validation.test([1, 2, 3])).toBeTruthy();
+
+    await expect(validation.testAsync([1, 2, -3])).rejects.toMatchObject({
+      rule: validation.chain[0]
+    });
+
+    await expect(validation.testAsync([1, 2, 3])).resolves.toEqual([1, 2, 3]);
+  });
+
   test("should be able to mix modifiers", async () => {
     await expect(
       v8n()
@@ -247,6 +260,20 @@ describe("modifiers", () => {
         .some.not.positive()
         .testAsync([1, 2, 3])
     ).rejects.toMatchObject({ rule: { name: "positive" } });
+
+    await expect(
+      v8n()
+        .some.positive()
+        .not.every.number()
+        .testAsync([1, 2, 3])
+    ).rejects.toMatchObject({ rule: { name: "number" } });
+
+    await expect(
+      v8n()
+        .some.positive()
+        .not.every.positive()
+        .testAsync([1, 2, -1])
+    ).resolves.toEqual([1, 2, -1]);
   });
 });
 

@@ -23,6 +23,7 @@ function v8n() {
    *
    * Look at the {@link rules} object to see all the available `rules`.
    *
+   * // TODO: write about `modifiers` abstraction instead
    * **The `not` modifier**
    *
    * To invert a `rule` meaning, the modifier {@link modifiers.not not} must be
@@ -449,9 +450,16 @@ const modifiers = {
     exec: value => !value
   },
 
+  // TODO: write docs
   some: {
     fork: (fn, value) => value.map(fn),
     exec: value => value.some(passThrough)
+  },
+
+  // TODO: write docs
+  every: {
+    fork: (fn, value) => value.map(fn),
+    exec: value => value.every(passThrough)
   }
 };
 
@@ -464,6 +472,7 @@ const modifiers = {
  *
  * See more about how to use validation `rules` at {@link Validation}.
  *
+ * // TODO: write about 'modifiers' abstraction instead
  * Also, each `rule` can have its meaning inverted by using the
  * {@link modifiers.not not} modifier before it.
  */

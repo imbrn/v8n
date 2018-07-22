@@ -68,7 +68,8 @@ function v8n() {
    * @module Validation
    */
   const context = {
-    chain: []
+    chain: [],
+    _modifiers: []
   };
 
   return new Proxy(context, contextProxyHandler);
@@ -151,7 +152,7 @@ const contextProxyHandler = {
       return obj[prop];
     }
     if (prop in modifiers) {
-      modifiers[prop].call(receiver);
+      receiver._modifiers.push(modifiers[prop]);
       return receiver;
     }
     if (prop in customRules) {
@@ -169,9 +170,9 @@ const contextProxyHandler = {
 function applyRule(rule, name) {
   return (...args) => {
     this.chain.push(
-      new Rule(name, rule.apply(this, args), args, !!this.invert)
+      new Rule(name, rule.apply(this, args), args, this._modifiers)
     );
-    this.invert = false;
+    this._modifiers = [];
     return this;
   };
 }
@@ -191,13 +192,63 @@ class Rule {
    * @param {string} name rule name
    * @param {function} fn rule function used to perform the validation
    * @param {*} args arguments used by the rule
-   * @param {*} invert indicates if the rule is inverted in its meaning
+   * @param {Array} modifiers list of modifiers to be applied on the Rule
    */
-  constructor(name, fn, args, invert) {
+  constructor(name, fn, args, modifiers) {
     this.name = name;
     this.fn = fn;
     this.args = args;
-    this.invert = invert;
+    this.modifiers = modifiers;
+  }
+
+  _test(value) {
+    const modifiers = this.modifiers.slice();
+    const fn = this.fn;
+
+    if (modifiers.length) {
+      const first = modifiers.pop();
+      value = first.fork(fn, value);
+      value = first.exec(value);
+
+      while (modifiers.length) {
+        const modifier = modifiers.pop();
+        value = modifier.fork(passThrough, value);
+        value = modifier.exec(value);
+      }
+      return value;
+    } else {
+      return fn(value);
+    }
+  }
+
+  _testAsync(value) {
+    const modifiers = this.modifiers.slice();
+    const fn = this.fn;
+
+    if (modifiers.length) {
+      const first = modifiers.pop();
+      value = first.fork(val => Promise.resolve(fn(val)), value);
+
+      const isArray = Array.isArray(value);
+
+      return Promise.all(isArray ? value : [value])
+        .then(result => {
+          let value = first.exec(isArray ? result : result[0]);
+
+          while (modifiers.length) {
+            const modifier = modifiers.pop();
+            value = modifier.fork(passThrough, value);
+            value = modifier.exec(value);
+          }
+
+          return value;
+        })
+        .catch(ex => {
+          return false;
+        });
+    } else {
+      return Promise.resolve(fn(value));
+    }
   }
 }
 
@@ -223,9 +274,13 @@ const core = {
   test(value) {
     return this.chain.every(rule => {
       try {
-        return rule.fn(value) !== rule.invert;
+        return rule._test(value);
       } catch (ex) {
-        return rule.invert;
+        return rule.modifiers.reduce((val, modifier) => {
+          val = modifier.fork(passThrough, val);
+          val = modifier.exec(val);
+          return val;
+        }, false);
       }
     });
   },
@@ -243,7 +298,7 @@ const core = {
   testAll(value) {
     const err = [];
     this.chain.forEach(rule => {
-      if (rule.fn(value) === rule.invert) err.push(rule);
+      if (!rule._test(value)) err.push(rule);
     });
     return err;
   },
@@ -263,7 +318,7 @@ const core = {
   check(value) {
     this.chain.forEach(rule => {
       try {
-        if (rule.fn(value) === rule.invert) {
+        if (!rule._test(value)) {
           throw null;
         }
       } catch (ex) {
@@ -306,12 +361,12 @@ function executeAsyncRulesAux(value, rules, resolve, reject) {
   if (rules.length > 0) {
     const rule = rules.shift();
     try {
-      const result = Promise.resolve(rule.fn(value));
+      const result = rule._testAsync(value);
       result.then(valid => {
-        if (valid !== rule.invert) {
+        if (valid) {
           executeAsyncRulesAux(value, rules, resolve, reject);
         } else {
-          reject(new ValidationException(rule, value, "Rule failed"));
+          reject(new ValidationException(rule, value, null));
         }
       });
     } catch (cause) {
@@ -384,8 +439,9 @@ const modifiers = {
    * v8n()
    *  .not.equal("three");
    */
-  not() {
-    this.invert = true;
+  not: {
+    fork: (fn, value) => fn(value),
+    exec: value => !value
   }
 };
 
@@ -1223,6 +1279,10 @@ function testSchema(schema) {
     }
     return true;
   };
+}
+
+function passThrough(value) {
+  return value;
 }
 
 export default v8n;

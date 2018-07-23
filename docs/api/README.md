@@ -6,6 +6,57 @@ sidebar: auto
 
 ## Core
 
+### v8n
+
+- **Signature:** `v8n()`
+
+- **Returns:** `Proxy`
+
+- **Usage:**
+
+  This function is the main entry point for `v8n`. Once this function is called
+  rule chaining can be done on it. There can be multiple instances of `v8n` in
+  your code independently from one another. Instances can also be
+  [reused](/Validation.md#reusing-validations) with some preset of rules that is
+  common to multiple validation.
+
+  ```js
+  v8n()
+    .string()
+    .test("Test");
+  ```
+
+- **See also:** [Extending](/Extending.md)
+
+### extend
+
+- **Signature:** `extend(newRules)`
+
+- **Arguments:**
+
+  - `newRules: Object`
+
+- **Usage:**
+
+  This function is used to add custom validation rules to `v8n`. It accepts an
+  objects of keys and values where the keys are the names for the rule and the
+  values are the functions performing the validation. These rules can be
+  asynchronous. Refer to the [guide on extending `v8n`](/Extending.md) for more
+  information on how rules need to be written.
+
+  ::: danger
+  This function is part of the `v8n` object and is not available on `v8n()`.
+  Make sure to omit the braces to call `extend()`.
+  :::
+
+  ```js
+  v8n.extend({
+    myRule: expected => value => value === expected;
+  });
+  ```
+
+- **See also:** [Extending](/Extending.md)
+
 ### Rule
 
 - **Properties:**
@@ -131,8 +182,6 @@ sidebar: auto
 - **Arguments:**
 
   - `value: any`
-
-- **Returns:** `void`
 
 - **Throws:** [`ValidationException`](#validationexception)
 

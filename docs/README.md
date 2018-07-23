@@ -13,6 +13,14 @@ you look closely you will find that between the _v_ and the _n_ in there are
 precisely 8 letters (_a l i d a t i o_). So we get from the sort of boring word
 _validation_ to the very nice looking acronym **v8n**.
 
+### Features
+
+- Fluent and chainable API
+- Useful standard validation rules (30+)
+- Custom validations rules
+- Asynchronous validation
+- Reusability
+
 ## Getting started
 
 Using v8n is supposed to be easy and intuitive. Aside from usage in the browser

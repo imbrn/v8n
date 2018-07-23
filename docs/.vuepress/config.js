@@ -1,4 +1,5 @@
 module.exports = {
+  base: '/v8n',
   title: 'v8n',
   description: 'The ultimate JavaScript validation library',
   themeConfig: {

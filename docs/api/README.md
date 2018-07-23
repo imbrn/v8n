@@ -255,74 +255,797 @@ sidebar: auto
 
 ### pattern
 
+- **Signature:** `pattern(pattern)`
+
+- **Arguments:**
+
+  - `pattern: RegExp`
+
+- **Usage:**
+
+  This rule verifies that the tested value matches a `RegExp` pattern.
+
+  ```js
+  v8n()
+    .pattern(/[a-z]+/)
+    .test("hello"); // true
+
+  v8n()
+    .pattern(/[0-9]/)
+    .test("hello"); // false
+  ```
+
+- **See also:** [RegExp](https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/RegExp)
+
 ### equal
+
+- **Signature:** `equal(expected)`
+
+- **Arguments:**
+
+  - `expected: any`
+
+- **Usage:**
+
+  This rule verifies that the tested value matches the expected value losely.
+
+  ::: warning
+  This rule uses `==` to check equality. For strict equality use the
+  [`exact`](#exact) rule.
+  :::
+
+  ```js
+  v8n()
+    .equal(10)
+    .test("10"); // true
+
+  v8n()
+    .equal("Hello")
+    .test("Another"); // false
+  ```
+
+- **See also:** [Equality comparisons and sameness](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Equality_comparisons_and_sameness)
 
 ### exact
 
+- **Signature:** `exact(expected)`
+
+- **Arguments:**
+
+  - `expected: any`
+
+- **Usage:**
+
+  This rule verifies that the tested value matches the expected value.
+
+  ```js
+  v8n()
+    .exact(10)
+    .test("10"); // false
+
+  v8n()
+    .exact("Hello")
+    .test("Hello"); // true
+  ```
+
 ### string
+
+- **Signature:** `string()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is a string.
+
+  ```js
+  v8n()
+    .string()
+    .test("Hello"); // true
+
+  v8n()
+    .string()
+    .test(123); // false
+  ```
 
 ### number
 
+- **Signature:** `number()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is a number.
+
+  ```js
+  v8n()
+    .number()
+    .test(123); // true
+
+  v8n()
+    .number()
+    .test("Hello"); // false
+  ```
+
 ### boolean
+
+- **Signature:** `boolean()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is a boolean.
+
+  ```js
+  v8n()
+    .boolean()
+    .test(22); // false
+
+  v8n()
+    .boolean()
+    .test(false); // true
+  ```
 
 ### undefined
 
+- **Signature:** `undefined()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is undefined.
+
+  ```js
+  v8n()
+    .undefined()
+    .test("something"); // false
+
+  v8n()
+    .undefined()
+    .test(undefined); // true
+
+  v8n()
+    .undefined()
+    .test(); // true
+  ```
+
 ### null
+
+- **Signature:** `null()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is null.
+
+  ```js
+  v8n()
+    .null()
+    .test(123); // false
+
+  v8n()
+    .null()
+    .test(null); // true
+  ```
 
 ### array
 
+- **Signature:** `array()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is an array.
+
+  ```js
+  v8n()
+    .array()
+    .test("hello"); // false
+
+  v8n()
+    .array()
+    .test([1, 2, 3]); // true
+  ```
+
 ### object
+
+- **Signature:** `object()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is an object.
+
+  ```js
+  v8n()
+    .object()
+    .test("hello"); // false
+
+  v8n()
+    .object()
+    .test({ key: "value" }); // true
+  ```
 
 ### lowercase
 
+- **Signature:** `lowercase()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is all lowercase.
+
+  ```js
+  v8n()
+    .lowercase()
+    .test("hello"); // true
+
+  v8n()
+    .lowercase()
+    .test("Hello"); // false
+  ```
+
 ### uppercase
+
+- **Signature:** `uppercase()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is all uppercase.
+
+  ```js
+  v8n()
+    .uppercase()
+    .test("HELLO"); // true
+
+  v8n()
+    .uppercase()
+    .test("Hello"); // false
+  ```
 
 ### vowel
 
+- **Signature:** `vowel()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is all vowels.
+
+  ::: warning
+  Only vowels of the "words" characters set are valid:
+  [Read more](http://www.ecma-international.org/ecma-262/5.1/#sec-15.10.2.6)
+  :::
+
+  ```js
+  v8n()
+    .uppercase()
+    .test("HELLO"); // true
+
+  v8n()
+    .uppercase()
+    .test("Hello"); // false
+  ```
+
+- **See also:** [ECMAScript Language Specification](http://www.ecma-international.org/ecma-262/5.1/#sec-15.10.2.6)
+
 ### consonant
+
+- **Signature:** `consonant()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is all consonants.
+
+  ::: warning
+  Only consonants of the "words" characters set are valid:
+  [Read more](http://www.ecma-international.org/ecma-262/5.1/#sec-15.10.2.6)
+  :::
+
+  ```js
+  v8n()
+    .consonant()
+    .test("vn"); // true
+
+  v8n()
+    .consonant()
+    .test("me"); // false
+  ```
+
+- **See also:** [ECMAScript Language Specification](http://www.ecma-international.org/ecma-262/5.1/#sec-15.10.2.6)
 
 ### first
 
+- **Signature:** `first(item)`
+
+- **Arguments:**
+
+  - `item: any`
+
+- **Usage:**
+
+  This rule verifies that the tested value is a string that starts with the
+  given letter or an array where the first item is the given item.
+
+  ```js
+  v8n()
+    .first("H")
+    .test("Hello"); // true
+
+  v8n()
+    .first("A")
+    .test("Hello"); // false
+  ```
+
+  ```js
+  v8n()
+    .first("One")
+    .test(["One", "Two", "Three"]); // true
+
+  v8n()
+    .first(10)
+    .test([0, 10, 20]); // false
+  ```
+
 ### last
+
+- **Signature:** `last(item)`
+
+- **Arguments:**
+
+  - `item: any`
+
+- **Usage:**
+
+  This rule verifies that the tested value is a string that ends with the
+  given letter or an array where the last item is the given item.
+
+  ```js
+  v8n()
+    .last("o")
+    .test("Hello"); // true
+
+  v8n()
+    .last("A")
+    .test("Hello"); // false
+  ```
+
+  ```js
+  v8n()
+    .last("Three")
+    .test(["One", "Two", "Three"]); // true
+
+  v8n()
+    .last(10)
+    .test([0, 10, 20]); // false
+  ```
 
 ### empty
 
+- **Signature:** `empty()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is empty.
+
+  ::: warning
+  This rule works with any value that has a `length` property.
+  :::
+
+  ```js
+  v8n()
+    .empty()
+    .test(""); // true
+
+  v8n()
+    .empty()
+    .test([1, 2]); // false
+  ```
+
 ### length
+
+- **Signature:** `length(min, max = min)`
+
+- **Arguments:**
+
+  - `min: number`
+  - `[max: number]`
+
+- **Usage:**
+
+  This rule verifies that the tested value has the specified length. The `max`
+  parameter is optional and defaults to the value of `min`.
+
+  ::: warning
+  This rule works with any value that has a `length` property.
+  :::
+
+  ```js
+  v8n()
+    .length(3, 5)
+    .test([1, 2, 3, 4]); // true
+
+  v8n()
+    .length(3)
+    .test([1, 2, 3, 4]); // false
+  ```
 
 ### minLength
 
+- **Signature:** `minLength(min)`
+
+- **Arguments:**
+
+  - `min: number`
+
+- **Usage:**
+
+  This rule verifies that the tested value has the at least the specified
+  length.
+
+  ::: warning
+  This rule works with any value that has a `length` property.
+  :::
+
+  ```js
+  v8n()
+    .minLength(3)
+    .test([1, 2, 3, 4]); // true
+
+  v8n()
+    .minLength(3)
+    .test([1, 2]); // false
+  ```
+
 ### maxLength
+
+- **Signature:** `maxLength(max)`
+
+- **Arguments:**
+
+  - `max: number`
+
+- **Usage:**
+
+  This rule verifies that the tested value has the at most the specified
+  length.
+
+  ::: warning
+  This rule works with any value that has a `length` property.
+  :::
+
+  ```js
+  v8n()
+    .maxLength(3)
+    .test([1, 2]); // true
+
+  v8n()
+    .maxLength(3)
+    .test([1, 2, 3, 4]); // false
+  ```
 
 ### negative
 
+- **Signature:** `negative()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is a negative number.
+
+  ```js
+  v8n()
+    .negative()
+    .test(-1); // true
+
+  v8n()
+    .negative()
+    .test(0); // false
+  ```
+
 ### positive
+
+- **Signature:** `positive()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is a positive number.
+
+  ```js
+  v8n()
+    .positive()
+    .test(1); // true
+
+  v8n()
+    .positive()
+    .test(-1); // false
+  ```
 
 ### between
 
+- **Signature:** `between(min, max)`
+
+- **Arguments:**
+
+  - `min: number`
+  - `max: number`
+
+- **Usage:**
+
+  This rule verifies that the tested value is in within the specified range.
+
+  ::: warning
+  The bounds `min` and `max` are included in the range check (inclusive).
+  :::
+
+  ```js
+  v8n()
+    .between(1, 3)
+    .test(2); // true
+
+  v8n()
+    .between(1, 3)
+    .test(4); // false
+  ```
+
 ### range
+
+- **See also:** This is an alias of [between](#between)
 
 ### lessThan
 
+- **Signature:** `lessThan(bound)`
+
+- **Arguments:**
+
+  - `bound: number`
+
+- **Usage:**
+
+  This rule verifies that the tested value is less than the `bound`.
+
+  ```js
+  v8n()
+    .lessThan(10)
+    .test(9); // true
+
+  v8n()
+    .lessThan(10)
+    .test(10); // false
+  ```
+
+- **See also:** [lessThanOrEqual](#lessthanorequal)
+
 ### lessThanOrEqual
+
+- **Signature:** `lessThanOrEqual(bound)`
+
+- **Arguments:**
+
+  - `bound: number`
+
+- **Usage:**
+
+  This rule verifies that the tested value is less than or equal to the `bound`.
+
+  ```js
+  v8n()
+    .lessThanOrEqual(10)
+    .test(10); // true
+
+  v8n()
+    .lessThanOrEqual(10)
+    .test(11); // false
+  ```
+
+- **See also:** [lessThan](#lessthan)
 
 ### greaterThan
 
+- **Signature:** `greaterThan(bound)`
+
+- **Arguments:**
+
+  - `bound: number`
+
+- **Usage:**
+
+  This rule verifies that the tested value is greater than the `bound`.
+
+  ```js
+  v8n()
+    .greaterThan(10)
+    .test(11); // true
+
+  v8n()
+    .greaterThan(10)
+    .test(10); // false
+  ```
+
+- **See also:** [greaterThanOrEqual](#greaterthanorequal)
+
 ### greaterThanOrEqual
+
+- **Signature:** `greaterThanOrEqual(bound)`
+
+- **Arguments:**
+
+  - `bound: number`
+
+- **Usage:**
+
+  This rule verifies that the tested value is greater than or equal to the
+  `bound`.
+
+  ```js
+  v8n()
+    .greaterThanOrEqual(10)
+    .test(10); // true
+
+  v8n()
+    .greaterThanOrEqual(10)
+    .test(9); // false
+  ```
+
+- **See also:** [greaterThan](#greaterthan)
 
 ### even
 
+- **Signature:** `even()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is an even number.
+
+  ```js
+  v8n()
+    .even()
+    .test(40); // true
+
+  v8n()
+    .even()
+    .test(21); // false
+  ```
+
 ### odd
+
+- **Signature:** `odd()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is an odd number.
+
+  ```js
+  v8n()
+    .odd()
+    .test(20); // false
+
+  v8n()
+    .odd()
+    .test(9); // true
+  ```
 
 ### includes
 
+- **Signature:** `includes(item)`
+
+- **Arguments:**
+
+  - `item: any`
+
+- **Usage:**
+
+  This rule verifies that the tested value is a string that contains the
+  given letter or an array that contains the given item.
+
+  ```js
+  v8n()
+    .includes(2)
+    .test([1, 2, 3]); // true
+
+  v8n()
+    .includes("a")
+    .test("Hello"); // false
+  ```
+
 ### integer
 
+- **Signature:** `integer()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is an integer.
+
+  ```js
+  v8n()
+    .integer()
+    .test(20); // true
+
+  v8n()
+    .integer()
+    .test(2.2); // false
+  ```
+
 ### schema
+
+- **Signature:** `schema(schema)`
+
+- **Arguments:**
+
+  - `schema: Object`
+
+- **Usage:**
+
+  This rule verifies that the tested value is an object where the `schema`
+  matches the given schema. The given schema contains key-validation pairs. The
+  values of the given object are then validated based on the validation
+  specified for it's key in the schema.
+
+  ```js
+  const validation = v8n().schema({
+    id: v8n()
+      .number()
+      .positive(),
+    name: v8n()
+      .string()
+      .minLength(4)
+  });
+
+  validation.test({
+    id: 1,
+    name: "Luke"
+  }); // true
+
+  validation.test({
+    id: -1,
+    name: "Luke"
+  }); // false
+  ```
 
 ## Built-in modifiers
 
 ### not
 
+- **Applicable Types:** `any`
+
+- **Usage:**
+
+  This modifier will invert the rule that follows it. This allows for checking
+  if something does not meet a specified rule.
+
+  ```js
+  v8n()
+    .string()
+    .test("Hello"); // true
+
+  v8n()
+    .not.string()
+    .test("Hello"); // false
+  ```
+
 ### some
 
+- **Applicable Types:** `array`
+
+- **Usage:**
+
+  This modifier makes the rule check that at least one item in a given array
+  passes validation. It applies to the rule chained after it.
+
+  ```js
+  v8n()
+    .some.positive()
+    .test([1, -2, -3]); // true
+
+  v8n()
+    .some.positive()
+    .test(-1, -2, -3); // false
+  ```
+
 ### every
+
+- **Applicable Types:** `array`
+
+- **Usage:**
+
+  This modifier makes the rule check that all the items in a given array
+  pass validation. It applies to the rule chained after it.
+
+  ```js
+  v8n()
+    .every.positive()
+    .test([1, 2, 3]); // true
+
+  v8n()
+    .every.positive()
+    .test(1, 2, -3); // false
+  ```

@@ -74,7 +74,7 @@ For all the rules you can chain take a look at the
 ## Modifiers
 
 Sometimes you might want the inverse of a rule somewhere in your validation. For
-example you might want to check that something isn't null when it can be any
+example you might want to check that something isn't `null` when it can be any
 other type. This is where modifiers come in. Modifiers are similar to rules,
 they are also chained but instead of validating anything they will augment the
 following rule.
@@ -92,6 +92,10 @@ v8n()
   .some.number()
   .test([1, 2, "hello"]); // True, there is at least one number
 ```
+
+::: tip
+Modifiers can be combined on a rule. Simply chain them!
+:::
 
 Notice how modifiers don't have braces `()`, this distinguishes them from
 regular rules. There are three modifiers provided which you can use. Two of them
@@ -129,7 +133,7 @@ v8n()
 
 This strategy is most useful for conditionals since you can pass it's result
 directly into an `if` statement or similar. For more details about `test()`
-and for additional examples take a look at it's [API documentation](/api/#core).
+and for additional examples take a look at it's [API documentation](/api/#test).
 
 ### Array based validation
 
@@ -157,10 +161,10 @@ v8n()
 
 This is useful for providing detailed error messages but can also be used for
 any number of other purposes. For some more in-depth examples head over
-[to the documentation for `testAll()`](/api/#core).
+[to the documentation for `testAll()`](/api/#testall).
 
 ::: tip
-The array will contain [`Rule` objects](/api/#core) that you can work with.
+The array will contain [`Rule` objects](/api/#rule) that you can work with.
 :::
 
 Keep in mind that this validation strategy will work exactly opposite if used
@@ -189,10 +193,10 @@ try {
 }
 ```
 
-The resulting [`ValidationException`](/api/#core) will also contain
+The resulting [`ValidationException`](/api/#validationexception) will also contain
 information about the rule that failed so that you may display errors or
 similar. You can find out more in the
-[documentation for `check()`](/api/#core).
+[documentation for `check()`](/api/#check).
 
 ### Asynchronous validation
 
@@ -222,7 +226,7 @@ can check out the guide on [Extending](/Extending.md) and specifically on the
 creation of [asynchronous rules](/Extending.md#asynchronous-rules).
 :::
 
-Make sure to take a look the [documentation for `testAsync()`](/api/#core) to
+Make sure to take a look the [documentation for `testAsync()`](/api/#testasync) to
 get a good grasp of the return values it will yield.
 
 ## Reusing validations

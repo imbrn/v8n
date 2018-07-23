@@ -49,7 +49,6 @@
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.5",
     "babel-preset-env": "^1.7.0",
-    "documentation": "^8.0.0",
     "eslint": "^5.0.1",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.1",

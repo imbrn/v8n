@@ -27,7 +27,6 @@ function v8n() {
    *
    * Look at the {@link rules} object to see all the available `rules`.
    *
-   * // TODO: write about `modifiers` abstraction instead
    * **The `not` modifier**
    *
    * To invert a `rule` meaning, the modifier {@link modifiers.not not} must be
@@ -300,7 +299,6 @@ function executeAsyncRules(value, rules, resolve, reject) {
  */
 const availableModifiers = {
   /**
-   * TODO: fix docs
    * Modifier for inverting of a rule meaning.
    *
    * It's used before a `rule` function call and will invert that `rule`
@@ -319,19 +317,25 @@ const availableModifiers = {
     fn => value => Promise.resolve(fn(value)).then(result => !result)
   ),
 
-  // TODO: write docs
   some: new Modifier(
-    fn => value => value.some(fn),
+    fn => value => split(value).some(fn),
     fn => value =>
-      Promise.all(value.map(fn)).then(result => result.some(Boolean))
+      Promise.all(split(value).map(fn)).then(result => result.some(Boolean))
   ),
 
-  // TODO: write docs
   every: new Modifier(
-    fn => value => value.every(fn),
-    fn => Promise.all(value.map(fn)).then(result => result.every(Boolean))
+    fn => value => split(value).every(fn),
+    fn =>
+      Promise.all(split(value).map(fn)).then(result => result.every(Boolean))
   )
 };
+
+function split(value) {
+  if (typeof value === "string") {
+    return value.split("");
+  }
+  return value;
+}
 
 /**
  * Group of standard rules that can be used to build a validation strategy.
@@ -342,7 +346,6 @@ const availableModifiers = {
  *
  * See more about how to use validation `rules` at {@link Validation}.
  *
- * // TODO: write about 'modifiers' abstraction instead
  * Also, each `rule` can have its meaning inverted by using the
  * {@link modifiers.not not} modifier before it.
  */
@@ -1150,7 +1153,6 @@ function testIntegerPolyfill(value) {
   );
 }
 
-// TODO: document about composite rules
 function testSchema(schema) {
   return value => {
     const causes = [];

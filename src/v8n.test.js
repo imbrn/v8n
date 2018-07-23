@@ -791,6 +791,71 @@ describe("custom rules", () => {
   });
 });
 
+describe("fluency", () => {
+  test("fluency test 1", () => {
+    const validation = v8n()
+      .array()
+      .some.positive()
+      .some.negative()
+      .not.every.even()
+      .includes(6);
+
+    expect(validation.test(10)).toBeFalsy();
+    expect(validation.test([1, 2, 3, 6])).toBeFalsy();
+    expect(validation.test([-1, -2, -3])).toBeFalsy();
+    expect(validation.test([2, -2, 4, 6])).toBeFalsy();
+    expect(validation.test([2, -2, 4, 6, 7])).toBeTruthy();
+  });
+
+  test("fluency test 2", () => {
+    const validation = v8n()
+      .some.odd()
+      .some.not.odd()
+      .length(3);
+
+    expect(validation.test([1, 3, 5])).toBeFalsy();
+    expect(validation.test([1, 2, 3])).toBeTruthy();
+    expect(validation.test([1, 2, 3, 4])).toBeFalsy();
+  });
+
+  test("fluency test 3", () => {
+    const validation = v8n()
+      .not.every.positive()
+      .some.not.even()
+      .not.some.equal(3);
+
+    expect(validation.test([1, 2, 4])).toBeFalsy();
+    expect(validation.test([-2, 2, 3])).toBeFalsy();
+    expect(validation.test([-2, 2, 4])).toBeFalsy();
+    expect(validation.test([-2, 2, 5])).toBeTruthy();
+  });
+
+  test("fluency test 4", () => {
+    const validation = v8n()
+      .not.every.equal(2)
+      .every.positive()
+      .every.even();
+
+    expect(validation.test([2, 2, 2])).toBeFalsy();
+    expect(validation.test([2, 2, -4])).toBeFalsy();
+    expect(validation.test([4, 4, 4])).toBeTruthy();
+  });
+
+  test("fluency test 5", () => {
+    const validation = v8n()
+      .string()
+      .first("H")
+      .not.last("o")
+      .not.every.consonant()
+      .minLength(3);
+
+    expect(validation.test("Hello")).toBeFalsy();
+    expect(validation.test("Hi")).toBeFalsy();
+    expect(validation.test("Hbrn")).toBeFalsy();
+    expect(validation.test("Hbon")).toBeTruthy();
+  });
+});
+
 describe("random tests", () => {
   test("random test 1", () => {
     const validation = v8n()

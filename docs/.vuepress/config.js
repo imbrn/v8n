@@ -7,12 +7,17 @@ module.exports = {
       { text: 'Guide', link: '/' },
       { text: 'API', link: '/api/' },
     ],
-    sidebar: [
-      '/',
-      '/Installation.md',
-      '/Validation.md',
-      '/Extending.md'
-    ],
+    sidebar: {
+      '/': [
+        '',
+        '/Installation.md',
+        '/Validation.md',
+        '/Extending.md'
+      ],
+      '/api/': [
+        ''
+      ]
+    },
     sidebarDepth: 2,
     displayAllHeaders: true,
     lastUpdated: 'Last Updated',

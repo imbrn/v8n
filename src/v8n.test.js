@@ -130,22 +130,63 @@ describe("execution functions", () => {
       }
     });
 
-    it("should work with the 'not' modifier", async () => {
-      const validation = v8n()
-        .minLength(2)
-        .not.asyncRule("Hello");
+    describe("working with modifiers", () => {
+      it("should work with the 'not' modifier", async () => {
+        const validation = v8n()
+          .minLength(2)
+          .not.asyncRule("Hello");
 
-      expect.assertions(2);
+        expect.assertions(2);
 
-      try {
-        await validation.testAsync("Hello");
-      } catch (ex) {
-        expect(ex.rule.name).toEqual("asyncRule");
-        expect(ex.value).toEqual("Hello");
-      }
+        try {
+          await validation.testAsync("Hello");
+        } catch (ex) {
+          expect(ex.rule.name).toEqual("asyncRule");
+          expect(ex.value).toEqual("Hello");
+        }
+      });
+
+      it("should work with mixed modifiers", async () => {
+        const val1 = v8n()
+          .some.equal("a")
+          .not.every.vowel()
+          .length(3);
+
+        await expect(val1.testAsync("abc")).resolves.toBe("abc");
+        await expect(val1.testAsync("aei")).rejects.toBeDefined();
+        await expect(val1.testAsync("efg")).rejects.toBeDefined();
+        await expect(val1.testAsync("abcd")).rejects.toBeDefined();
+
+        const val2 = v8n()
+          .some.even()
+          .some.odd()
+          .not.length(2);
+
+        await expect(val2.testAsync([1, 2, 3])).resolves.toEqual([1, 2, 3]);
+        await expect(val2.testAsync([1, 2])).rejects.toBeDefined();
+        await expect(val2.testAsync([2, 4, 6])).rejects.toBeDefined();
+        await expect(val2.testAsync([1, 3, 5])).rejects.toBeDefined();
+
+        const val3 = v8n()
+          .length(3)
+          .every.even()
+          .not.some.equal(2);
+
+        await expect(val3.testAsync([4, 6, 8])).resolves.toEqual([4, 6, 8]);
+        await expect(val3.testAsync([4, 6, 7])).rejects.toBeDefined();
+        await expect(val3.testAsync([4, 5, 6, 7])).rejects.toBeDefined();
+        await expect(val3.testAsync([2, 4, 6])).rejects.toBeDefined();
+
+        const val4 = v8n()
+          .not.every.lowercase()
+          .not.every.uppercase();
+
+        await expect(val4.testAsync("abc")).rejects.toBeDefined();
+        await expect(val4.testAsync("ABU")).rejects.toBeDefined();
+        await expect(val4.testAsync("aBc")).resolves.toEqual("aBc");
+        await expect(val4.testAsync("AbC")).resolves.toEqual("AbC");
+      });
     });
-
-    //  TODO: test with other modifiers
 
     describe("the returned Promise", () => {
       it("should resolves when valid", async () => {

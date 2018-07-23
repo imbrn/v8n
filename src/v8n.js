@@ -325,7 +325,7 @@ const availableModifiers = {
 
   every: new Modifier(
     fn => value => split(value).every(fn),
-    fn =>
+    fn => value =>
       Promise.all(split(value).map(fn)).then(result => result.every(Boolean))
   )
 };

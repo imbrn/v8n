@@ -2137,7 +2137,7 @@ v8n()
   .test(1); // true
 
 v8n()
-  .position()
+  .positive()
   .test(-1); // false
 ```
 

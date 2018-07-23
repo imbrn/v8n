@@ -206,21 +206,7 @@ const core = {
    * @returns {boolean} true for valid and false for invalid
    */
   test(value) {
-    return this.chain.every(rule => {
-      try {
-        return rule._test(value);
-      } catch (ex) {
-        return rule.modifiers.reduce((val, modifier) => {
-          try {
-            val = modifier.fork(it => it, val);
-            val = modifier.exec(val);
-            return val;
-          } catch (ex) {
-            return val;
-          }
-        }, false);
-      }
-    });
+    return this.chain.every(rule => rule._test(value));
   },
 
   /**
@@ -256,11 +242,9 @@ const core = {
   check(value) {
     this.chain.forEach(rule => {
       try {
-        if (!rule._test(value)) {
-          throw null;
-        }
-      } catch (ex) {
-        throw new ValidationException(rule, value, ex);
+        rule._check(value);
+      } catch (cause) {
+        throw new ValidationException(rule, value, cause);
       }
     });
   },
@@ -285,31 +269,18 @@ const core = {
    * with a {@link ValidationException}
    */
   testAsync(value) {
-    return executeAsyncRules(value, this.chain);
+    return new Promise((resolve, reject) => {
+      executeAsyncRules(value, this.chain.slice(), resolve, reject);
+    });
   }
 };
 
-function executeAsyncRules(value, rules) {
-  return new Promise((resolve, reject) => {
-    executeAsyncRulesAux(value, rules.slice(), resolve, reject);
-  });
-}
-
-function executeAsyncRulesAux(value, rules, resolve, reject) {
-  if (rules.length > 0) {
+function executeAsyncRules(value, rules, resolve, reject) {
+  if (rules.length) {
     const rule = rules.shift();
-    try {
-      const result = rule._testAsync(value);
-      result.then(valid => {
-        if (valid) {
-          executeAsyncRulesAux(value, rules, resolve, reject);
-        } else {
-          reject(new ValidationException(rule, value, null));
-        }
-      });
-    } catch (cause) {
-      reject(new ValidationException(rule, value, cause));
-    }
+    rule._testAsync(value).then(() => {
+      executeAsyncRules(value, rules, resolve, reject);
+    }, reject);
   } else {
     resolve(value);
   }
@@ -343,18 +314,22 @@ const availableModifiers = {
    * v8n()
    *  .not.equal("three");
    */
-  not: new Modifier((fn, value) => fn(value), value => !value),
+  not: new Modifier(
+    fn => value => !fn(value),
+    fn => value => Promise.resolve(fn(value)).then(result => !result)
+  ),
 
   // TODO: write docs
   some: new Modifier(
-    (fn, value) => value.map(fn),
-    value => value.some(it => it)
+    fn => value => value.some(fn),
+    fn => value =>
+      Promise.all(value.map(fn)).then(result => result.some(Boolean))
   ),
 
   // TODO: write docs
   every: new Modifier(
-    (fn, value) => value.map(fn),
-    value => value.every(it => it)
+    fn => value => value.every(fn),
+    fn => Promise.all(value.map(fn)).then(result => result.every(Boolean))
   )
 };
 
@@ -1175,6 +1150,7 @@ function testIntegerPolyfill(value) {
   );
 }
 
+// TODO: document about composite rules
 function testSchema(schema) {
   return value => {
     const causes = [];

@@ -145,6 +145,8 @@ describe("execution functions", () => {
       }
     });
 
+    //  TODO: test with other modifiers
+
     describe("the returned Promise", () => {
       it("should resolves when valid", async () => {
         const validation = v8n()
@@ -242,6 +244,27 @@ describe("modifiers", () => {
     const validation = v8n().not.some.positive();
     expect(validation.test([-1, -2, 1])).toBeFalsy();
     expect(validation.test([-1, -2, -3])).toBeTruthy();
+    expect(validation.test([-5, -5, -1])).toBeTruthy();
+  });
+
+  test("fluency", async () => {
+    // some item should not be 2
+    const a = v8n().some.not.exact(2);
+    expect(a.test([2, 2, 3])).toBeTruthy();
+    expect(a.test([2, 2, 2])).toBeFalsy();
+
+    // all items should not be 2
+    const b = v8n().not.some.exact(2);
+    expect(b.test([2, 3, 3])).toBeFalsy();
+    expect(b.test([3, 3, 3])).toBeTruthy();
+
+    const c = v8n()
+      .not.every.even()
+      .some.not.exact(3);
+    expect(c.test([2, 4, 6])).toBeFalsy();
+    expect(c.test([3, 3, 3])).toBeFalsy();
+    expect(c.test([2, 3, 4])).toBeTruthy();
+    expect(c.test([2, 4, 5])).toBeTruthy();
   });
 });
 

@@ -1,3 +1,5 @@
+import ValidationException from "./ValidationException";
+
 /**
  * A Rule object instance stores information about a rule inside the validation
  * process.
@@ -23,53 +25,67 @@ class Rule {
   }
 
   _test(value) {
-    const modifiers = this.modifiers.slice();
-    const fn = this.fn;
-
-    if (modifiers.length) {
-      const first = modifiers.pop();
-      value = first.fork(fn, value);
-      value = first.exec(value);
-
-      while (modifiers.length) {
-        const modifier = modifiers.pop();
-        value = modifier.fork(it => it, value);
-        value = modifier.exec(value);
+    try {
+      const result = testAux(this.modifiers.slice(), this.fn)(value);
+      if (typeof result !== "boolean") {
+        throw result;
       }
-      return value;
-    } else {
-      return fn(value);
+      return result;
+    } catch (ex) {
+      return testAux(this.modifiers.slice(), () => false)(false);
+    }
+  }
+
+  _check(value) {
+    if (!testAux(this.modifiers.slice(), this.fn)(value)) {
+      throw new ValidationException(this, value);
     }
   }
 
   _testAsync(value) {
-    const modifiers = this.modifiers.slice();
-    const fn = this.fn;
-
-    if (modifiers.length) {
-      const first = modifiers.pop();
-      value = first.fork(val => Promise.resolve(fn(val)), value);
-
-      const isArray = Array.isArray(value);
-
-      return Promise.all(isArray ? value : [value])
-        .then(result => {
-          let value = first.exec(isArray ? result : result[0]);
-
-          while (modifiers.length) {
-            const modifier = modifiers.pop();
-            value = modifier.fork(it => it, value);
-            value = modifier.exec(value);
+    return new Promise((resolve, reject) => {
+      try {
+        testAsyncAux(this.modifiers.slice(), this.fn)(value).then(valid => {
+          if (valid) {
+            resolve(value);
+          } else {
+            reject(new ValidationException(this, value));
           }
-
-          return value;
-        })
-        .catch(ex => {
-          return false;
         });
-    } else {
-      return Promise.resolve(fn(value));
+      } catch (ex) {
+        reject(new ValidationException(this, value, ex));
+      }
+    });
+  }
+}
+
+function testAux(modifiers, fn) {
+  if (modifiers.length) {
+    const modifier = modifiers.shift();
+    const nextFn = testAux(modifiers, fn);
+    return applyModifier(modifier, nextFn);
+  } else {
+    return fn;
+  }
+}
+
+function applyModifier(modifier, fn) {
+  return value => {
+    try {
+      return modifier.perform(fn)(value);
+    } catch (ex) {
+      return value;
     }
+  };
+}
+
+function testAsyncAux(modifiers, fn) {
+  if (modifiers.length) {
+    const modifier = modifiers.shift();
+    const nextFn = testAsyncAux(modifiers, fn);
+    return modifier.performAsync(nextFn);
+  } else {
+    return value => Promise.resolve(fn(value));
   }
 }
 

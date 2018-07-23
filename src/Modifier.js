@@ -1,8 +1,8 @@
 //  TODO: add docs
 class Modifier {
-  constructor(fork, exec) {
-    this.fork = fork;
-    this.exec = exec;
+  constructor(perform, performAsync) {
+    this.perform = perform;
+    this.performAsync = performAsync;
   }
 }
 

@@ -5,25 +5,37 @@ beforeEach(() => {
   v8n.clearCustomRules();
 });
 
-describe("rules chain", () => {
+describe("chaining", () => {
   // TODO: make sure 'modifiers' are included in debug
   const validation = v8n()
     .string()
-    .lowercase()
-    .null()
+    .not.every.lowercase()
+    .not.null()
     .first("a")
     .last("e")
+    .some.equal("l")
     .length(3, 5);
 
   it("should chain rules", () => {
     expect(debugRules(validation)).toEqual([
       "string()",
-      "lowercase()",
-      "null()",
+      "not.every.lowercase()",
+      "not.null()",
       'first("a")',
       'last("e")',
+      'some.equal("l")',
       "length(3, 5)"
     ]);
+  });
+});
+
+describe("the 'validation' object", () => {
+  it("should be immutable", () => {
+    const a = v8n().number();
+    const b = a.not.equal(10);
+    expect(a).not.toBe(b);
+    expect(a.test(10)).toBeTruthy();
+    expect(b.test(10)).toBeFalsy();
   });
 });
 
@@ -1041,8 +1053,10 @@ function debugRules(validation) {
   return validation.chain.map(ruleId);
 }
 
-function ruleId({ name, args }) {
-  return `${name}(${args.map(parseArg).join(", ")})`;
+function ruleId({ name, modifiers, args }) {
+  const modifiersStr = modifiers.map(it => it.name).join(".");
+  const argsStr = args.map(parseArg).join(", ");
+  return `${modifiersStr ? modifiersStr + "." : ""}${name}(${argsStr})`;
 }
 
 function parseArg(arg) {

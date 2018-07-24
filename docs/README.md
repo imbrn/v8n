@@ -8,7 +8,7 @@ validations in any part of your app. Even though there are many useful default
 validation methods, it's a breeze to add your own fluent rules to v8n and use
 them anywhere in your app.
 
-The name v8n is actually derived from the structure of the word validation. If
+The name v8n is actually derived from the structure of the word "validation". If
 you look closely you will find that between the _v_ and the _n_ in there are
 precisely 8 letters (_a l i d a t i o_). So we get from the sort of boring word
 _validation_ to the very nice looking acronym **v8n**.
@@ -52,17 +52,18 @@ v8n()
 
 ### Fluent API
 
-One of the main goals of v8n is it's simple and fluent usage. You simply chain
+One of the main goals of v8n is its simple and fluent usage. You simply chain
 your rules and build even incredibly complex rules with easy. You can chain any
 number of built-in rules and even combine them with your own custom rules in the
 same way. Make sure to check out all the
-[built-in rules](/API.md#Built-In-Rules) and how you can add your own.
+[built-in rules](/api/#built-in-rules) and how you can add your own.
 
 ```javascript
 v8n()
-  .number()
-  .between(3, 5)
-  .test(4); //true
+  .string()
+  .first("H")
+  .last("o")
+  .test("Hello"); //true
 ```
 
 The code above simply validates that the given value is a string, it's first
@@ -75,7 +76,7 @@ your validations, so that you can leverage them to their full extent.
 Extending is at the core of v8n. And it's easy, too. All you do is pack your own
 validation into a function that returns a `boolean`. You can do as much logic
 in your rule as you like, all that matters is the boolean return and you're good
-to go. Once you created your function just add using `extend()`. Take a look
+to go. Once you created your function just add it using `extend()`. Take a look
 at the [Extending](/Extending.md) page for more details and different types of
 rules you might want to add.
 

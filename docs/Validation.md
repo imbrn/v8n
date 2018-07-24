@@ -131,7 +131,7 @@ v8n()
   .test({ age: 3 }); // False, this is an object
 ```
 
-This strategy is most useful for conditionals since you can pass it's result
+This strategy is most useful for conditionals since you can pass its result
 directly into an `if` statement or similar. For more details about `test()`
 and for additional examples take a look at it's [API documentation](/api/#test).
 
@@ -167,11 +167,13 @@ any number of other purposes. For some more in-depth examples head over
 The array will contain [`Rule` objects](/api/#rule) that you can work with.
 :::
 
+::: warning
 Keep in mind that this validation strategy will work exactly opposite if used
 in conditionals compared to `test()`. This is because JavaScript will consider
 an empty array to be a falsy value, so no errors would actually result in the
 conditional passing here. Make sure to keep this in mind when checking whether
 the validation passed here.
+:::
 
 ### Exception based validation
 
@@ -215,7 +217,7 @@ and would reject to a `ValidationException`.
 v8n()
   .string() // You can use regular rules too
   .checkUsernameAvailable() // This asks something from a server
-  .testAsync() // Promise return
+  .testAsync("myUsername") // Promise return
   .then(validatedValue => validatedValue)
   .catch(exception => exception);
 ```

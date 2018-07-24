@@ -1,14 +1,14 @@
 # Installation
 
 Since projects are quite different from one another, v8n offers multiple ways to
-use it in your project. This will hopesfully allow you to use the library in
+use it in your project. This will hopefully allow you to use the library in
 your project with ease.
 
 ## `<script>` include
 
 For use in your static HTML you might not want to whip up a complex building
 pipeline with npm packages or you may just want to test v8n before you put it
-in your project. This is easiest using the good old `<script>` tag in your
+in your project. This is easier using the good old `<script>` tag in your
 `.html` files. The best way to achieve this is by referencing the library from
 a CDN. Services like `unpkg` and `jsdelivr` offer great speed and offer
 multiple versions of v8n.

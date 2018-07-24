@@ -64,28 +64,30 @@ import ValidationException from "./ValidationException";
  * @module Validation
  */
 class Context {
-  constructor(chain = [], modifiers = []) {
+  constructor(chain = [], nextRuleModifiers = []) {
     this.chain = chain;
-    this.modifiers = modifiers;
+    this.nextRuleModifiers = nextRuleModifiers;
   }
 
   _applyRule(ruleFn, name) {
     return (...args) => {
       this.chain.push(
-        new Rule(name, ruleFn.apply(this, args), args, this.modifiers)
+        new Rule(name, ruleFn.apply(this, args), args, this.nextRuleModifiers)
       );
-      this.modifiers = [];
+      this.nextRuleModifiers = [];
       return this;
     };
   }
 
   _applyModifier(modifier, name) {
-    this.modifiers.push(new Modifier(name, modifier.simple, modifier.async));
+    this.nextRuleModifiers.push(
+      new Modifier(name, modifier.simple, modifier.async)
+    );
     return this;
   }
 
   _clone() {
-    return new Context(this.chain.slice(), this.modifiers.slice());
+    return new Context(this.chain.slice(), this.nextRuleModifiers.slice());
   }
 
   /**

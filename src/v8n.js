@@ -8,7 +8,7 @@ import Context from "./Context";
  * @returns {Validation}
  */
 function v8n() {
-  return createValidation(new Context());
+  return proxyContext(new Context());
 }
 
 // Custom rules
@@ -86,26 +86,26 @@ v8n.clearCustomRules = function() {
   customRules = {};
 };
 
-const newContextProxyHandler = {
-  get(obj, prop) {
-    if (prop in obj) {
-      return obj[prop];
-    }
-    const validation = createValidation(obj._clone());
-    if (prop in availableModifiers) {
-      return validation._applyModifier(availableModifiers[prop], prop);
-    }
-    if (prop in customRules) {
-      return validation._applyRule(customRules[prop], prop);
-    }
-    if (prop in availableRules) {
-      return validation._applyRule(availableRules[prop], prop);
-    }
-  }
-};
+function proxyContext(context) {
+  return new Proxy(context, {
+    get(obj, prop) {
+      if (prop in obj) {
+        return obj[prop];
+      }
 
-function createValidation(context) {
-  return new Proxy(context, newContextProxyHandler);
+      const newContext = proxyContext(context._clone());
+
+      if (prop in availableModifiers) {
+        return newContext._applyModifier(availableModifiers[prop], prop);
+      }
+      if (prop in customRules) {
+        return newContext._applyRule(customRules[prop], prop);
+      }
+      if (prop in availableRules) {
+        return newContext._applyRule(availableRules[prop], prop);
+      }
+    }
+  });
 }
 
 /**

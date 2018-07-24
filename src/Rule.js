@@ -1,5 +1,3 @@
-import ValidationException from "./ValidationException";
-
 /**
  * A Rule object instance stores information about a rule inside the validation
  * process.
@@ -37,24 +35,18 @@ class Rule {
   }
 
   _check(value) {
-    if (!testAux(this.modifiers.slice(), this.fn)(value)) {
-      throw new ValidationException(this, value);
-    }
+    return testAux(this.modifiers.slice(), this.fn)(value);
   }
 
   _testAsync(value) {
     return new Promise((resolve, reject) => {
-      try {
-        testAsyncAux(this.modifiers.slice(), this.fn)(value).then(valid => {
-          if (valid) {
-            resolve(value);
-          } else {
-            reject(new ValidationException(this, value));
-          }
-        });
-      } catch (ex) {
-        reject(new ValidationException(this, value, ex));
-      }
+      testAsyncAux(this.modifiers.slice(), this.fn)(value).then(valid => {
+        if (valid) {
+          resolve(value);
+        } else {
+          reject(this);
+        }
+      });
     });
   }
 }

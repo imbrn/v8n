@@ -13,7 +13,8 @@ function buildBabelConfig() {
           exclude: ["transform-es2015-typeof-symbol"]
         }
       ]
-    ]
+    ],
+    plugins: ["external-helpers"]
   };
 }
 

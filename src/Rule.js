@@ -7,14 +7,6 @@
  * > process and this should not be done directly by the developer.
  */
 class Rule {
-  /**
-   * Constructs a Rule object instance.
-   *
-   * @param {string} name rule name
-   * @param {function} fn rule function used to perform the validation
-   * @param {*} args arguments used by the rule
-   * @param {Array} modifiers list of modifiers to be applied on the Rule
-   */
   constructor(name, fn, args, modifiers) {
     this.name = name;
     this.fn = fn;

@@ -1,3 +1,7 @@
+import Rule from "./Rule";
+import Modifier from "./Modifier";
+import ValidationException from "./ValidationException";
+
 /**
  * Function used to produce a {@link Validation} object. The Validation object
  * is used to configure a validation strategy and perform the validation tests.
@@ -68,7 +72,8 @@ function v8n() {
    * @module Validation
    */
   const context = {
-    chain: []
+    chain: [],
+    modifiers: []
   };
 
   return new Proxy(context, contextProxyHandler);
@@ -145,20 +150,24 @@ v8n.extend = function(newRules) {
   Object.assign(customRules, newRules);
 };
 
+v8n.clearCustomRules = function() {
+  customRules = {};
+};
+
 const contextProxyHandler = {
   get: function(obj, prop, receiver) {
     if (prop in obj) {
       return obj[prop];
     }
-    if (prop in modifiers) {
-      modifiers[prop].call(receiver);
+    if (prop in availableModifiers) {
+      receiver.modifiers.push(availableModifiers[prop]);
       return receiver;
     }
     if (prop in customRules) {
       return applyRule.call(receiver, customRules[prop], prop);
     }
-    if (prop in rules) {
-      return applyRule.call(receiver, rules[prop], prop);
+    if (prop in availableRules) {
+      return applyRule.call(receiver, availableRules[prop], prop);
     }
     if (prop in core) {
       return core[prop];
@@ -169,36 +178,11 @@ const contextProxyHandler = {
 function applyRule(rule, name) {
   return (...args) => {
     this.chain.push(
-      new Rule(name, rule.apply(this, args), args, !!this.invert)
+      new Rule(name, rule.apply(this, args), args, this.modifiers)
     );
-    this.invert = false;
+    this.modifiers = [];
     return this;
   };
-}
-
-/**
- * A Rule object instance stores information about a rule inside the validation
- * process.
- *
- * > It's mostly used by the developer to handle validation results. It's
- * > instantiated automatically by the library engine during the validation
- * > process and this should not be done directly by the developer.
- */
-class Rule {
-  /**
-   * Constructs a Rule object instance.
-   *
-   * @param {string} name rule name
-   * @param {function} fn rule function used to perform the validation
-   * @param {*} args arguments used by the rule
-   * @param {*} invert indicates if the rule is inverted in its meaning
-   */
-  constructor(name, fn, args, invert) {
-    this.name = name;
-    this.fn = fn;
-    this.args = args;
-    this.invert = invert;
-  }
 }
 
 /**
@@ -221,13 +205,7 @@ const core = {
    * @returns {boolean} true for valid and false for invalid
    */
   test(value) {
-    return this.chain.every(rule => {
-      try {
-        return rule.fn(value) !== rule.invert;
-      } catch (ex) {
-        return rule.invert;
-      }
-    });
+    return this.chain.every(rule => rule._test(value));
   },
 
   /**
@@ -243,7 +221,7 @@ const core = {
   testAll(value) {
     const err = [];
     this.chain.forEach(rule => {
-      if (rule.fn(value) === rule.invert) err.push(rule);
+      if (!rule._test(value)) err.push(rule);
     });
     return err;
   },
@@ -263,11 +241,9 @@ const core = {
   check(value) {
     this.chain.forEach(rule => {
       try {
-        if (rule.fn(value) === rule.invert) {
-          throw null;
-        }
-      } catch (ex) {
-        throw new ValidationException(rule, value, ex);
+        rule._check(value);
+      } catch (cause) {
+        throw new ValidationException(rule, value, cause);
       }
     });
   },
@@ -292,68 +268,20 @@ const core = {
    * with a {@link ValidationException}
    */
   testAsync(value) {
-    return executeAsyncRules(value, this.chain);
+    return new Promise((resolve, reject) => {
+      executeAsyncRules(value, this.chain.slice(), resolve, reject);
+    });
   }
 };
 
-function executeAsyncRules(value, rules) {
-  return new Promise((resolve, reject) => {
-    executeAsyncRulesAux(value, rules.slice(), resolve, reject);
-  });
-}
-
-function executeAsyncRulesAux(value, rules, resolve, reject) {
-  if (rules.length > 0) {
+function executeAsyncRules(value, rules, resolve, reject) {
+  if (rules.length) {
     const rule = rules.shift();
-    try {
-      const result = Promise.resolve(rule.fn(value));
-      result.then(valid => {
-        if (valid !== rule.invert) {
-          executeAsyncRulesAux(value, rules, resolve, reject);
-        } else {
-          reject(new ValidationException(rule, value, "Rule failed"));
-        }
-      });
-    } catch (cause) {
-      reject(new ValidationException(rule, value, cause));
-    }
+    rule._testAsync(value).then(() => {
+      executeAsyncRules(value, rules, resolve, reject);
+    }, reject);
   } else {
     resolve(value);
-  }
-}
-
-/**
- * Exception which represents a validation issue.
- *
- * It contains information about the {@link Rule} which was being performed when
- * the issue happened, and about the value which was being validated.
- *
- * > An exception object can be used as a chain for handling nested validation
- * > results. If some validation is composed by other validations, the `cause`
- * > property of the exception can be used to get the next deepest level in the
- * > error chain.
- */
-class ValidationException extends Error {
-  /**
-   * Constructs a validation exception with the rule which caused the issue and
-   * the value which was being validated when the issue happened.
-   *
-   * @param {Rule} rule the rule object which caused the validation
-   * @param {any} value the validated value
-   * @param {Error} cause indicates which problem ocurred during the validation;
-   * it can be used as chain to detected deep validations
-   * @param {string} target? indicates the target which was being validated, it
-   * can be a key in a object validation, for example
-   */
-  constructor(rule, value, cause, target, ...remaining) {
-    super(remaining);
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, ValidationException);
-    }
-    this.rule = rule;
-    this.value = value;
-    this.cause = cause;
-    this.target = target;
   }
 }
 
@@ -369,7 +297,7 @@ class ValidationException extends Error {
  *
  * @namespace
  */
-const modifiers = {
+const availableModifiers = {
   /**
    * Modifier for inverting of a rule meaning.
    *
@@ -384,10 +312,30 @@ const modifiers = {
    * v8n()
    *  .not.equal("three");
    */
-  not() {
-    this.invert = true;
-  }
+  not: new Modifier(
+    fn => value => !fn(value),
+    fn => value => Promise.resolve(fn(value)).then(result => !result)
+  ),
+
+  some: new Modifier(
+    fn => value => split(value).some(fn),
+    fn => value =>
+      Promise.all(split(value).map(fn)).then(result => result.some(Boolean))
+  ),
+
+  every: new Modifier(
+    fn => value => split(value).every(fn),
+    fn => value =>
+      Promise.all(split(value).map(fn)).then(result => result.every(Boolean))
+  )
 };
+
+function split(value) {
+  if (typeof value === "string") {
+    return value.split("");
+  }
+  return value;
+}
 
 /**
  * Group of standard rules that can be used to build a validation strategy.
@@ -401,7 +349,7 @@ const modifiers = {
  * Also, each `rule` can have its meaning inverted by using the
  * {@link modifiers.not not} modifier before it.
  */
-const rules = {
+const availableRules = {
   /**
    * Rule function for regular expression based validation.
    *

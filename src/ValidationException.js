@@ -1,5 +1,3 @@
-import Rule from "./Rule";
-
 class ValidationException extends Error {
   constructor(rule, value, cause, target, ...remaining) {
     super(remaining);

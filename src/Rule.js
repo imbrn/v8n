@@ -1,11 +1,3 @@
-/**
- * A Rule object instance stores information about a rule inside the validation
- * process.
- *
- * > It's mostly used by the developer to handle validation results. It's
- * > instantiated automatically by the library engine during the validation
- * > process and this should not be done directly by the developer.
- */
 class Rule {
   constructor(name, fn, args, modifiers) {
     this.name = name;

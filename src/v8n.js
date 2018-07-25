@@ -38,20 +38,6 @@ function proxyContext(context) {
 }
 
 const availableModifiers = {
-  /**
-   * Modifier for inverting of a rule meaning.
-   *
-   * It's used before a `rule` function call and will invert that `rule`
-   * meaning, making it to expect the opposite result.
-   *
-   * @property
-   * @example
-   *
-   * // This call will make the `equal` rule to be inverted, so that it now
-   * // expect the validated value to be everything but "three".
-   * v8n()
-   *  .not.equal("three");
-   */
   not: {
     simple: fn => value => !fn(value),
     async: fn => value => Promise.resolve(fn(value)).then(result => !result)

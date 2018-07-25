@@ -6,7 +6,6 @@ beforeEach(() => {
 });
 
 describe("chaining", () => {
-  // TODO: make sure 'modifiers' are included in debug
   const validation = v8n()
     .string()
     .not.every.lowercase()

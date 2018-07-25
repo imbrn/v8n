@@ -1,5 +1,6 @@
 import v8n from "./v8n";
 import Rule from "./Rule";
+import ValidationException from "./ValidationException";
 
 beforeEach(() => {
   v8n.clearCustomRules();
@@ -58,18 +59,21 @@ describe("execution functions", () => {
 
   describe("the 'testAll' function", () => {
     const validation = v8n()
-      .number()
-      .between(5, 10)
-      .not.even();
+      .string()
+      .last("o")
+      .not.includes("a");
 
-    it("should return an array of rules that failed", () => {
-      expect(Array.isArray(validation.testAll("test"))).toBeTruthy();
-      expect(validation.testAll("11")).toHaveLength(2);
-      expect(validation.testAll(11)).toHaveLength(1);
+    it("should return an array with a ValidationException for each failed rule", () => {
+      const result = validation.testAll(100);
+      expect(result).toHaveLength(2);
+      for (let i = 0; i < result.length; i++) {
+        expect(result[i].rule).toBe(validation.chain[i]);
+        expect(result[i].value).toBe(100);
+      }
     });
 
     it("should return an empty array if all rules passed", () => {
-      expect(validation.testAll(7)).toHaveLength(0);
+      expect(validation.testAll("Hello")).toHaveLength(0);
     });
   });
 

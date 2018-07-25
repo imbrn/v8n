@@ -153,13 +153,13 @@ sidebar: auto
 
   - `value: any`
 
-- **Returns:** [`Rule[]`](#rule)
+- **Returns:** [`ValidationException[]`](#validationexception)
 
 - **Usage:**
 
-  This function is used for array-based validation. It is chained at the end
-  of all the rules and will return an array containing all rules that failed.
-  The array is empty if the validation succeeded.
+  This function is used for array-based validation. It is chained at the end of
+  all the rules and will return an array containing ValidationException objects,
+  one for each failed rule. The array is empty if the validation succeeded.
 
   ```js
   v8n()
@@ -170,10 +170,11 @@ sidebar: auto
   v8n()
     .number()
     .min(4)
-    .test(3); // [Rule{name: "min", ...}]
+    .test(3);
+  // [ ValidationException{ rule: { name: "min"...}, value: 3 ...} ... ]
   ```
 
-- **See also:** [Rule](#rule)
+- **See also:** [ValidationException](#validationexception)
 
 ### check
 

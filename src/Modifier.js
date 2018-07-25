@@ -1,6 +1,7 @@
 //  TODO: add docs
 class Modifier {
-  constructor(perform, performAsync) {
+  constructor(name, perform, performAsync) {
+    this.name = name;
     this.perform = perform;
     this.performAsync = performAsync;
   }

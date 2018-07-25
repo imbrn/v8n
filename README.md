@@ -8,19 +8,49 @@ Dead simple fluent API. Customizable. Reusable.
 </p>
 
 <p align="center">
-<a href="#usage">Usage</a> -
 <a href="#installation">Installation</a> -
-<a href="#api">Documentation</a>
+<a href="#usage">Usage</a> -
+<a href="https://imbrn.github.io/v8n">Documentation</a>
 </p>
 
 ```javascript
 v8n()
-  .number()
-  .between(0, 100)
-  .even()
-  .not.equal(32)
-  .test(74); // true
+  .string()
+  .not.every.vowel()
+  .not.every.consonant()
+  .first("H")
+  .last("o")
+  .test("Hello"); // true
 ```
+
+## What is it?
+
+The `v8n` is a validation library which provides you an easy and incredibly
+fluent way to build and run validations. With this, you can construct validation
+strategies as easy as you'd do in the English language.
+
+The main goal of this library is to be used to validate any kind of data with
+any validation type. There are a lot of useful built-in-rules for you to use,
+and you also can build (and share) your own.
+
+By mixing rules and modifiers, you can build a ton of different validation
+strategies, using its incredible fluent API.
+
+The `v8n` is not intended to be used in a specific application scope, like an
+input input or data model validation.
+
+Actually, it's designed to be used in any scope, and to reuse validation
+strategies between scopes. So, you can define your validation and use it in your
+input field, in your pre-request logic, in your server-side model, whatever.
+Pretty cool, huh?
+
+## Features
+
+- Incredible fluent and chainable API;
+- Useful standard validation rules;
+- Custom validations rules;
+- Asynchronous validation;
+- Reusability;
 
 ## Installation
 
@@ -43,6 +73,10 @@ yarn add v8n
 ```
 
 ## Usage
+
+There is a much better place for you to check out how this library works and to
+get information about its API. Access our
+[documentation](https://imbrn.github.io/v8n) page.
 
 ### Boolean based validation
 
@@ -138,184 +172,63 @@ the core. Look at the [API section](#api) of this document.
 You can also [implement your own rules](#extend), and share them between your
 projects, or even with the community.
 
-## Custom validation rules
+## Rules
 
-To create custom validation rules, you just need to call the `v8n.extend`
-function passing an object with your custom rules:
-
-```javascript
-import v8n from "v8n";
-
-v8n.extend({
-  myCustomRule: function(expected) {
-    return value => value === expected;
-  }
-});
-```
-
-And now you can use your custom rule in a validation as you do with standard
-rules:
+Rules are the heart of the `v8n` ecosystem. You use them to build your
+validation strategies:
 
 ```javascript
 v8n()
   .string()
-  .myCustomRule("Hello")
-  .test("Olá"); // false
-```
-
-> To learn more about custom rules and how to implement them, look at the
-> [extend](#extend) documentation section.
-
-## The `not` modifier
-
-The `not` modifier can be used to invert a validation rule meaning. Suppose we
-have a validation like that:
-
-```javascript
-v8n()
-  .includes("World")
-  .test("Hello World!"); // true
-```
-
-Here, we're declaring a validation to check if the validated value includes a
-`"World"` string. And the test returns `true`.
-
-But we could want a validation with the inverse meaning. With the `not`
-modifier, we can do that:
-
-```javascript
-v8n()
-  .not.includes("World")
-  .test("Hello World!"); // false
-```
-
-Now, we have a validation to check if the value **does not** include a `"World"`
-string. And the test returns `false`.
-
-> The `not` modifier inverts the meaning only of the next `rule`, the rule
-> declared right after it. So for each rule you want to invert its meaning, you
-> should use the `not` modifier before it.
->
-> To learn more about the `not` modifier, look at [its documentation](#not).
-
-## Why another validation library?
-
-Although we have a lot of validation libraries, almost all of them are about
-input fields validation. That's great sometimes, but we often need something
-independent of the way we're going to use it.
-
-We usually need some kind of in-code validation, so that we can use that same
-validation in an input field, in a function call, in the server logic, whatever.
-Actually almost everytime, we need the same validation, that same logic, even
-between different projects.
-
-That's all about the `v8n` validation library. This is **not** another input field
-validation library.
-
-This is a powerful engine for validation creation, reuse, and in-code validation
-execution.
-
-With the `v8n` we can write our validation strategies and reuse them whenever we
-need. Actually, we can reuse validation from other people, and in a really
-simple way.
-
-## Features
-
-- Fluent and chainable API;
-- Useful standard validation rules;
-- Custom validations rules;
-- Asynchronous validation;
-- Reusability;
-
-## Fluent and chainable API
-
-The `v8n` library has a fluent chainable API. This help us to easily create
-validation objects.
-
-```javascript
-v8n()
-  .not.null()
-  .between(100, 200)
-  .even()
-  .not.between(40, 60);
-```
-
-## Reusing validations
-
-To reuse a validation strategy, you just need to declare it, export it in
-someway, and import it from your code:
-
-_myValidation.js_
-
-```javascript
-import v8n from "v8n";
-
-// Export the validation object
-export default v8n()
-  .array()
-  .not.empty()
   .minLength(3)
-  .maxLength(10)
-  .includes("Hello");
+  .test("Hello"); // true
 ```
 
-_myApp.js_
+In this code snippet, we're using two rules (`string` and `minLenght`) to build
+our validation strategy. So our validated value (`"Hello"`) is valid because
+it's a string and it is at least 3 characters long.
+
+There are a lot of built-in validation rules to be used. Check them all in in
+the [documentation]("https://imbrn.github.io/v8n/api/#built-in-rules")
+
+> Rules can be more powerful if used along with _modifiers_. Learn about them in
+> the next section.
+
+## Modifiers
+
+Modifiers can be used to change rules meaning. For example, you can use the
+`not` modifier to expect the reversed result from your rule:
 
 ```javascript
-// Import the validation object somewhere
-import myValidation from "./myValidation";
-
-myValidation.test(["Hello", "World", "!"]); // true
-myValidation.check(["Hello", "Hi", "How is it going?"]); // No exception thrown!
-```
-
-## Sharing custom validation rules
-
-You can write custom validation rules and reuse them in other projects. You
-can also use rules from other people.
-
-To export validation rules, create a `.js` file contain a call to the v8n static
-[extend](#extend) function with your custom rules declared in a object, and then
-export this file someway. So you can import this file from another source code,
-and your custom validation rules will be available like the standard ones:
-
-_myCustomRules.js_
-
-```javascript
-import v8n from "v8n";
-
-v8n.extend({
-  // "one" is a custom rule
-  one() {
-    return value => value == 1;
-  },
-
-  // "two" is another custom rule
-  two() {
-    return value => value == 2;
-  }
-});
-```
-
-And in another file or even another project, import the file with the custom
-rules and use them like you do with standard rules:
-
-```javascript
-import v8n from "v8n";
-import "myExternalProject/myCustomRules.js";
-
 v8n()
-  .number()
-  .one()
-  .test(1); // true
-
-v8n()
-  .string()
-  .two()
-  .test("2"); // true
+  .not.equal(5)
+  .test(5); // false
 ```
 
-> You can mix custom and standard rules as you want.
+> There are some others modifiers, you can check all of them in the
+> documentation page.
+
+Modifiers can also be used together to build incredible fluent validations. Take
+a look:
+
+```javascript
+v8n()
+  .some.not.lowercase()
+  .test("Hello"); // true
+```
+
+Here, we're declaring a validation which expects that the validated value have
+**at least one** item that is not lowercase.
+
+But in this next validation snippet, just by changing the order of the
+modifiers, our validation now expects that **none** of the items to be
+lowercase:
+
+```javascript
+v8n()
+  .not.some.lowercase()
+  .test("Hello"); // false
+```
 
 ## Contribute
 

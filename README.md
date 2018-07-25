@@ -96,14 +96,15 @@ v8n()
 ### Array based validation
 
 We use the function [testAll](#testAll) to perform array based validations. The
-returned array will contain all failed rules or none if the validation passes:
+returned array will contain a ValidationException object for each fail that
+has occurred, and an empty array if the validation passes:
 
 ```javascript
 import v8n from "v8n";
 
 v8n()
   .number()
-  .testAll("Hello"); // [Rule{ name: 'number', ... }]
+  .testAll("Hello"); // [ValidationException{ rule:{ name: 'number', ... } ...}]
 ```
 
 ### Exception based validation
@@ -129,21 +130,15 @@ try {
 
 > The exception thrown by the `check` function contains useful information about
 > the rule which caused the validation fail, and it also has information about
-> the validation process. Look and the [ValidationException
-> docs](#validationexception) section to learn more about it.
+> the validation process.
 
 ### Asynchronous validation
 
 If your validation strategy includes some asynchronous rule, you must use the
-[testAsync](#testasync) function, so that the validation process will execute
+'testAsync' function, so that the validation process will execute
 asynchronously. It will return a promise that will resolve with the validated
-value when it's valid and rejects with a
-[ValidationException](#validationexception) when it's invalid.
-
-> Look at the [testAsync](#testasync) documentation to learn more about it.
->
-> To learn how you can define your custom asynchronous rules, check out [this
-> documentation](#extend) section.
+value when it's valid and rejects with a `ValidationException` when it's
+invalid.
 
 ```javascript
 v8n()
@@ -161,16 +156,7 @@ v8n()
 
 > The `exception` object caught by the failure callback contains information
 > about the rule which caused the validation fail, and about the validation
-> process. Look at [its documentation](#validationexception) to learn more about
-> it.
-
-### And more...
-
-There are a lot of useful standard rules for you to use already implemented in
-the core. Look at the [API section](#api) of this document.
-
-You can also [implement your own rules](#extend), and share them between your
-projects, or even with the community.
+> process.
 
 ## Rules
 

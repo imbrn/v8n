@@ -25,7 +25,7 @@ _validation_ to the very nice looking acronym **v8n**.
 
 Using v8n is supposed to be easy and intuitive. Aside from usage in the browser
 with versions hosted on popular CDN services, you can import the library into
-your codebase with `import` or `require` depending on how bleeding-edge your
+your codebase with `import` or `require` depending on how bleeding-edge you
 are.
 
 The example below shows one way to get started. Simply create an `.html` file

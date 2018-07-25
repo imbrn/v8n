@@ -156,7 +156,7 @@ v8n()
   .string()
   .first("H")
   .last("o")
-  .testAll("Hi"); // Returns [Rule{name: "last"...}] (last letter isn't o)
+  .testAll("Hi"); // Returns [ValidationException{rule: {name: "last"...}, ...}]
 ```
 
 This is useful for providing detailed error messages but can also be used for

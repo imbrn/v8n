@@ -139,11 +139,11 @@ and for additional examples take a look at it's [API documentation](/api/#test).
 
 If you really need to know what was wrong with the value you passed to v8n,
 simply getting `true` or `false` won't do you any good. This is where
-array-based comes in. If you use `testAll()` you will always receive an array
-in return. The array will be empty if no rules failed, but it will contain all
-the rules that failed if any do. This also means that this strategy does not
-stop when any rule fails like the boolean-based version does, instead it will
-always run all the rules.
+array-based comes in. If you use `testAll()` you will always receive an array in
+return. The array will be empty if no rules failed, but it will contain
+ValidationException objects indicating each fail if they occur. This also means
+that this strategy does not stop when any rule fails like the boolean-based
+version does, instead it will always run all the rules.
 
 ```js
 v8n()
@@ -164,7 +164,8 @@ any number of other purposes. For some more in-depth examples head over
 [to the documentation for `testAll()`](/api/#testall).
 
 ::: tip
-The array will contain [`Rule` objects](/api/#rule) that you can work with.
+The array will contain [`ValidationException` objects](/api/#validationexception)
+that you can work with.
 :::
 
 ::: warning

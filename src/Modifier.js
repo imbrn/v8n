@@ -1,4 +1,3 @@
-//  TODO: add docs
 class Modifier {
   constructor(name, perform, performAsync) {
     this.name = name;

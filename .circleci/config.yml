@@ -50,6 +50,9 @@ jobs:
       - run:
           name: Publish package
           command: npm run deploy
+      - run:
+          name: Deploy docs page
+          command: scripts/deploy-docs.sh
 
 workflows:
   version: 2

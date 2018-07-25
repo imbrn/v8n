@@ -241,7 +241,9 @@ const core = {
   check(value) {
     this.chain.forEach(rule => {
       try {
-        rule._check(value);
+        if (!rule._check(value)) {
+          throw new ValidationException(rule, value, null);
+        }
       } catch (cause) {
         throw new ValidationException(rule, value, cause);
       }
@@ -277,9 +279,14 @@ const core = {
 function executeAsyncRules(value, rules, resolve, reject) {
   if (rules.length) {
     const rule = rules.shift();
-    rule._testAsync(value).then(() => {
-      executeAsyncRules(value, rules, resolve, reject);
-    }, reject);
+    rule._testAsync(value).then(
+      () => {
+        executeAsyncRules(value, rules, resolve, reject);
+      },
+      cause => {
+        reject(new ValidationException(rule, value, cause));
+      }
+    );
   } else {
     resolve(value);
   }

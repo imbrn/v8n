@@ -120,21 +120,21 @@ const availableRules = {
 
   // Range
 
-  negative: makeTestRange(false, false, undefined, -1),
+  negative: makeTestRange(-Infinity, 0),
 
-  positive: makeTestRange(false, false, 0, undefined),
+  positive: makeTestRange(-1, Infinity),
 
-  between: makeTestRange(true, true),
+  between: makeTestRange(undefined, undefined, true, true),
 
-  range: makeTestRange(true, true),
+  range: makeTestRange(undefined, undefined, true, true),
 
-  lessThan: makeTestRange(false, true, undefined, 0, 0, -1),
+  lessThan: makeTestRange(-Infinity),
 
-  lessThanOrEqual: makeTestRange(false, true, undefined, 0),
+  lessThanOrEqual: makeTestRange(-Infinity, undefined, undefined, true),
 
-  greaterThan: makeTestRange(true, false, 0, undefined, 1),
+  greaterThan: makeTestRange(undefined, Infinity),
 
-  greaterThanOrEqual: makeTestRange(true, false, 0, undefined),
+  greaterThanOrEqual: makeTestRange(undefined, Infinity, true),
 
   // Divisible
 
@@ -185,28 +185,18 @@ function makeTestLength(overriddenMin, overriddenMax) {
   };
 }
 
-function firstDefined(values) {
-  return values.find(it => it !== undefined);
-}
-
-function valueOrOther(value, other) {
-  return value !== undefined ? value : other;
-}
-
 function makeTestRange(
-  useMin,
-  useMax,
-  defaultMin,
-  defaultMax,
-  adjustMin,
-  adjustMax
+  overriddenLower,
+  overriddenUpper,
+  inclusiveLower,
+  inclusiveUpper
 ) {
-  return (min, max) => value => {
-    const finalMin = useMin ? min : defaultMin;
-    const finalMax = useMax ? max || min : defaultMax;
+  return (lower, upper) => value => {
+    upper = firstDefined([overriddenUpper, upper, lower]);
+    lower = firstDefined([overriddenLower, lower]);
     return (
-      (finalMin === undefined || value >= finalMin + (adjustMin || 0)) &&
-      (finalMax === undefined || value <= finalMax + (adjustMax || 0))
+      (inclusiveLower ? value >= lower : value > lower) &&
+      (inclusiveUpper ? value <= upper : value < upper)
     );
   };
 }
@@ -242,6 +232,10 @@ function testSchema(schema) {
     }
     return true;
   };
+}
+
+function firstDefined(values) {
+  return values.find(it => it !== undefined);
 }
 
 export default v8n;

@@ -794,6 +794,99 @@ describe("rules", () => {
   });
 });
 
+describe("validation composition", () => {
+  // A complex schema
+  const complex = v8n().schema({
+    one: v8n().equal("one"),
+    two: v8n().schema({
+      two_one: v8n().equal("two_one"),
+      two_two: v8n().not.schema({
+        two_two_one: v8n().equal("two_two_one")
+      })
+    }),
+    three: v8n().schema({
+      three_one: v8n().schema({
+        three_one_one: v8n().not.equal("three_one_one")
+      }),
+      three_two: v8n().not.schema({
+        three_two_one: v8n().not.equal("three_two_one")
+      })
+    })
+  });
+
+  const validObj = {
+    one: "one",
+    two: {
+      two_one: "two_one",
+      two_two: "two_two"
+    },
+    three: {
+      three_one: {
+        three_one_one: 311
+      },
+      three_two: {
+        three_two_one: "three_two_one"
+      }
+    }
+  };
+
+  const invalidObj = {
+    one: "one",
+    two: {
+      two_one: 21,
+      two_two: {
+        two_two_one: 221
+      }
+    },
+    three: {
+      three_two: {
+        three_two_one: 321
+      }
+    }
+  };
+
+  const causes = [
+    {
+      target: "two",
+      cause: [{ target: "two_one", rule: { name: "equal" } }]
+    },
+    {
+      target: "three",
+      cause: [{ target: "three_two", cause: null }]
+    }
+  ];
+
+  it("should work with 'test' function", () => {
+    expect(complex.test(validObj)).toBeTruthy();
+    expect(complex.test(invalidObj)).toBeFalsy();
+  });
+
+  it("should work with 'check' function", () => {
+    expect.assertions(2);
+    expect(() => complex.check(validObj)).not.toThrow();
+    try {
+      complex.check(invalidObj);
+    } catch (ex) {
+      expect(ex.cause).toMatchObject(causes);
+    }
+  });
+
+  it("should work with 'testAll' function", () => {
+    expect(complex.testAll(validObj)).toHaveLength(0);
+    expect(complex.testAll(invalidObj)).toMatchObject([{ cause: causes }]);
+  });
+
+  it("should work with 'testAsync' function", async () => {
+    expect.assertions(2);
+    await expect(complex.testAsync(validObj)).resolves.toEqual(validObj);
+    try {
+      await complex.testAsync(invalidObj);
+    } catch (ex) {
+      expect(ex.cause).toMatchObject(causes);
+    }
+  });
+});
+
 describe("custom rules", () => {
   it("should be chainable", () => {
     v8n.extend({

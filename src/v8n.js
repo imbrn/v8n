@@ -110,13 +110,13 @@ const availableRules = {
 
   // Length
 
-  empty: makeTestLength(true, true),
+  empty: makeTestLength(0, 0),
 
-  length: makeTestLength(true, true),
+  length: makeTestLength(),
 
-  minLength: makeTestLength(true, false),
+  minLength: makeTestLength(undefined, Infinity),
 
-  maxLength: makeTestLength(false, true),
+  maxLength: makeTestLength(-Infinity),
 
   // Range
 
@@ -176,13 +176,21 @@ function makeTestValueAt(index) {
   };
 }
 
-function makeTestLength(useMin, useMax) {
+function makeTestLength(overriddenMin, overriddenMax) {
   return (min, max) => value => {
-    let valid = true;
-    if (useMin) valid = valid && value.length >= (min || 0);
-    if (useMax) valid = valid && value.length <= (max || min || 0);
-    return valid;
+    return (
+      value.length >= firstDefined([overriddenMin, min]) &&
+      value.length <= firstDefined([overriddenMax, max, min])
+    );
   };
+}
+
+function firstDefined(values) {
+  return values.find(it => it !== undefined);
+}
+
+function valueOrOther(value, other) {
+  return value !== undefined ? value : other;
 }
 
 function makeTestRange(

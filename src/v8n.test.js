@@ -424,6 +424,9 @@ describe("rules", () => {
     expect(validation.test("1")).toBeFalsy();
     expect(validation.test(null)).toBeFalsy();
     expect(validation.test(undefined)).toBeFalsy();
+    expect(validation.test(Number.NaN)).toBeFalsy();
+    expect(validation.test(Number.NEGATIVE_INFINITY)).toBeFalsy();
+    expect(validation.test(Number.POSITIVE_INFINITY)).toBeFalsy();
   });
 
   test("boolean", () => {

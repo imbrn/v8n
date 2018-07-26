@@ -363,6 +363,10 @@ sidebar: auto
   v8n()
     .number()
     .test("Hello"); // false
+  
+  v8n()
+    .number()
+    .test(NaN); // false
   ```
 
 ### boolean

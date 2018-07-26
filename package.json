@@ -1,6 +1,6 @@
 {
   "name": "v8n",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Dead simple fluent JavaScript validation library",
   "main": "./dist/v8n.cjs.js",
   "module": "./dist/v8n.esm.js",

@@ -223,10 +223,9 @@ function testSchema(schema) {
     Object.keys(schema).forEach(key => {
       const nestedValidation = schema[key];
       try {
-        nestedValidation.check(value[key]);
+        nestedValidation.check((value || {})[key]);
       } catch (ex) {
         ex.target = key;
-        ex.cause = null;
         causes.push(ex);
       }
     });

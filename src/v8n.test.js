@@ -1,6 +1,5 @@
 import v8n from "./v8n";
 import Rule from "./Rule";
-import ValidationException from "./ValidationException";
 
 beforeEach(() => {
   v8n.clearCustomRules();
@@ -93,11 +92,13 @@ describe("execution functions", () => {
     describe("the thrown exception", () => {
       let exception;
 
-      try {
-        validation.check("Hello");
-      } catch (ex) {
-        exception = ex;
-      }
+      beforeEach(() => {
+        try {
+          validation.check("Hello");
+        } catch (ex) {
+          exception = ex;
+        }
+      });
 
       it("should have rule object", () => {
         expect(exception.rule).toBeInstanceOf(Rule);
@@ -722,51 +723,167 @@ describe("rules", () => {
     expect(not.test(Infinity)).toBeTruthy();
   });
 
-  test("schema", () => {
+  describe("schema", () => {
     const is = v8n().schema({
-      one: v8n()
-        .string()
-        .minLength(3),
-      two: v8n()
-        .number()
-        .between(5, 10)
+      one: v8n().equal(1),
+      two: v8n().schema({
+        three: v8n().equal(3),
+        four: v8n().equal(4),
+        five: v8n().schema({
+          six: v8n().equal(6)
+        })
+      }),
+      seven: v8n().schema({
+        eight: v8n().not.equal(8)
+      })
     });
-
-    expect(is.test({ one: "Hello", two: 8 })).toBeTruthy();
-    expect(is.test({ one: "Hi", two: 8 })).toBeFalsy();
-    expect(is.test({ one: "Hello", two: 12 })).toBeFalsy();
-    expect(is.test({ one: 1, two: "Two" })).toBeFalsy();
-    expect(is.test({ one: "Hello" })).toBeFalsy();
-    expect(is.test({ two: 8 })).toBeFalsy();
-    expect(is.test({})).toBeFalsy();
-    expect(() => is.test({ one: "Hello", two: 8 })).not.toThrow();
-    expect(() => is.check({ one: "Hello", two: 12 })).toThrow();
-
-    try {
-      is.check({ one: "Hi", two: 12 });
-    } catch (ex) {
-      expect(ex.cause).toMatchObject([
-        { target: "one", value: "Hi", rule: { name: "minLength" } },
-        { target: "two", value: 12, rule: { name: "between" } }
-      ]);
-    }
 
     const not = v8n().not.schema({
-      one: v8n()
-        .string()
-        .minLength(3),
-      two: v8n()
-        .number()
-        .between(5, 10)
+      one: v8n().equal(1),
+      two: v8n().schema({
+        three: v8n().equal(3),
+        four: v8n().equal(4),
+        five: v8n().schema({
+          six: v8n().equal(6)
+        })
+      }),
+      seven: v8n().schema({
+        eight: v8n().not.equal(8)
+      })
     });
 
-    expect(not.test({ one: "Hello", two: 8 })).toBeFalsy();
-    expect(not.test({ one: "Hi", two: 8 })).toBeTruthy();
-    expect(not.test({ one: "Hello", two: 12 })).toBeTruthy();
-    expect(not.test({ one: 1, two: "Two" })).toBeTruthy();
-    expect(not.test({ one: "Hello" })).toBeTruthy();
-    expect(not.test({ two: 8 })).toBeTruthy();
-    expect(not.test({})).toBeTruthy();
+    const validObj = { one: 1, two: { three: 3, four: 4, five: { six: 6 } } };
+    const invalidObj = { one: "Hello" };
+
+    it("should work with validation", () => {
+      const result = is.testAll(invalidObj);
+      expect(result[0].cause).toHaveLength(2);
+      expect(result[0].cause[0].rule.name).toBe("equal");
+      expect(result[0].cause[1].rule.name).toBe("schema");
+      expect(result[0].cause[1].cause).toHaveLength(3);
+      expect(result[0].cause[1].cause[2].rule.name).toBe("schema");
+      expect(result[0].cause[1].cause[2].cause[0].target).toBe("six");
+
+      expect(is.test(validObj)).toBeTruthy();
+      expect(is.test(invalidObj)).toBeFalsy();
+      expect(not.test(validObj)).toBeFalsy();
+      expect(not.test(invalidObj)).toBeTruthy();
+    });
+
+    it("should work with nested validations", () => {
+      expect.assertions(12);
+
+      try {
+        is.check(invalidObj);
+      } catch (ex) {
+        expect(ex.cause).toHaveLength(2);
+        expect(ex.cause[0].rule.name).toBe("equal");
+        expect(ex.cause[0].value).toBe(invalidObj.one);
+        expect(ex.cause[1].rule.name).toBe("schema");
+        expect(ex.cause[1].cause).toHaveLength(3);
+        expect(ex.cause[1].cause[0].rule.name).toBe("equal");
+        expect(ex.cause[1].cause[1].rule.name).toBe("equal");
+        expect(ex.cause[1].cause[2].rule.name).toBe("schema");
+        expect(ex.cause[1].cause[2].cause[0].target).toBe("six");
+      }
+
+      expect(() => is.check(validObj)).not.toThrow();
+      expect(() => not.check(invalidObj)).not.toThrow();
+      expect(() => not.check(validObj)).toThrow();
+    });
+  });
+});
+
+describe("validation composition", () => {
+  // A complex schema
+  const complex = v8n().schema({
+    one: v8n().equal("one"),
+    two: v8n().schema({
+      two_one: v8n().equal("two_one"),
+      two_two: v8n().not.schema({
+        two_two_one: v8n().equal("two_two_one")
+      })
+    }),
+    three: v8n().schema({
+      three_one: v8n().schema({
+        three_one_one: v8n().not.equal("three_one_one")
+      }),
+      three_two: v8n().not.schema({
+        three_two_one: v8n().not.equal("three_two_one")
+      })
+    })
+  });
+
+  const validObj = {
+    one: "one",
+    two: {
+      two_one: "two_one",
+      two_two: "two_two"
+    },
+    three: {
+      three_one: {
+        three_one_one: 311
+      },
+      three_two: {
+        three_two_one: "three_two_one"
+      }
+    }
+  };
+
+  const invalidObj = {
+    one: "one",
+    two: {
+      two_one: 21,
+      two_two: {
+        two_two_one: 221
+      }
+    },
+    three: {
+      three_two: {
+        three_two_one: 321
+      }
+    }
+  };
+
+  const causes = [
+    {
+      target: "two",
+      cause: [{ target: "two_one", rule: { name: "equal" } }]
+    },
+    {
+      target: "three",
+      cause: [{ target: "three_two", cause: null }]
+    }
+  ];
+
+  it("should work with 'test' function", () => {
+    expect(complex.test(validObj)).toBeTruthy();
+    expect(complex.test(invalidObj)).toBeFalsy();
+  });
+
+  it("should work with 'check' function", () => {
+    expect.assertions(2);
+    expect(() => complex.check(validObj)).not.toThrow();
+    try {
+      complex.check(invalidObj);
+    } catch (ex) {
+      expect(ex.cause).toMatchObject(causes);
+    }
+  });
+
+  it("should work with 'testAll' function", () => {
+    expect(complex.testAll(validObj)).toHaveLength(0);
+    expect(complex.testAll(invalidObj)).toMatchObject([{ cause: causes }]);
+  });
+
+  it("should work with 'testAsync' function", async () => {
+    expect.assertions(2);
+    await expect(complex.testAsync(validObj)).resolves.toEqual(validObj);
+    try {
+      await complex.testAsync(invalidObj);
+    } catch (ex) {
+      expect(ex.cause).toMatchObject(causes);
+    }
   });
 });
 

@@ -7,19 +7,33 @@ class Rule {
   }
 
   _test(value) {
+    let fn = this.fn;
+
     try {
-      const result = testAux(this.modifiers.slice(), this.fn)(value);
-      if (typeof result !== "boolean") {
-        throw result;
-      }
-      return result;
+      fn(value);
     } catch (ex) {
-      return testAux(this.modifiers.slice(), () => false)(false);
+      fn = () => false;
+    }
+
+    try {
+      return testAux(this.modifiers.slice(), fn)(value);
+    } catch (ex) {
+      return false;
     }
   }
 
   _check(value) {
-    return testAux(this.modifiers.slice(), this.fn)(value);
+    try {
+      this.fn(value);
+    } catch (ex) {
+      if (testAux(this.modifiers.slice(), it => it)(false)) {
+        return;
+      }
+    }
+
+    if (!testAux(this.modifiers.slice(), this.fn)(value)) {
+      throw null;
+    }
   }
 
   _testAsync(value) {
@@ -39,20 +53,10 @@ function testAux(modifiers, fn) {
   if (modifiers.length) {
     const modifier = modifiers.shift();
     const nextFn = testAux(modifiers, fn);
-    return applyModifier(modifier, nextFn);
+    return modifier.perform(nextFn);
   } else {
     return fn;
   }
-}
-
-function applyModifier(modifier, fn) {
-  return value => {
-    try {
-      return modifier.perform(fn)(value);
-    } catch (ex) {
-      return value;
-    }
-  };
 }
 
 function testAsyncAux(modifiers, fn) {

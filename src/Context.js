@@ -37,7 +37,7 @@ class Context {
     const err = [];
     this.chain.forEach(rule => {
       try {
-        if (!rule._test(value)) err.push(new ValidationException(rule, value));
+        rule._check(value);
       } catch (ex) {
         err.push(new ValidationException(rule, value, ex));
       }
@@ -48,11 +48,9 @@ class Context {
   check(value) {
     this.chain.forEach(rule => {
       try {
-        if (!rule._check(value)) {
-          throw new ValidationException(rule, value, null);
-        }
-      } catch (cause) {
-        throw new ValidationException(rule, value, cause);
+        rule._check(value);
+      } catch (ex) {
+        throw new ValidationException(rule, value, ex);
       }
     });
   }

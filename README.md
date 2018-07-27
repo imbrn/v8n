@@ -8,6 +8,14 @@ Dead simple fluent API. Customizable. Reusable.
 </p>
 
 <p align="center">
+  <a href="https://circleci.com/gh/imbrn/v8n/tree/master">
+    <img src="https://circleci.com/gh/imbrn/v8n/tree/master.svg?style=svg" alt="CircleCI" />
+  </a>
+  <img src="https://img.shields.io/npm/v/v8n.svg" alt="npm version" />
+  <img src="https://img.shields.io/bundlephobia/minzip/v8n.svg" alt="npm bundle size (minified + gzip)" />
+</p>
+
+<p align="center">
 <a href="#installation">Installation</a> -
 <a href="#usage">Usage</a> -
 <a href="https://imbrn.github.io/v8n">Documentation</a>

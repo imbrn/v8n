@@ -152,8 +152,7 @@ const availableRules = {
 
   // branching
 
-  any: (...validations) => value =>
-    !validations.length || validations.some(it => it.test(value))
+  any: (...validations) => value => validations.some(it => it.test(value))
 };
 
 function testPattern(pattern) {

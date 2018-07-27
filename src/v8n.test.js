@@ -794,7 +794,7 @@ describe("rules", () => {
   });
 
   describe("any", () => {
-    it("should be valid if any received validation is valid", () => {
+    it("should pass if any of the received validation is valid", () => {
       const is = v8n().any(
         v8n().number(),
         v8n().schema({
@@ -826,12 +826,12 @@ describe("rules", () => {
       expect(not.test({ id: "ef13c" })).toBeFalsy();
     });
 
-    it("should be valid if there's no validation specified", () => {
+    it("should fail if there's no validation specified", () => {
       expect(
         v8n()
           .any()
           .test("Foo")
-      ).toBeTruthy();
+      ).toBeFalsy();
     });
 
     it("should work together with other rules", () => {

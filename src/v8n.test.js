@@ -792,6 +792,72 @@ describe("rules", () => {
       expect(() => not.check(validObj)).toThrow();
     });
   });
+
+  describe("any", () => {
+    it("should be valid if any received validation is valid", () => {
+      const is = v8n().any(
+        v8n().number(),
+        v8n().schema({
+          id: v8n().string()
+        })
+      );
+
+      expect(is.test(true)).toBeFalsy();
+      expect(is.test(undefined)).toBeFalsy();
+      expect(is.test("Hello")).toBeFalsy();
+      expect(is.test(null)).toBeFalsy();
+      expect(is.test({})).toBeFalsy();
+      expect(is.test(11)).toBeTruthy();
+      expect(is.test({ id: "ef13c" })).toBeTruthy();
+
+      const not = v8n().not.any(
+        v8n().number(),
+        v8n().schema({
+          id: v8n().string()
+        })
+      );
+
+      expect(not.test(true)).toBeTruthy();
+      expect(not.test(undefined)).toBeTruthy();
+      expect(not.test("Hello")).toBeTruthy();
+      expect(not.test(null)).toBeTruthy();
+      expect(not.test({})).toBeTruthy();
+      expect(not.test(11)).toBeFalsy();
+      expect(not.test({ id: "ef13c" })).toBeFalsy();
+    });
+
+    it("should be valid if there's no validation specified", () => {
+      expect(
+        v8n()
+          .any()
+          .test("Foo")
+      ).toBeTruthy();
+    });
+
+    it("should work together with other rules", () => {
+      const validation = v8n()
+        .string()
+        .any(v8n().every.lowercase(), v8n().every.uppercase());
+
+      expect(validation.test("HELLO")).toBeTruthy();
+      expect(validation.test("hello")).toBeTruthy();
+      expect(validation.test("Hello")).toBeFalsy();
+      expect(validation.test({})).toBeFalsy();
+    });
+
+    test("composition", () => {
+      const validation = v8n().any(
+        v8n().any(v8n().null(), v8n().undefined()),
+        v8n().any(v8n().number(), v8n().boolean())
+      );
+
+      expect(validation.test(null)).toBeTruthy();
+      expect(validation.test(undefined)).toBeTruthy();
+      expect(validation.test(12)).toBeTruthy();
+      expect(validation.test(false)).toBeTruthy();
+      expect(validation.test("Hello")).toBeFalsy();
+    });
+  });
 });
 
 describe("validation composition", () => {

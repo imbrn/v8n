@@ -45,12 +45,12 @@ By mixing rules and modifiers, you can build a ton of different validation
 strategies, using its incredible fluent API.
 
 The `v8n` is not intended to be used in a specific application scope, like an
-input input or data model validation.
+input field or data model validation.
 
-Actually, it's designed to be used in any scope, and to reuse validation
-strategies between scopes. So, you can define your validation and use it in your
-input field, in your pre-request logic, in your server-side model, whatever.
-Pretty cool, huh?
+Actually, it's designed to be used with any scope, and to aid reusability of
+validation strategies between scopes. So, you can define your validation and use
+it in your input field, in your pre-request logic, in your server-side model,
+whatever. Pretty cool, huh?
 
 ## Features
 
@@ -59,6 +59,7 @@ Pretty cool, huh?
 - Custom validations rules;
 - Asynchronous validation;
 - Reusability;
+- Composition;
 
 ## Installation
 

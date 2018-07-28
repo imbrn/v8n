@@ -992,7 +992,7 @@ sidebar: auto
   }); // false
   ```
 
-### any
+### passesAnyOf
 
 - **Signature:** `any(...validations)`
 
@@ -1008,7 +1008,7 @@ sidebar: auto
   argument, the rule fails.
 
   ```js
-  const validation = v8n().any(
+  const validation = v8n().passesAnyOf(
     v8n().number(),
     v8n().null()
   );

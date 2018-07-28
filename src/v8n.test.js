@@ -793,9 +793,9 @@ describe("rules", () => {
     });
   });
 
-  describe("any", () => {
+  describe("passesAnyOf", () => {
     it("should pass if any of the received validation is valid", () => {
-      const is = v8n().any(
+      const is = v8n().passesAnyOf(
         v8n().number(),
         v8n().schema({
           id: v8n().string()
@@ -810,7 +810,7 @@ describe("rules", () => {
       expect(is.test(11)).toBeTruthy();
       expect(is.test({ id: "ef13c" })).toBeTruthy();
 
-      const not = v8n().not.any(
+      const not = v8n().not.passesAnyOf(
         v8n().number(),
         v8n().schema({
           id: v8n().string()
@@ -829,7 +829,7 @@ describe("rules", () => {
     it("should fail if there's no validation specified", () => {
       expect(
         v8n()
-          .any()
+          .passesAnyOf()
           .test("Foo")
       ).toBeFalsy();
     });
@@ -837,7 +837,7 @@ describe("rules", () => {
     it("should work together with other rules", () => {
       const validation = v8n()
         .string()
-        .any(v8n().every.lowercase(), v8n().every.uppercase());
+        .passesAnyOf(v8n().every.lowercase(), v8n().every.uppercase());
 
       expect(validation.test("HELLO")).toBeTruthy();
       expect(validation.test("hello")).toBeTruthy();
@@ -846,9 +846,9 @@ describe("rules", () => {
     });
 
     test("composition", () => {
-      const validation = v8n().any(
-        v8n().any(v8n().null(), v8n().undefined()),
-        v8n().any(v8n().number(), v8n().boolean())
+      const validation = v8n().passesAnyOf(
+        v8n().passesAnyOf(v8n().null(), v8n().undefined()),
+        v8n().passesAnyOf(v8n().number(), v8n().boolean())
       );
 
       expect(validation.test(null)).toBeTruthy();

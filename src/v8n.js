@@ -152,7 +152,8 @@ const availableRules = {
 
   // branching
 
-  any: (...validations) => value => validations.some(it => it.test(value))
+  passesAnyOf: (...validations) => value =>
+    validations.some(it => it.test(value))
 };
 
 function testPattern(pattern) {

@@ -261,6 +261,36 @@ describe("execution functions", () => {
           expect(ex.cause).toBeDefined();
         }
       });
+
+      it("should get correct ValidationException from composite failure", async () => {
+        function asyncCompositeRule() {
+          return value =>
+            new Promise(resolve => {
+              v8n()
+                .schema({
+                  a: v8n().string(),
+                  b: v8n().number()
+                })
+                .check(value);
+              resolve(true);
+            });
+        }
+
+        v8n.extend({ asyncCompositeRule });
+
+        const validation = v8n().asyncCompositeRule();
+
+        expect.assertions(4);
+
+        try {
+          await validation.testAsync({ a: "one", b: "two" });
+        } catch (ex) {
+          expect(ex.rule.name).toBe("asyncCompositeRule");
+          expect(ex.value).toEqual({ a: "one", b: "two" });
+          expect(ex.cause.rule.name).toBe("schema");
+          expect(ex.cause.value).toEqual({ a: "one", b: "two" });
+        }
+      });
     });
   });
 });

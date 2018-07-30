@@ -16,7 +16,7 @@ Dead simple fluent API. Customizable. Reusable.
 </p>
 
 <p align="center">
-<a href="#installation">Installation</a> -
+<a href="https://imbrn.github.io/v8n/Installation.html">Installation</a> -
 <a href="https://imbrn.github.io/v8n">Documentation</a> -
 <a href="https://imbrn.github.io/v8n/api/">API</a>
 </p>
@@ -63,7 +63,7 @@ v8n()
   .test("Hello"); // true
 
 v8n()
-  .not.some.uppercase() // expects that none character is uppercase
+  .not.some.uppercase() // expects that no character is uppercase
   .test("Hello"); // false
 ```
 
@@ -83,7 +83,7 @@ function foo() {
 v8n.extend({ foo });
 ```
 
-v8n will treat them as built-in ones:
+v8n will treat them like built-in ones:
 
 ```javascript
 v8n()
@@ -96,7 +96,7 @@ v8n()
 
 Export validations just like you're used to do with your JavaScript modules:
 
-_myValidation.js_
+_specialNumber.js_
 
 ```javascript
 import v8n from "v8n";
@@ -110,9 +110,9 @@ export default v8n()
 and use them anywhere you want:
 
 ```javascript
-import myValidation from "../myValidation";
+import specialNumber from "../specialNumber";
 
-myValidation.test(63); // true
+specialNumber.test(63); // true
 ```
 
 ### For any kind of data
@@ -196,8 +196,7 @@ failed;
 #### Async validation:
 
 If your validation strategy has some rule that performs time consuming
-validation, like a back-end check validation, you should use asynchronous
-validation:
+validation, like a back-end check, you should use asynchronous validation:
 
 ```javascript
 v8n()
@@ -216,7 +215,7 @@ v8n()
 Share your rules with the world, and use theirs as well.
 
 Create useful validation rules and share them with the open source community,
-and let people around the world to validate without reinventing the wheel.
+and let people around the world validate without reinventing the wheel.
 
 ### Ready to use!
 
@@ -231,48 +230,10 @@ All these incredible features for just a few bytes:
 
 ![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/v8n.svg)
 
-## Installation
-
-```shell
-# Using npm
-npm install v8n
-
-# or yarn
-yarn add v8n
-```
-
-### Or using a `script` tag:
-
-```html
-<!-- From unpkg -->
-<script src="https://unpkg.com/v8n/dist/v8n.min.js"></script>
-
-<!-- or from jsdelivr -->
-<script src="https://cdn.jsdelivr.net/npm/v8n/dist/v8n.min.js"></script>
-```
-
-## More about v8n
-
-The `v8n` is a validation library which provides you an easy and incredibly
-fluent way to build and run validations. With this, you can construct validation
-strategies as easy as you'd do in the English language.
-
-The main goal of this library is to be used to validate any kind of data with
-any validation type. There are a lot of useful built-in-rules for you to use,
-and you also can build (and share) your own.
-
-The `v8n` is not intended to be used in a specific application scope, like an
-input field or data model validation.
-
-Actually, it's designed to be used with any scope, and to aid reusability of
-validation strategies between scopes. So, you can define your validation and use
-it in your input field, in your pre-request logic, in your server-side model,
-whatever. Pretty cool, huh?
-
 ## Architecture
 
-The **v8n** core is composed by `rules` and `modifiers`. They are used together
-to build complex validations in a easy way.
+The **v8n** core is composed of `rules` and `modifiers`. They are used together
+to build complex validations in an easy way.
 
 ### Rules
 
@@ -304,7 +265,7 @@ v8n()
   .test(5); // false
 ```
 
-> You can check all available modifiers in our documentation page.
+> You can check all available modifiers on our documentation page.
 
 Modifiers are very powerful. They work as decorators for rules. When used
 together, they allow you to build very complex validations.

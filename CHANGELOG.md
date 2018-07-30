@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Rule `passesAnyOf()` to perform branching validation.
+
 ## [1.1.2] - 2018-07-26
 
 ### Fixed

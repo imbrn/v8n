@@ -154,7 +154,13 @@ const availableRules = {
   // branching
 
   passesAnyOf: (...validations) => value =>
-    validations.some(validation => validation.test(value))
+    validations.some(validation => validation.test(value)),
+
+  optional: validation => value => {
+    if (value === undefined || value === null) return true;
+    validation.check(value);
+    return true;
+  }
 };
 
 function testPattern(pattern) {

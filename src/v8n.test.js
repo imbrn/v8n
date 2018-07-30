@@ -787,21 +787,6 @@ describe("rules", () => {
       invalidObj = { one: "Hello" };
     });
 
-    it("should work with validation", () => {
-      const result = is.testAll(invalidObj);
-      expect(result[0].cause).toHaveLength(2);
-      expect(result[0].cause[0].rule.name).toBe("equal");
-      expect(result[0].cause[1].rule.name).toBe("schema");
-      expect(result[0].cause[1].cause).toHaveLength(3);
-      expect(result[0].cause[1].cause[2].rule.name).toBe("schema");
-      expect(result[0].cause[1].cause[2].cause[0].target).toBe("six");
-
-      expect(is.test(validObj)).toBeTruthy();
-      expect(is.test(invalidObj)).toBeFalsy();
-      expect(not.test(validObj)).toBeFalsy();
-      expect(not.test(invalidObj)).toBeTruthy();
-    });
-
     it("should work with nested validations", () => {
       expect.assertions(12);
 
@@ -889,6 +874,18 @@ describe("rules", () => {
       expect(validation.test(false)).toBeTruthy();
       expect(validation.test("Hello")).toBeFalsy();
     });
+  });
+
+  test("optional", () => {
+    const v = v8n().optional(
+      v8n()
+        .number()
+        .positive()
+    );
+    expect(v.test(-1)).toBeFalsy();
+    expect(v.test(1)).toBeTruthy();
+    expect(v.test(null)).toBeTruthy();
+    expect(v.test(undefined)).toBeTruthy();
   });
 });
 

@@ -6,14 +6,18 @@ beforeEach(() => {
 });
 
 describe("chaining", () => {
-  const validation = v8n()
-    .string()
-    .not.every.lowercase()
-    .not.null()
-    .first("a")
-    .last("e")
-    .some.equal("l")
-    .length(3, 5);
+  let validation;
+
+  beforeEach(() => {
+    validation = v8n()
+      .string()
+      .not.every.lowercase()
+      .not.null()
+      .first("a")
+      .last("e")
+      .some.equal("l")
+      .length(3, 5);
+  });
 
   it("should chain rules", () => {
     expect(debugRules(validation)).toEqual([
@@ -40,10 +44,14 @@ describe("the 'validation' object", () => {
 
 describe("execution functions", () => {
   describe("the 'test' function", () => {
-    const validation = v8n()
-      .number()
-      .between(10, 20)
-      .not.odd();
+    let validation;
+
+    beforeEach(() => {
+      validation = v8n()
+        .number()
+        .between(10, 20)
+        .not.odd();
+    });
 
     it("should return false for invalid value", () => {
       expect(validation.test("Hello")).toBeFalsy();
@@ -57,10 +65,14 @@ describe("execution functions", () => {
   });
 
   describe("the 'testAll' function", () => {
-    const validation = v8n()
-      .string()
-      .last("o")
-      .not.includes("a");
+    let validation;
+
+    beforeEach(() => {
+      validation = v8n()
+        .string()
+        .last("o")
+        .not.includes("a");
+    });
 
     it("should return an array with a ValidationException for each failed rule", () => {
       const result = validation.testAll(100);
@@ -77,9 +89,13 @@ describe("execution functions", () => {
   });
 
   describe("the 'check' function", () => {
-    const validation = v8n()
-      .string()
-      .maxLength(3);
+    let validation;
+
+    beforeEach(() => {
+      validation = v8n()
+        .string()
+        .maxLength(3);
+    });
 
     it("should throw exception for invalid value", () => {
       expect(() => validation.check("abcd")).toThrow();
@@ -724,36 +740,40 @@ describe("rules", () => {
   });
 
   describe("schema", () => {
-    const is = v8n().schema({
-      one: v8n().equal(1),
-      two: v8n().schema({
-        three: v8n().equal(3),
-        four: v8n().equal(4),
-        five: v8n().schema({
-          six: v8n().equal(6)
-        })
-      }),
-      seven: v8n().schema({
-        eight: v8n().not.equal(8)
-      })
-    });
+    let is, not, validObj, invalidObj;
 
-    const not = v8n().not.schema({
-      one: v8n().equal(1),
-      two: v8n().schema({
-        three: v8n().equal(3),
-        four: v8n().equal(4),
-        five: v8n().schema({
-          six: v8n().equal(6)
+    beforeEach(() => {
+      is = v8n().schema({
+        one: v8n().equal(1),
+        two: v8n().schema({
+          three: v8n().equal(3),
+          four: v8n().equal(4),
+          five: v8n().schema({
+            six: v8n().equal(6)
+          })
+        }),
+        seven: v8n().schema({
+          eight: v8n().not.equal(8)
         })
-      }),
-      seven: v8n().schema({
-        eight: v8n().not.equal(8)
-      })
-    });
+      });
 
-    const validObj = { one: 1, two: { three: 3, four: 4, five: { six: 6 } } };
-    const invalidObj = { one: "Hello" };
+      not = v8n().not.schema({
+        one: v8n().equal(1),
+        two: v8n().schema({
+          three: v8n().equal(3),
+          four: v8n().equal(4),
+          five: v8n().schema({
+            six: v8n().equal(6)
+          })
+        }),
+        seven: v8n().schema({
+          eight: v8n().not.equal(8)
+        })
+      });
+
+      validObj = { one: 1, two: { three: 3, four: 4, five: { six: 6 } } };
+      invalidObj = { one: "Hello" };
+    });
 
     it("should work with validation", () => {
       const result = is.testAll(invalidObj);
@@ -861,66 +881,70 @@ describe("rules", () => {
 });
 
 describe("validation composition", () => {
-  // A complex schema
-  const complex = v8n().schema({
-    one: v8n().equal("one"),
-    two: v8n().schema({
-      two_one: v8n().equal("two_one"),
-      two_two: v8n().not.schema({
-        two_two_one: v8n().equal("two_two_one")
-      })
-    }),
-    three: v8n().schema({
-      three_one: v8n().schema({
-        three_one_one: v8n().not.equal("three_one_one")
+  let complex, validObj, invalidObj, causes;
+
+  beforeEach(() => {
+    // A complex schema
+    complex = v8n().schema({
+      one: v8n().equal("one"),
+      two: v8n().schema({
+        two_one: v8n().equal("two_one"),
+        two_two: v8n().not.schema({
+          two_two_one: v8n().equal("two_two_one")
+        })
       }),
-      three_two: v8n().not.schema({
-        three_two_one: v8n().not.equal("three_two_one")
+      three: v8n().schema({
+        three_one: v8n().schema({
+          three_one_one: v8n().not.equal("three_one_one")
+        }),
+        three_two: v8n().not.schema({
+          three_two_one: v8n().not.equal("three_two_one")
+        })
       })
-    })
-  });
+    });
 
-  const validObj = {
-    one: "one",
-    two: {
-      two_one: "two_one",
-      two_two: "two_two"
-    },
-    three: {
-      three_one: {
-        three_one_one: 311
+    validObj = {
+      one: "one",
+      two: {
+        two_one: "two_one",
+        two_two: "two_two"
       },
-      three_two: {
-        three_two_one: "three_two_one"
+      three: {
+        three_one: {
+          three_one_one: 311
+        },
+        three_two: {
+          three_two_one: "three_two_one"
+        }
       }
-    }
-  };
+    };
 
-  const invalidObj = {
-    one: "one",
-    two: {
-      two_one: 21,
-      two_two: {
-        two_two_one: 221
+    invalidObj = {
+      one: "one",
+      two: {
+        two_one: 21,
+        two_two: {
+          two_two_one: 221
+        }
+      },
+      three: {
+        three_two: {
+          three_two_one: 321
+        }
       }
-    },
-    three: {
-      three_two: {
-        three_two_one: 321
-      }
-    }
-  };
+    };
 
-  const causes = [
-    {
-      target: "two",
-      cause: [{ target: "two_one", rule: { name: "equal" } }]
-    },
-    {
-      target: "three",
-      cause: [{ target: "three_two", cause: null }]
-    }
-  ];
+    causes = [
+      {
+        target: "two",
+        cause: [{ target: "two_one", rule: { name: "equal" } }]
+      },
+      {
+        target: "three",
+        cause: [{ target: "three_two", cause: null }]
+      }
+    ];
+  });
 
   it("should work with 'test' function", () => {
     expect(complex.test(validObj)).toBeTruthy();

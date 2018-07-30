@@ -1,20 +1,23 @@
 import v8n from "./v8n";
 import Rule from "./Rule";
-import ValidationException from "./ValidationException";
 
 beforeEach(() => {
   v8n.clearCustomRules();
 });
 
 describe("chaining", () => {
-  const validation = v8n()
-    .string()
-    .not.every.lowercase()
-    .not.null()
-    .first("a")
-    .last("e")
-    .some.equal("l")
-    .length(3, 5);
+  let validation;
+
+  beforeEach(() => {
+    validation = v8n()
+      .string()
+      .not.every.lowercase()
+      .not.null()
+      .first("a")
+      .last("e")
+      .some.equal("l")
+      .length(3, 5);
+  });
 
   it("should chain rules", () => {
     expect(debugRules(validation)).toEqual([
@@ -41,10 +44,14 @@ describe("the 'validation' object", () => {
 
 describe("execution functions", () => {
   describe("the 'test' function", () => {
-    const validation = v8n()
-      .number()
-      .between(10, 20)
-      .not.odd();
+    let validation;
+
+    beforeEach(() => {
+      validation = v8n()
+        .number()
+        .between(10, 20)
+        .not.odd();
+    });
 
     it("should return false for invalid value", () => {
       expect(validation.test("Hello")).toBeFalsy();
@@ -58,10 +65,14 @@ describe("execution functions", () => {
   });
 
   describe("the 'testAll' function", () => {
-    const validation = v8n()
-      .string()
-      .last("o")
-      .not.includes("a");
+    let validation;
+
+    beforeEach(() => {
+      validation = v8n()
+        .string()
+        .last("o")
+        .not.includes("a");
+    });
 
     it("should return an array with a ValidationException for each failed rule", () => {
       const result = validation.testAll(100);
@@ -78,9 +89,13 @@ describe("execution functions", () => {
   });
 
   describe("the 'check' function", () => {
-    const validation = v8n()
-      .string()
-      .maxLength(3);
+    let validation;
+
+    beforeEach(() => {
+      validation = v8n()
+        .string()
+        .maxLength(3);
+    });
 
     it("should throw exception for invalid value", () => {
       expect(() => validation.check("abcd")).toThrow();
@@ -93,11 +108,13 @@ describe("execution functions", () => {
     describe("the thrown exception", () => {
       let exception;
 
-      try {
-        validation.check("Hello");
-      } catch (ex) {
-        exception = ex;
-      }
+      beforeEach(() => {
+        try {
+          validation.check("Hello");
+        } catch (ex) {
+          exception = ex;
+        }
+      });
 
       it("should have rule object", () => {
         expect(exception.rule).toBeInstanceOf(Rule);
@@ -734,51 +751,175 @@ describe("rules", () => {
     expect(not.test(Infinity)).toBeTruthy();
   });
 
-  test("schema", () => {
-    const is = v8n().schema({
-      one: v8n()
-        .string()
-        .minLength(3),
-      two: v8n()
-        .number()
-        .between(5, 10)
+  describe("schema", () => {
+    let is, not, validObj, invalidObj;
+
+    beforeEach(() => {
+      is = v8n().schema({
+        one: v8n().equal(1),
+        two: v8n().schema({
+          three: v8n().equal(3),
+          four: v8n().equal(4),
+          five: v8n().schema({
+            six: v8n().equal(6)
+          })
+        }),
+        seven: v8n().schema({
+          eight: v8n().not.equal(8)
+        })
+      });
+
+      not = v8n().not.schema({
+        one: v8n().equal(1),
+        two: v8n().schema({
+          three: v8n().equal(3),
+          four: v8n().equal(4),
+          five: v8n().schema({
+            six: v8n().equal(6)
+          })
+        }),
+        seven: v8n().schema({
+          eight: v8n().not.equal(8)
+        })
+      });
+
+      validObj = { one: 1, two: { three: 3, four: 4, five: { six: 6 } } };
+      invalidObj = { one: "Hello" };
     });
 
-    expect(is.test({ one: "Hello", two: 8 })).toBeTruthy();
-    expect(is.test({ one: "Hi", two: 8 })).toBeFalsy();
-    expect(is.test({ one: "Hello", two: 12 })).toBeFalsy();
-    expect(is.test({ one: 1, two: "Two" })).toBeFalsy();
-    expect(is.test({ one: "Hello" })).toBeFalsy();
-    expect(is.test({ two: 8 })).toBeFalsy();
-    expect(is.test({})).toBeFalsy();
-    expect(() => is.test({ one: "Hello", two: 8 })).not.toThrow();
-    expect(() => is.check({ one: "Hello", two: 12 })).toThrow();
+    it("should work with validation", () => {
+      const result = is.testAll(invalidObj);
+      expect(result[0].cause).toHaveLength(2);
+      expect(result[0].cause[0].rule.name).toBe("equal");
+      expect(result[0].cause[1].rule.name).toBe("schema");
+      expect(result[0].cause[1].cause).toHaveLength(3);
+      expect(result[0].cause[1].cause[2].rule.name).toBe("schema");
+      expect(result[0].cause[1].cause[2].cause[0].target).toBe("six");
 
+      expect(is.test(validObj)).toBeTruthy();
+      expect(is.test(invalidObj)).toBeFalsy();
+      expect(not.test(validObj)).toBeFalsy();
+      expect(not.test(invalidObj)).toBeTruthy();
+    });
+
+    it("should work with nested validations", () => {
+      expect.assertions(12);
+
+      try {
+        is.check(invalidObj);
+      } catch (ex) {
+        expect(ex.cause).toHaveLength(2);
+        expect(ex.cause[0].rule.name).toBe("equal");
+        expect(ex.cause[0].value).toBe(invalidObj.one);
+        expect(ex.cause[1].rule.name).toBe("schema");
+        expect(ex.cause[1].cause).toHaveLength(3);
+        expect(ex.cause[1].cause[0].rule.name).toBe("equal");
+        expect(ex.cause[1].cause[1].rule.name).toBe("equal");
+        expect(ex.cause[1].cause[2].rule.name).toBe("schema");
+        expect(ex.cause[1].cause[2].cause[0].target).toBe("six");
+      }
+
+      expect(() => is.check(validObj)).not.toThrow();
+      expect(() => not.check(invalidObj)).not.toThrow();
+      expect(() => not.check(validObj)).toThrow();
+    });
+  });
+});
+
+describe("validation composition", () => {
+  let complex, validObj, invalidObj, causes;
+
+  beforeEach(() => {
+    // A complex schema
+    complex = v8n().schema({
+      one: v8n().equal("one"),
+      two: v8n().schema({
+        two_one: v8n().equal("two_one"),
+        two_two: v8n().not.schema({
+          two_two_one: v8n().equal("two_two_one")
+        })
+      }),
+      three: v8n().schema({
+        three_one: v8n().schema({
+          three_one_one: v8n().not.equal("three_one_one")
+        }),
+        three_two: v8n().not.schema({
+          three_two_one: v8n().not.equal("three_two_one")
+        })
+      })
+    });
+
+    validObj = {
+      one: "one",
+      two: {
+        two_one: "two_one",
+        two_two: "two_two"
+      },
+      three: {
+        three_one: {
+          three_one_one: 311
+        },
+        three_two: {
+          three_two_one: "three_two_one"
+        }
+      }
+    };
+
+    invalidObj = {
+      one: "one",
+      two: {
+        two_one: 21,
+        two_two: {
+          two_two_one: 221
+        }
+      },
+      three: {
+        three_two: {
+          three_two_one: 321
+        }
+      }
+    };
+
+    causes = [
+      {
+        target: "two",
+        cause: [{ target: "two_one", rule: { name: "equal" } }]
+      },
+      {
+        target: "three",
+        cause: [{ target: "three_two", cause: null }]
+      }
+    ];
+  });
+
+  it("should work with 'test' function", () => {
+    expect(complex.test(validObj)).toBeTruthy();
+    expect(complex.test(invalidObj)).toBeFalsy();
+  });
+
+  it("should work with 'check' function", () => {
+    expect.assertions(2);
+    expect(() => complex.check(validObj)).not.toThrow();
     try {
-      is.check({ one: "Hi", two: 12 });
+      complex.check(invalidObj);
     } catch (ex) {
-      expect(ex.cause).toMatchObject([
-        { target: "one", value: "Hi", rule: { name: "minLength" } },
-        { target: "two", value: 12, rule: { name: "between" } }
-      ]);
+      expect(ex.cause).toMatchObject(causes);
     }
+  });
 
-    const not = v8n().not.schema({
-      one: v8n()
-        .string()
-        .minLength(3),
-      two: v8n()
-        .number()
-        .between(5, 10)
-    });
+  it("should work with 'testAll' function", () => {
+    expect(complex.testAll(validObj)).toHaveLength(0);
+    expect(complex.testAll(invalidObj)).toMatchObject([{ cause: causes }]);
+  });
 
-    expect(not.test({ one: "Hello", two: 8 })).toBeFalsy();
-    expect(not.test({ one: "Hi", two: 8 })).toBeTruthy();
-    expect(not.test({ one: "Hello", two: 12 })).toBeTruthy();
-    expect(not.test({ one: 1, two: "Two" })).toBeTruthy();
-    expect(not.test({ one: "Hello" })).toBeTruthy();
-    expect(not.test({ two: 8 })).toBeTruthy();
-    expect(not.test({})).toBeTruthy();
+  it("should work with 'testAsync' function", async () => {
+    expect.assertions(2);
+    await expect(complex.testAsync(validObj)).resolves.toEqual(validObj);
+    try {
+      await complex.testAsync(invalidObj);
+    } catch (ex) {
+      expect(ex.cause).toMatchObject(causes);
+    }
   });
 });
 

@@ -8,9 +8,18 @@ Dead simple fluent API. Customizable. Reusable.
 </p>
 
 <p align="center">
+  <a href="https://circleci.com/gh/imbrn/v8n/tree/master">
+    <img src="https://circleci.com/gh/imbrn/v8n/tree/master.svg?style=svg" alt="CircleCI" />
+  </a>
+  <img src="https://img.shields.io/npm/v/v8n.svg" alt="npm version" />
+  <img src="https://img.shields.io/bundlephobia/minzip/v8n.svg" alt="npm bundle size (minified + gzip)" />
+</p>
+
+<p align="center">
 <a href="#installation">Installation</a> -
 <a href="#usage">Usage</a> -
-<a href="https://imbrn.github.io/v8n">Documentation</a>
+<a href="https://imbrn.github.io/v8n">Documentation</a> -
+<a href="https://imbrn.github.io/v8n/api/">API</a>
 </p>
 
 ```javascript
@@ -25,6 +34,10 @@ v8n()
 
 ## What is it?
 
+> **v8n** is an acronym for **v**_alidatio_**n**. Notice that it has exactly
+eight letters between **v** and **n** in the _"validation"_ word. This is the
+same pattern we are used to seeing in _i18n_, _a11y_, _l10n_ ...
+
 The `v8n` is a validation library which provides you an easy and incredibly
 fluent way to build and run validations. With this, you can construct validation
 strategies as easy as you'd do in the English language.
@@ -37,12 +50,12 @@ By mixing rules and modifiers, you can build a ton of different validation
 strategies, using its incredible fluent API.
 
 The `v8n` is not intended to be used in a specific application scope, like an
-input input or data model validation.
+input field or data model validation.
 
-Actually, it's designed to be used in any scope, and to reuse validation
-strategies between scopes. So, you can define your validation and use it in your
-input field, in your pre-request logic, in your server-side model, whatever.
-Pretty cool, huh?
+Actually, it's designed to be used with any scope, and to aid reusability of
+validation strategies between scopes. So, you can define your validation and use
+it in your input field, in your pre-request logic, in your server-side model,
+whatever. Pretty cool, huh?
 
 ## Features
 
@@ -51,6 +64,7 @@ Pretty cool, huh?
 - Custom validations rules;
 - Asynchronous validation;
 - Reusability;
+- Validation composition;
 
 ## Installation
 
@@ -74,13 +88,12 @@ yarn add v8n
 
 ## Usage
 
-There is a much better place for you to check out how this library works and to
-get information about its API. Access our
-[documentation](https://imbrn.github.io/v8n) page.
+> Access our [documentation page](https://imbrn.github.io/v8n) to learn more
+about the library and its API.
 
 ### Boolean based validation
 
-We use the function [test](#test) to perform boolean based validations:
+We use the function `test` to perform boolean based validations:
 
 ```javascript
 import v8n from "v8n";
@@ -95,9 +108,9 @@ v8n()
 
 ### Array based validation
 
-We use the function [testAll](#testAll) to perform array based validations. The
-returned array will contain a ValidationException object for each fail that
-has occurred, and an empty array if the validation passes:
+We use the function `testAll` to perform array based validations. The returned
+array will contain a ValidationException object for each fail that has occurred,
+and an empty array if the validation passes:
 
 ```javascript
 import v8n from "v8n";
@@ -109,8 +122,8 @@ v8n()
 
 ### Exception based validation
 
-We can also use the [check](#check) function to perform exception based
-validations. This is going to throw an exception when the validation fails:
+We can also use the `check` function to perform exception based validations.
+This is going to throw an exception when the validation fails:
 
 ```javascript
 import v8n from "v8n";
@@ -121,16 +134,12 @@ try {
     .between(10, 20)
     .check(25);
 } catch (ex) {
-  console.log(ex.rule.name); // "between"
-  console.log(ex.rule.args); // [10, 20]
-  console.log(ex.value); // 25
-  console.log(ex.cause); // Rule failed!
+  // ex is a ValidationException object
 }
 ```
 
-> The exception thrown by the `check` function contains useful information about
-> the rule which caused the validation fail, and it also has information about
-> the validation process.
+> A `ValidationException` object contains a lot of useful information about the
+validation process and its fail cause.
 
 ### Asynchronous validation
 
@@ -146,17 +155,9 @@ v8n()
   .between(10, 100)
   .someAsyncRule()
   .testAsync(50)
-  .then(value => {
-    // It's valid!!!
-  })
-  .catch(exception => {
-    // It's invalid!
-  });
+  .then(value => { /* valid */ })
+  .catch(exception => { /* invalid */ });
 ```
-
-> The `exception` object caught by the failure callback contains information
-> about the rule which caused the validation fail, and about the validation
-> process.
 
 ## Rules
 
@@ -218,7 +219,8 @@ v8n()
 
 ## Contribute
 
-Contributions of any kind are welcome!
+Contributions of any kind are welcome! Read our
+[CONTRIBUTING](./.github/CONTRIBUTING.md) guide.
 
 ## License
 

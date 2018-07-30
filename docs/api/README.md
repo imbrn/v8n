@@ -1035,7 +1035,7 @@ sidebar: auto
 
 ### some
 
-- **Applicable Types:** `array`
+- **Applicable Types:** `array|string`
 
 - **Usage:**
 
@@ -1054,7 +1054,7 @@ sidebar: auto
 
 ### every
 
-- **Applicable Types:** `array`
+- **Applicable Types:** `array|string`
 
 - **Usage:**
 

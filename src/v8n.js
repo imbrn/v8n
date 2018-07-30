@@ -111,31 +111,31 @@ const availableRules = {
 
   // Length
 
-  empty: makeTestLength(true, true),
+  empty: makeTestLength(0, 0),
 
-  length: makeTestLength(true, true),
+  length: makeTestLength(),
 
-  minLength: makeTestLength(true, false),
+  minLength: makeTestLength(undefined, Infinity),
 
-  maxLength: makeTestLength(false, true),
+  maxLength: makeTestLength(-Infinity),
 
   // Range
 
-  negative: makeTestRange(false, false, undefined, -1),
+  negative: makeTestRange(-Infinity, 0),
 
-  positive: makeTestRange(false, false, 0, undefined),
+  positive: makeTestRange(-1, Infinity),
 
-  between: makeTestRange(true, true),
+  between: makeTestRange(undefined, undefined, true, true),
 
-  range: makeTestRange(true, true),
+  range: makeTestRange(undefined, undefined, true, true),
 
-  lessThan: makeTestRange(false, true, undefined, 0, 0, -1),
+  lessThan: makeTestRange(-Infinity),
 
-  lessThanOrEqual: makeTestRange(false, true, undefined, 0),
+  lessThanOrEqual: makeTestRange(-Infinity, undefined, undefined, true),
 
-  greaterThan: makeTestRange(true, false, 0, undefined, 1),
+  greaterThan: makeTestRange(undefined, Infinity),
 
-  greaterThanOrEqual: makeTestRange(true, false, 0, undefined),
+  greaterThanOrEqual: makeTestRange(undefined, Infinity, true),
 
   // Divisible
 
@@ -177,29 +177,27 @@ function makeTestValueAt(index) {
   };
 }
 
-function makeTestLength(useMin, useMax) {
+function makeTestLength(overriddenMin, overriddenMax) {
   return (min, max) => value => {
-    let valid = true;
-    if (useMin) valid = valid && value.length >= (min || 0);
-    if (useMax) valid = valid && value.length <= (max || min || 0);
-    return valid;
+    return (
+      value.length >= firstDefined([overriddenMin, min]) &&
+      value.length <= firstDefined([overriddenMax, max, min])
+    );
   };
 }
 
 function makeTestRange(
-  useMin,
-  useMax,
-  defaultMin,
-  defaultMax,
-  adjustMin,
-  adjustMax
+  overriddenLower,
+  overriddenUpper,
+  inclusiveLower,
+  inclusiveUpper
 ) {
-  return (min, max) => value => {
-    const finalMin = useMin ? min : defaultMin;
-    const finalMax = useMax ? max || min : defaultMax;
+  return (lower, upper) => value => {
+    upper = firstDefined([overriddenUpper, upper, lower]);
+    lower = firstDefined([overriddenLower, lower]);
     return (
-      (finalMin === undefined || value >= finalMin + (adjustMin || 0)) &&
-      (finalMax === undefined || value <= finalMax + (adjustMax || 0))
+      (inclusiveLower ? value >= lower : value > lower) &&
+      (inclusiveUpper ? value <= upper : value < upper)
     );
   };
 }
@@ -224,10 +222,9 @@ function testSchema(schema) {
     Object.keys(schema).forEach(key => {
       const nestedValidation = schema[key];
       try {
-        nestedValidation.check(value[key]);
+        nestedValidation.check((value || {})[key]);
       } catch (ex) {
         ex.target = key;
-        ex.cause = null;
         causes.push(ex);
       }
     });
@@ -236,6 +233,10 @@ function testSchema(schema) {
     }
     return true;
   };
+}
+
+function firstDefined(values) {
+  return values.find(it => it !== undefined);
 }
 
 export default v8n;

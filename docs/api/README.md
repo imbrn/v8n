@@ -349,11 +349,23 @@ sidebar: auto
 
 ### number
 
-- **Signature:** `number()`
+- **Signature:** `number(allowInfinite = true)`
+
+- **Arguments:**
+
+  - `[allowInfinite: boolean]`
 
 - **Usage:**
 
-  This rule verifies that the tested value is a number.
+  This rule verifies that the tested value is a number. This rule will also
+  return `true` for infinite values like `NaN` and `Infinity` by default. You
+  may disable this behaviour by setting the `allowInfinite` parameter to
+  `false`.
+
+  ::: warning DEPRECATED
+  From **v2.0.0** onwards this rule will return `false` for infinite values by
+  default.
+  :::
 
   ```js
   v8n()
@@ -363,9 +375,13 @@ sidebar: auto
   v8n()
     .number()
     .test("Hello"); // false
-  
+
   v8n()
     .number()
+    .test(NaN); // true
+
+  v8n()
+    .number(false)
     .test(NaN); // false
   ```
 

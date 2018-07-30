@@ -149,7 +149,12 @@ const availableRules = {
 
   integer: () => value => Number.isInteger(value) || testIntegerPolyfill(value),
 
-  schema: schema => testSchema(schema)
+  schema: schema => testSchema(schema),
+
+  // branching
+
+  passesAnyOf: (...validations) => value =>
+    validations.some(validation => validation.test(value))
 };
 
 function testPattern(pattern) {

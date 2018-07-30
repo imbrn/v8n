@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Rule `passesAnyOf()` to perform branching validation.
+
 ### Changed
 
 - Rule `number()` now supports a flag to make it return `false` for infinite numbers ([#76](https://github.com/imbrn/v8n/issues/76))

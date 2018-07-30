@@ -1012,6 +1012,32 @@ sidebar: auto
   }); // false
   ```
 
+### passesAnyOf
+
+- **Signature:** `any(...validations)`
+
+- **Arguments:**
+
+  - `validations: ...Validation`
+
+- **Usage:**
+
+  This rule checks if any of the validations given as its argument passes when
+  performed against the validated value. If some of them pass, the rule passes.
+  But if all of them fail, the rule fails, too. If no validation is given as the
+  argument, the rule fails.
+
+  ```js
+  const validation = v8n().passesAnyOf(
+    v8n().number(),
+    v8n().null()
+  );
+
+  validation.test(12); // true
+  validation.test(null); // true
+  validation.test("Hello"); // false
+  ```
+
 ## Built-in modifiers
 
 ### not

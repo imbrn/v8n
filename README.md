@@ -16,150 +16,226 @@ Dead simple fluent API. Customizable. Reusable.
 </p>
 
 <p align="center">
-<a href="#installation">Installation</a> -
-<a href="#usage">Usage</a> -
+<a href="https://imbrn.github.io/v8n/Installation.html">Installation</a> -
 <a href="https://imbrn.github.io/v8n">Documentation</a> -
 <a href="https://imbrn.github.io/v8n/api/">API</a>
 </p>
 
-```javascript
-v8n()
-  .string()
-  .not.every.vowel()
-  .not.every.consonant()
-  .first("H")
-  .last("o")
-  .test("Hello"); // true
-```
-
-## What is it?
+## Introducing v8n
 
 > **v8n** is an acronym for **v**_alidatio_**n**. Notice that it has exactly
-eight letters between **v** and **n** in the _"validation"_ word. This is the
-same pattern we are used to seeing in _i18n_, _a11y_, _l10n_ ...
+> eight letters between **v** and **n** in the _"validation"_ word. This is the
+> same pattern we are used to seeing with _i18n_, _a11y_, _l10n_ ...
 
-The `v8n` is a validation library which provides you an easy and incredibly
-fluent way to build and run validations. With this, you can construct validation
-strategies as easy as you'd do in the English language.
+### Chainable API
 
-The main goal of this library is to be used to validate any kind of data with
-any validation type. There are a lot of useful built-in-rules for you to use,
-and you also can build (and share) your own.
-
-By mixing rules and modifiers, you can build a ton of different validation
-strategies, using its incredible fluent API.
-
-The `v8n` is not intended to be used in a specific application scope, like an
-input field or data model validation.
-
-Actually, it's designed to be used with any scope, and to aid reusability of
-validation strategies between scopes. So, you can define your validation and use
-it in your input field, in your pre-request logic, in your server-side model,
-whatever. Pretty cool, huh?
-
-## Features
-
-- Incredible fluent and chainable API;
-- Useful standard validation rules;
-- Custom validations rules;
-- Asynchronous validation;
-- Reusability;
-- Validation composition;
-
-## Installation
-
-```shell
-# Using npm
-npm install v8n
-
-# or yarn
-yarn add v8n
-```
-
-### Or using a `script` tag:
-
-```html
-<!-- From unpkg -->
-<script src="https://unpkg.com/v8n/dist/v8n.min.js"></script>
-
-<!-- or from jsdelivr -->
-<script src="https://cdn.jsdelivr.net/npm/v8n/dist/v8n.min.js"></script>
-```
-
-## Usage
-
-> Access our [documentation page](https://imbrn.github.io/v8n) to learn more
-about the library and its API.
-
-### Boolean based validation
-
-We use the function `test` to perform boolean based validations:
+Create validations very easily with its chainable API:
 
 ```javascript
-import v8n from "v8n";
-
 v8n()
-  .not.null()
   .string()
+  .minLength(5)
   .first("H")
   .last("o")
   .test("Hello"); // true
 ```
 
-### Array based validation
+### Incredibly fluent
 
-We use the function `testAll` to perform array based validations. The returned
-array will contain a ValidationException object for each fail that has occurred,
-and an empty array if the validation passes:
+Mix **rules** and **modifiers** together to create complex validations with
+great ease and fluency:
 
 ```javascript
-import v8n from "v8n";
-
 v8n()
-  .number()
-  .testAll("Hello"); // [ValidationException{ rule:{ name: 'number', ... } ...}]
+  .some.vowel()
+  .some.consonant()
+  .not.every.lowercase()
+  .not.every.uppercase()
+  .not.some.number()
+  .test("Foo5"); // false - no numbers (.not.some.number), please!
 ```
 
-### Exception based validation
+So fluent that it looks like English:
 
-We can also use the `check` function to perform exception based validations.
-This is going to throw an exception when the validation fails:
+```javascript
+v8n()
+  .some.not.uppercase() // expects that some character is not uppercase
+  .test("Hello"); // true
+
+v8n()
+  .not.some.uppercase() // expects that no character is uppercase
+  .test("Hello"); // false
+```
+
+Notice how we made very different validation strategies just by changing the
+order of the modifiers. It's so intuitive that seems to be impossible, but this
+is v8n.
+
+### Customizable
+
+Create your own **custom validation rules** in a very intuitive way:
+
+```javascript
+function foo() {
+  return value => value === "bar";
+}
+
+v8n.extend({ foo });
+```
+
+v8n will treat them like built-in ones:
+
+```javascript
+v8n()
+  .string()
+  .foo()
+  .test("bar"); // true
+```
+
+### Reusable
+
+Export validations just like you're used to do with your JavaScript modules:
+
+_specialNumber.js_
 
 ```javascript
 import v8n from "v8n";
 
+export default v8n()
+  .number()
+  .between(50, 100)
+  .not.even();
+```
+
+and use them anywhere you want:
+
+```javascript
+import specialNumber from "../specialNumber";
+
+specialNumber.test(63); // true
+```
+
+### For any kind of data
+
+Use v8n to validate your data regardless of its type. You can validate
+primitives, arrays, objects and whatever you want! You can also use them
+together!
+
+```javascript
+// numbers
+v8n()
+  .number()
+  .between(5, 10)
+  .test(7); //true
+
+// strings
+v8n()
+  .string()
+  .minLength(3)
+  .test("foo"); // true
+
+// arrays
+v8n()
+  .array()
+  .every.even()
+  .test([2, 4, 6]); // true
+
+// objects
+const myData = { id: "fe03" };
+
+v8n()
+  .schema({
+    id: v8n().string()
+  })
+  .test(myData); // true
+```
+
+### For any kind of validation
+
+Do simple validations with boolean based tests. Get more information about your
+validation process with exception based tests. And of course, perform
+asynchronous tests as well. All in one library.
+
+#### Boolean based validation:
+
+```javascript
+v8n()
+  .string()
+  .first("H")
+  .test("Hello"); // true
+```
+
+#### Exception based validation:
+
+```javascript
 try {
   v8n()
-    .number()
-    .between(10, 20)
-    .check(25);
+    .string()
+    .first("b")
+    .check("foo");
 } catch (ex) {
-  // ex is a ValidationException object
+  console.log(ex.rule.name); // first
 }
 ```
 
-> A `ValidationException` object contains a lot of useful information about the
-validation process and its fail cause.
+#### Getting all failures:
 
-### Asynchronous validation
+```javascript
+const failed = v8n()
+  .string()
+  .minLength(3)
+  .testAll(10);
 
-If your validation strategy includes some asynchronous rule, you must use the
-'testAsync' function, so that the validation process will execute
-asynchronously. It will return a promise that will resolve with the validated
-value when it's valid and rejects with a `ValidationException` when it's
-invalid.
+failed;
+// [
+//   ValidationException { rule: { name: "string", ... } },
+//   ValidationException { rule: { name: "minLength", ... } }
+// ]
+```
+
+#### Async validation:
+
+If your validation strategy has some rule that performs time consuming
+validation, like a back-end check, you should use asynchronous validation:
 
 ```javascript
 v8n()
-  .number()
-  .between(10, 100)
-  .someAsyncRule()
-  .testAsync(50)
-  .then(value => { /* valid */ })
-  .catch(exception => { /* invalid */ });
+  .somAsyncRule()
+  .testAsync("foo") // returns a Promise
+  .then(result => {
+    /* valid! */
+  })
+  .catch(ex => {
+    /* invalid! */
+  });
 ```
 
-## Rules
+### Shareable
+
+Share your rules with the world, and use theirs as well.
+
+Create useful validation rules and share them with the open source community,
+and let people around the world validate without reinventing the wheel.
+
+### Ready to use!
+
+There are a lot of built-in rules and modifiers for you to use already
+implemented in `v8n`'s core. Take a look at all of them in our
+[API](https://imbrn.github.io/v8n/api/) page. But if you can't find what you
+need, go ahead and make it.
+
+### Tiny!
+
+All these incredible features for just a few bytes:
+
+![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/v8n.svg)
+
+## Architecture
+
+The **v8n** core is composed of `rules` and `modifiers`. They are used together
+to build complex validations in an easy way.
+
+### Rules
 
 Rules are the heart of the `v8n` ecosystem. You use them to build your
 validation strategies:
@@ -171,20 +247,17 @@ v8n()
   .test("Hello"); // true
 ```
 
-In this code snippet, we're using two rules (`string` and `minLenght`) to build
+In this code snippet, we're using two rules (`string` and `minLength`) to build
 our validation strategy. So our validated value (`"Hello"`) is valid because
 it's a string and it is at least 3 characters long.
-
-There are a lot of built-in validation rules to be used. Check them all in in
-the [documentation]("https://imbrn.github.io/v8n/api/#built-in-rules")
 
 > Rules can be more powerful if used along with _modifiers_. Learn about them in
 > the next section.
 
-## Modifiers
+### Modifiers
 
 Modifiers can be used to change rules meaning. For example, you can use the
-`not` modifier to expect the reversed result from your rule:
+`not` modifier to expect the reversed result from a rule:
 
 ```javascript
 v8n()
@@ -192,30 +265,10 @@ v8n()
   .test(5); // false
 ```
 
-> There are some others modifiers, you can check all of them in the
-> documentation page.
+> You can check all available modifiers on our documentation page.
 
-Modifiers can also be used together to build incredible fluent validations. Take
-a look:
-
-```javascript
-v8n()
-  .some.not.lowercase()
-  .test("Hello"); // true
-```
-
-Here, we're declaring a validation which expects that the validated value have
-**at least one** item that is not lowercase.
-
-But in this next validation snippet, just by changing the order of the
-modifiers, our validation now expects that **none** of the items to be
-lowercase:
-
-```javascript
-v8n()
-  .not.some.lowercase()
-  .test("Hello"); // false
-```
+Modifiers are very powerful. They work as decorators for rules. When used
+together, they allow you to build very complex validations.
 
 ## Contribute
 

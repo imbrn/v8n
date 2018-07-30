@@ -80,7 +80,8 @@ const availableRules = {
 
   string: makeTestType("string"),
 
-  number: makeTestType("number"),
+  number: (allowInfinite = true) => value =>
+    typeof value === "number" && (allowInfinite || isFinite(value)),
 
   boolean: makeTestType("boolean"),
 

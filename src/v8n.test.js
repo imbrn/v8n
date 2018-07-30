@@ -435,12 +435,24 @@ describe("rules", () => {
   });
 
   test("number", () => {
-    const validation = v8n().number();
-    expect(validation.test(34)).toBeTruthy();
-    expect(validation.test(-10)).toBeTruthy();
-    expect(validation.test("1")).toBeFalsy();
-    expect(validation.test(null)).toBeFalsy();
-    expect(validation.test(undefined)).toBeFalsy();
+    const noFlag = v8n().number();
+    expect(noFlag.test(34)).toBeTruthy();
+    expect(noFlag.test(-10)).toBeTruthy();
+    expect(noFlag.test("1")).toBeFalsy();
+    expect(noFlag.test(null)).toBeFalsy();
+    expect(noFlag.test(undefined)).toBeFalsy();
+    expect(noFlag.test(NaN)).toBeTruthy();
+    expect(noFlag.test(Infinity)).toBeTruthy();
+    expect(noFlag.test(-Infinity)).toBeTruthy();
+    const flag = v8n().number(false);
+    expect(flag.test(34)).toBeTruthy();
+    expect(flag.test(-10)).toBeTruthy();
+    expect(flag.test("1")).toBeFalsy();
+    expect(flag.test(null)).toBeFalsy();
+    expect(flag.test(undefined)).toBeFalsy();
+    expect(flag.test(NaN)).toBeFalsy();
+    expect(flag.test(Infinity)).toBeFalsy();
+    expect(flag.test(-Infinity)).toBeFalsy();
   });
 
   test("boolean", () => {

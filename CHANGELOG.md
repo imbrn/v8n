@@ -11,11 +11,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Rule `passesAnyOf()` to perform branching validation.
 
+### Changed
+
+- Rule `number()` now supports a flag to make it return `false` for infinite numbers ([#76](https://github.com/imbrn/v8n/issues/76))
+
+### Deprecated
+
+- From **v2.0.0**: Rule `number()` will return `false` for infinite values by default
+
 ## [1.1.2] - 2018-07-26
 
 ### Fixed
 
-- Issue with `schema()` not validation at deeper levels properly.
+- Issue with `schema()` not validating at deeper levels properly.
 
 ## [1.1.0] - 2018-07-25
 

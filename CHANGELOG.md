@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Rule `passesAnyOf()` to perform branching validation.
+- Rule `optional()` for validation of optional values.
 
 ### Changed
 
 - Rule `number()` now supports a flag to make it return `false` for infinite numbers ([#76](https://github.com/imbrn/v8n/issues/76))
+
+### Fixed
+
+- `testAsync()` nesting causes for failed validation.
 
 ### Deprecated
 

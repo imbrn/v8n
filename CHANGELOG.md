@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Rule `number()` now supports a flag to make it return `false` for infinite numbers ([#76](https://github.com/imbrn/v8n/issues/76))
 
+### Fixed
+
+- `testAsync()` nesting causes for failed validation.
+
 ### Deprecated
 
 - From **v2.0.0**: Rule `number()` will return `false` for infinite values by default

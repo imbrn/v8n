@@ -38,13 +38,15 @@ class Rule {
 
   _testAsync(value) {
     return new Promise((resolve, reject) => {
-      testAsyncAux(this.modifiers.slice(), this.fn)(value).then(valid => {
-        if (valid) {
-          resolve(value);
-        } else {
-          reject(this);
-        }
-      });
+      testAsyncAux(this.modifiers.slice(), this.fn)(value)
+        .then(valid => {
+          if (valid) {
+            resolve(value);
+          } else {
+            reject(null);
+          }
+        })
+        .catch(ex => reject(ex));
     });
   }
 }

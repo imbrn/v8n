@@ -1014,7 +1014,7 @@ sidebar: auto
 
 ### passesAnyOf
 
-- **Signature:** `any(...validations)`
+- **Signature:** `passesAnyOf(...validations)`
 
 - **Arguments:**
 
@@ -1028,14 +1028,41 @@ sidebar: auto
   argument, the rule fails.
 
   ```js
-  const validation = v8n().passesAnyOf(
-    v8n().number(),
-    v8n().null()
-  );
+  const validation = v8n().passesAnyOf(v8n().number(), v8n().null());
 
   validation.test(12); // true
   validation.test(null); // true
   validation.test("Hello"); // false
+  ```
+
+### optional
+
+- **Signature:** `optional(validation)`
+
+- **Arguments:**
+
+  - `validation: Validation`
+
+- **Usage:**
+
+  Validates and optional value to pass a validation. Will return `true` for any
+  `undefined` or `null` values regardless of the given Validation.
+
+  ::: tip
+  When the `check()` is used on this rule, an exception resulting from within
+  will have the failed rule as in its `cause.rule` parameter.
+  :::
+
+  ```js
+  const validation = v8n().optional(
+    v8n()
+      .number()
+      .positive()
+  );
+
+  validation.test(-1); // false
+  validation.test(1); // true
+  validation.test(null); // true
   ```
 
 ## Built-in modifiers

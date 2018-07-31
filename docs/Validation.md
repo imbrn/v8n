@@ -71,6 +71,32 @@ v8n()
 For all the rules you can chain take a look at the
 [full list](/api/#built-in-rules).
 
+### Optional Validations
+
+If you have an optional value of some sort you might want to verify that it
+passes some sort of validation only if it's defined. You could wrap the whole
+validation in an `if` clause, but really there's a much better way. `v8n`
+provides optional validation out of the box. This means you can just write your
+rule-chain as you like and wrap it in an `optional()` validation rule.
+
+```js
+const specialString = v8n()
+  .string()
+  .length(12);
+
+v8n()
+  .optional(specialString)
+  .test("I like apples"); // true
+
+v8n()
+  .optional(specialString)
+  .test("I like oranges"); // false
+
+v8n()
+  .optional(specialString)
+  .test(undefined); // true
+```
+
 ## Modifiers
 
 Sometimes you might want the inverse of a rule somewhere in your validation. For

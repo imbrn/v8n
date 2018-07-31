@@ -890,6 +890,18 @@ describe("rules", () => {
       expect(validation.test("Hello")).toBeFalsy();
     });
   });
+
+  test("optional", () => {
+    const validation = v8n().optional(
+      v8n()
+        .number()
+        .positive()
+    );
+    expect(validation.test(-1)).toBeFalsy();
+    expect(validation.test(1)).toBeTruthy();
+    expect(validation.test(null)).toBeTruthy();
+    expect(validation.test(undefined)).toBeTruthy();
+  });
 });
 
 describe("validation composition", () => {

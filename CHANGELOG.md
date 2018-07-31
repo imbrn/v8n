@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Rule `passesAnyOf()` to perform branching validation.
+- Rule `optional()` for validation of optional values.
 
 ### Changed
 

@@ -5,7 +5,13 @@ module.exports = {
   themeConfig: {
     nav: [{ text: "Guide", link: "/" }, { text: "API", link: "/api/" }],
     sidebar: {
-      "/": ["", "/Installation.md", "/Validation.md", "/Extending.md"],
+      "/": [
+        "",
+        "/Installation.md",
+        "/Validation.md",
+        "/Extending.md",
+        "/Implementation.md"
+      ],
       "/api/": [""]
     },
     sidebarDepth: 2,

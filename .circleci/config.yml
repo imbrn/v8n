@@ -10,65 +10,63 @@ defaults: &defaults
     - image: circleci/node:10.1
 
 jobs:
-  test:
-    <<: *defaults  
+  build:
+    <<: *defaults
     steps:
       - checkout
-
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          - v1-dependencies-
-
-      - run: yarn
-
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
       - run:
-          name: Linting code
+          name: Install dependencies
+          command: yarn
+      - run:
+          name: Lint code
           command: yarn lint
-
       - run:
-          name: Run tests
+          name: Test code
           command: yarn test
-
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-
       - persist_to_workspace:
           root: ~/repo
           paths: .
-
+  
   deploy:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/repo
+          - at: ~/repo
       - add_ssh_keys
       - run:
-          name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+          name: Authenticate NPM registry
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
       - run:
-          name: Publish package
+          name: Publish NPM package
           command: npm run deploy
       - run:
-          name: Deploy docs page
+          name: Configure GitHub information
           command: |
-            git config --global user.email "$GIT_AUTHOR_EMAIL"
-            git config --global user.name "$GIT_AUTHOR_NAME"
-            scripts/deploy-docs.sh
+            git config --global user.email "${GH_EMAIL}"
+            git config --global user.name "${GH_NAME}"
+      - run:
+          name: Deploy documentation
+          command: scripts/deploy-docs.sh
 
 workflows:
   version: 2
-  test-deploy:
+  build-and-deploy:
     jobs:
-      - test:
+      - build:
           filters:
             tags:
               only: /^v[0-9]+.*/
       - deploy:
           requires:
-            - test
+            - build
           filters:
             tags:
               only: /^v[0-9]+.*/

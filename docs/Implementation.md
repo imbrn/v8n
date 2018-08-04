@@ -200,7 +200,7 @@ So our recursive approach comes it.
 
 First, the `decorateFn` function will get the first modifier of the list and
 will recursively call itself with the remaining modifiers. This recursive call
-will produce a function which we can now be attached to the current modifier.
+will produce a function which can now be decorated with the current modifier.
 
 > The recursive calls continue until we get an empty list of modifiers. So we
 > get our initial rule function (`equal`, in our example).
@@ -262,8 +262,7 @@ the value returned by calling the decorated function.
 try {
   return decorateFn(this.modifiers.slice(), fn)(value);
 } catch (ex) {
-  return;
-  false;
+  return false;
 }
 ```
 

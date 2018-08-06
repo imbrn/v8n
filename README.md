@@ -6,7 +6,6 @@
 The ultimate JavaScript validation library you've ever needed.<br/>
 Dead simple fluent API. Customizable. Reusable.
 </p>
-
 <p align="center">
   <a href="https://circleci.com/gh/imbrn/v8n/tree/master">
     <img src="https://circleci.com/gh/imbrn/v8n/tree/master.svg?style=svg" alt="CircleCI" />
@@ -188,8 +187,8 @@ const failed = v8n()
 
 failed;
 // [
-//   ValidationException { rule: { name: "string", ... } },
-//   ValidationException { rule: { name: "minLength", ... } }
+//   ValidationError { rule: { name: "string", ... } },
+//   ValidationError { rule: { name: "minLength", ... } }
 // ]
 ```
 

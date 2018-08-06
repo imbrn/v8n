@@ -1,6 +1,6 @@
 import Rule from "./Rule";
 import Modifier from "./Modifier";
-import ValidationException from "./ValidationException";
+import ValidationError from "./ValidationError";
 
 class Context {
   constructor(chain = [], nextRuleModifiers = []) {
@@ -39,7 +39,7 @@ class Context {
       try {
         rule._check(value);
       } catch (ex) {
-        err.push(new ValidationException(rule, value, ex));
+        err.push(new ValidationError(rule, value, ex));
       }
     });
     return err;
@@ -50,7 +50,7 @@ class Context {
       try {
         rule._check(value);
       } catch (ex) {
-        throw new ValidationException(rule, value, ex);
+        throw new ValidationError(rule, value, ex);
       }
     });
   }
@@ -70,7 +70,7 @@ function executeAsyncRules(value, rules, resolve, reject) {
         executeAsyncRules(value, rules, resolve, reject);
       },
       cause => {
-        reject(new ValidationException(rule, value, cause));
+        reject(new ValidationError(rule, value, cause));
       }
     );
   } else {

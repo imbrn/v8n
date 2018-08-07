@@ -167,9 +167,9 @@ If you really need to know what was wrong with the value you passed to v8n,
 simply getting `true` or `false` won't do you any good. This is where
 array-based comes in. If you use `testAll()` you will always receive an array in
 return. The array will be empty if no rules failed, but it will contain
-ValidationException objects indicating each fail if they occur. This also means
-that this strategy does not stop when any rule fails like the boolean-based
-version does, instead it will always run all the rules.
+ValidationError objects indicating each fail if they occur. This also means that
+this strategy does not stop when any rule fails like the boolean-based version
+does, instead it will always run all the rules.
 
 ```js
 v8n()
@@ -182,7 +182,7 @@ v8n()
   .string()
   .first("H")
   .last("o")
-  .testAll("Hi"); // Returns [ValidationException{rule: {name: "last"...}, ...}]
+  .testAll("Hi"); // Returns [ValidationError{rule: {name: "last"...}, ...}]
 ```
 
 This is useful for providing detailed error messages but can also be used for
@@ -190,7 +190,7 @@ any number of other purposes. For some more in-depth examples head over
 [to the documentation for `testAll()`](/api/#testall).
 
 ::: tip
-The array will contain [`ValidationException` objects](/api/#validationexception)
+The array will contain [`ValidationError` objects](/api/#validationexception)
 that you can work with.
 :::
 
@@ -222,10 +222,10 @@ try {
 }
 ```
 
-The resulting [`ValidationException`](/api/#validationexception) will also contain
+The resulting [`ValidationError`](/api/#validationexception) will also contain
 information about the rule that failed so that you may display errors or
-similar. You can find out more in the
-[documentation for `check()`](/api/#check).
+similar. You can find out more in the [documentation for
+`check()`](/api/#check).
 
 ### Asynchronous validation
 
@@ -238,7 +238,7 @@ type of rule though, since they will return a result before the server has a
 chance to respond. This is where we need `testAsync()` to run validations
 asynchronously and await all the returns. You will ultimately receive a
 `Promise` back which you can react to. It resolves to the value your validated
-and would reject to a `ValidationException`.
+and would reject to a `ValidationError`.
 
 ```js
 v8n()

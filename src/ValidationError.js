@@ -1,8 +1,8 @@
-class ValidationException extends Error {
+class ValidationError extends Error {
   constructor(rule, value, cause, target, ...remaining) {
     super(remaining);
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, ValidationException);
+      Error.captureStackTrace(this, ValidationError);
     }
     this.rule = rule;
     this.value = value;
@@ -11,4 +11,4 @@ class ValidationException extends Error {
   }
 }
 
-export default ValidationException;
+export default ValidationError;

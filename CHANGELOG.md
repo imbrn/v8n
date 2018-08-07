@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Rename `ValidationException` to `ValidationError`
+
 ## [1.2.0] - 2018-07-31
 
 ### Added

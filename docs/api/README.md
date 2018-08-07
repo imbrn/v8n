@@ -68,12 +68,12 @@ sidebar: auto
 
 - **Details:**
 
-  This class represents a rule. It is returned from
-  [array-based validation](#testall) and is contained in the rule property of a
-  [`ValidationException`](#validationexception). The `fn` property contains the
-  actual function the validation strategy uses to validate the value.
+  This class represents a rule. It is returned from [array-based
+  validation](#testall) and is contained in the rule property of a
+  [`ValidationError`](#validationerror). The `fn` property contains the actual
+  function the validation strategy uses to validate the value.
 
-- **See also:** [Modifier](#modifier), [ValidationException](#validationexception)
+- **See also:** [Modifier](#modifier), [ValidationError](#validationerror)
 
 ### Modifier
 
@@ -91,7 +91,7 @@ sidebar: auto
 
 - **See also:** [Rule](#rule)
 
-### ValidationException
+### ValidationError
 
 - **Extends:** [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
 
@@ -153,13 +153,13 @@ sidebar: auto
 
   - `value: any`
 
-- **Returns:** [`ValidationException[]`](#validationexception)
+- **Returns:** [`ValidationError[]`](#validationerror)
 
 - **Usage:**
 
   This function is used for array-based validation. It is chained at the end of
-  all the rules and will return an array containing ValidationException objects,
-  one for each failed rule. The array is empty if the validation succeeded.
+  all the rules and will return an array containing ValidationError objects, one
+  for each failed rule. The array is empty if the validation succeeded.
 
   ```js
   v8n()
@@ -171,10 +171,10 @@ sidebar: auto
     .number()
     .min(4)
     .test(3);
-  // [ ValidationException{ rule: { name: "min"...}, value: 3 ...} ... ]
+  // [ ValidationError{ rule: { name: "min"...}, value: 3 ...} ... ]
   ```
 
-- **See also:** [ValidationException](#validationexception)
+- **See also:** [ValidationError](#validationerror)
 
 ### check
 
@@ -184,14 +184,14 @@ sidebar: auto
 
   - `value: any`
 
-- **Throws:** [`ValidationException`](#validationexception)
+- **Throws:** [`ValidationError`](#validationerror)
 
 - **Usage:**
 
   This function is used for exception-based validation. It is chained at the end
   of all the rules and will return nothing if the validation passed. If any rule
-  fails a [`ValidationException`](#validationexception) is thrown that contains
-  the failed rule.
+  fails a [`ValidationError`](#validationerror) is thrown that contains the
+  failed rule.
 
   ```js
   v8n()
@@ -200,10 +200,10 @@ sidebar: auto
 
   v8n()
     .string()
-    .test(3); // ValidationException is thrown
+    .test(3); // ValidationError is thrown
   ```
 
-- **See also:** [ValidationException](#validationexception)
+- **See also:** [ValidationError](#validationerror)
 
 ### testAsync
 
@@ -217,12 +217,12 @@ sidebar: auto
 
 - **Usage:**
 
-  This function is used for asynchronous validation. It is chained at the end
-  of all the rules and will return a `Promise` that will resolve to the
-  validated value if validation passes or reject to a
-  [`ValidationException`](#validationexception) if it fails. This strategy must
-  be used if any asynchronous rules are used. It allows for the use of regular
-  rules next to asynchronous ones.
+  This function is used for asynchronous validation. It is chained at the end of
+  all the rules and will return a `Promise` that will resolve to the validated
+  value if validation passes or reject to a
+  [`ValidationError`](#validationerror) if it fails. This strategy must be used
+  if any asynchronous rules are used. It allows for the use of regular rules
+  next to asynchronous ones.
 
   ::: danger
   All other validation strategies won't work for asynchronous rules.
@@ -250,7 +250,7 @@ sidebar: auto
     .testAsync("Test"); // Promise
   ```
 
-- **See also:** [ValidationException](#validationexception)
+- **See also:** [ValidationError](#validationerror)
 
 ## Built-in rules
 

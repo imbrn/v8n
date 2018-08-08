@@ -46,12 +46,10 @@ great ease and fluency:
 
 ```javascript
 v8n()
-  .some.vowel()
-  .some.consonant()
-  .not.every.lowercase()
-  .not.every.uppercase()
-  .not.some.number()
-  .test("Foo5"); // false - no numbers (.not.some.number), please!
+  .array()
+  .every.number()
+  .not.some.negative()
+  .test([1, 2, -3]); // false - no negative please!
 ```
 
 So fluent that it looks like English:

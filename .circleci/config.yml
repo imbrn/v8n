@@ -34,12 +34,12 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
-  
+
   deploy:
     <<: *defaults
     steps:
       - attach_workspace:
-          - at: ~/repo
+          at: ~/repo
       - add_ssh_keys
       - run:
           name: Authenticate NPM registry

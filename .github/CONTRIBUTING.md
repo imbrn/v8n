@@ -9,13 +9,13 @@ You will need [Node.js](http://nodejs.org) **version 6+**.
 
 After cloning the repo, run:
 
-``` bash
+```bash
 $ npm install # or yarn
 ```
 
 ### Important NPM scripts
 
-``` bash
+```bash
 # build scripts in dist
 $ npm run build
 
@@ -33,9 +33,6 @@ When commiting the unit tests will be run automatically.
 ## Project Structure
 
 - **`src`**: contains all of v8n's core
-
-  - `src/v8n.js`: v8n in it's entirety
-
-  - `src/v8n.test.js`: all the tests for v8n
-
+  - `v8n.js`: module entry file which exports the `v8n` function
+  - `v8n.test.js`: all the tests for v8n
 - **`dist`**: contains built files for distribution

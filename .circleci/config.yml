@@ -40,7 +40,9 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
-      - add_ssh_keys
+      - add_ssh_keys:
+          fingerprints:
+            - "9f:10:3c:f2:df:f4:93:d8:e7:b0:14:0e:42:74:8f:66"
       - run:
           name: Authenticate NPM registry
           command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc

@@ -64,90 +64,88 @@ function split(value) {
 }
 
 const availableRules = {
-  pattern: testPattern,
-
   // Value
 
-  equal(expected) {
-    return value => value == expected;
-  },
+  equal: expected => value => value == expected,
 
-  exact(expected) {
-    return value => value === expected;
-  },
+  exact: expected => value => value === expected,
 
   // Types
-
-  string: makeTestType("string"),
 
   number: (allowInfinite = true) => value =>
     typeof value === "number" && (allowInfinite || isFinite(value)),
 
-  boolean: makeTestType("boolean"),
+  integer: () => value => {
+    const isInteger = Number.isInteger || isIntegerPolyfill;
+    return isInteger(value);
+  },
 
-  undefined: makeTestType("undefined"),
+  string: () => testType("string"),
 
-  null: makeTestType("null"),
+  boolean: () => testType("boolean"),
 
-  array: makeTestType("array"),
+  undefined: () => testType("undefined"),
 
-  object: makeTestType("object"),
+  null: () => testType("null"),
+
+  array: () => testType("array"),
+
+  object: () => testType("object"),
 
   // Pattern
 
-  lowercase: makeTestPattern(/^([a-z]+\s*)+$/),
+  pattern: expected => value => expected.test(value),
 
-  uppercase: makeTestPattern(/^([A-Z]+\s*)+$/),
+  lowercase: () => value => /^([a-z]+\s*)+$/.test(value),
 
-  vowel: makeTestPattern(/^[aeiou]+$/i),
+  uppercase: () => value => /^([A-Z]+\s*)+$/.test(value),
 
-  consonant: makeTestPattern(/^(?=[^aeiou])([a-z]+)$/i),
+  vowel: () => value => /^[aeiou]+$/i.test(value),
+
+  consonant: () => value => /^(?=[^aeiou])([a-z]+)$/i.test(value),
 
   // Value at
 
-  first: makeTestValueAt(0),
+  first: expected => value => value[0] == expected,
 
-  last: makeTestValueAt(-1),
+  last: expected => value => value[value.length - 1] == expected,
 
   // Length
 
-  empty: makeTestLength(0, 0),
+  empty: () => value => value.length === 0,
 
-  length: makeTestLength(),
+  length: (min, max) => value =>
+    value.length >= min && value.length <= (max || min),
 
-  minLength: makeTestLength(undefined, Infinity),
+  minLength: min => value => value.length >= min,
 
-  maxLength: makeTestLength(-Infinity),
+  maxLength: max => value => value.length <= max,
 
   // Range
 
-  negative: makeTestRange(-Infinity, 0),
+  negative: () => value => value < 0,
 
-  positive: makeTestRange(-1, Infinity),
+  positive: () => value => value >= 0,
 
-  between: makeTestRange(undefined, undefined, true, true),
+  between: (a, b) => value => value >= a && value <= b,
 
-  range: makeTestRange(undefined, undefined, true, true),
+  range: (a, b) => value => value >= a && value <= b,
 
-  lessThan: makeTestRange(-Infinity, undefined, true),
+  lessThan: n => value => value < n,
 
-  lessThanOrEqual: makeTestRange(-Infinity, undefined, true, true),
+  lessThanOrEqual: n => value => value <= n,
 
-  greaterThan: makeTestRange(undefined, Infinity, false, true),
+  greaterThan: n => value => value > n,
 
-  greaterThanOrEqual: makeTestRange(undefined, Infinity, true, true),
+  greaterThanOrEqual: n => value => value >= n,
 
   // Divisible
 
-  even: makeTestDivisible(2, true),
+  even: () => value => value % 2 === 0,
 
-  odd: makeTestDivisible(2, false),
+  odd: () => value => value % 2 !== 0,
 
-  includes(expected) {
-    return testIncludes(expected);
-  },
-
-  integer: () => testInteger(),
+  includes: expected => value => ~value.indexOf(expected),
 
   schema: schema => testSchema(schema),
 
@@ -157,73 +155,19 @@ const availableRules = {
     validations.some(validation => validation.test(value)),
 
   optional: validation => value => {
-    if (value === undefined || value === null) return true;
-    validation.check(value);
+    if (value !== undefined && value !== null) validation.check(value);
     return true;
   }
 };
 
-function testPattern(pattern) {
-  return value => pattern.test(value);
-}
-
-function makeTestPattern(pattern) {
-  return () => testPattern(pattern);
-}
-
-function makeTestType(type) {
-  return () => value => {
+function testType(expected) {
+  return value => {
     return (
-      typeof value === type ||
-      (value === null && type === "null") ||
-      (Array.isArray(value) && type === "array")
+      (Array.isArray(value) && expected === "array") ||
+      (value === null && expected === "null") ||
+      typeof value === expected
     );
   };
-}
-
-function makeTestValueAt(index) {
-  return expected => value => {
-    const i = index < 0 ? value.length + index : index;
-    return value[i] == expected;
-  };
-}
-
-function makeTestLength(overriddenMin, overriddenMax) {
-  return (min, max) => value => {
-    return (
-      value.length >= firstDefined([overriddenMin, min]) &&
-      value.length <= firstDefined([overriddenMax, max, min])
-    );
-  };
-}
-
-function makeTestRange(
-  overriddenLower,
-  overriddenUpper,
-  inclusiveLower,
-  inclusiveUpper
-) {
-  return (lower, upper) => value => {
-    upper = firstDefined([overriddenUpper, upper, lower]);
-    lower = firstDefined([overriddenLower, lower]);
-    return (
-      (inclusiveLower ? value >= lower : value > lower) &&
-      (inclusiveUpper ? value <= upper : value < upper)
-    );
-  };
-}
-
-function makeTestDivisible(by, expected) {
-  return () => value => (value % by === 0) === expected;
-}
-
-function testIncludes(expected) {
-  return value => value.indexOf(expected) !== -1;
-}
-
-function testInteger() {
-  const isInteger = Number.isInteger || isIntegerPolyfill;
-  return value => isInteger(value);
 }
 
 function isIntegerPolyfill(value) {
@@ -249,10 +193,6 @@ function testSchema(schema) {
     }
     return true;
   };
-}
-
-function firstDefined(values) {
-  return values.find(it => it !== undefined);
 }
 
 export default v8n;

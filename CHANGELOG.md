@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Bug with `Infinity` values in range-based rules
+
 ## [1.2.1] - 2018-08-17
 
 ### Changed

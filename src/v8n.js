@@ -129,13 +129,13 @@ const availableRules = {
 
   range: makeTestRange(undefined, undefined, true, true),
 
-  lessThan: makeTestRange(-Infinity),
+  lessThan: makeTestRange(-Infinity, undefined, true),
 
-  lessThanOrEqual: makeTestRange(-Infinity, undefined, undefined, true),
+  lessThanOrEqual: makeTestRange(-Infinity, undefined, true, true),
 
-  greaterThan: makeTestRange(undefined, Infinity),
+  greaterThan: makeTestRange(undefined, Infinity, false, true),
 
-  greaterThanOrEqual: makeTestRange(undefined, Infinity, true),
+  greaterThanOrEqual: makeTestRange(undefined, Infinity, true, true),
 
   // Divisible
 

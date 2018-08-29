@@ -129,13 +129,13 @@ const availableRules = {
 
   range: makeTestRange(undefined, undefined, true, true),
 
-  lessThan: makeTestRange(-Infinity),
+  lessThan: makeTestRange(-Infinity, undefined, true),
 
-  lessThanOrEqual: makeTestRange(-Infinity, undefined, undefined, true),
+  lessThanOrEqual: makeTestRange(-Infinity, undefined, true, true),
 
-  greaterThan: makeTestRange(undefined, Infinity),
+  greaterThan: makeTestRange(undefined, Infinity, false, true),
 
-  greaterThanOrEqual: makeTestRange(undefined, Infinity, true),
+  greaterThanOrEqual: makeTestRange(undefined, Infinity, true, true),
 
   // Divisible
 
@@ -147,7 +147,7 @@ const availableRules = {
     return testIncludes(expected);
   },
 
-  integer: () => value => Number.isInteger(value) || testIntegerPolyfill(value),
+  integer: () => testInteger(),
 
   schema: schema => testSchema(schema),
 
@@ -221,7 +221,12 @@ function testIncludes(expected) {
   return value => value.indexOf(expected) !== -1;
 }
 
-function testIntegerPolyfill(value) {
+function testInteger() {
+  const isInteger = Number.isInteger || isIntegerPolyfill;
+  return value => isInteger(value);
+}
+
+function isIntegerPolyfill(value) {
   return (
     typeof value === "number" && isFinite(value) && Math.floor(value) === value
   );

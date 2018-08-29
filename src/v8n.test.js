@@ -634,6 +634,8 @@ describe("rules", () => {
     expect(is.test(-4)).toBeTruthy();
     expect(is.test(3)).toBeFalsy();
     expect(is.test(4)).toBeFalsy();
+    expect(is.test(-Infinity)).toBeTruthy();
+    expect(is.test(Infinity)).toBeFalsy();
 
     const not = v8n().not.lessThan(3);
     expect(not.test(1)).toBeFalsy();
@@ -641,6 +643,32 @@ describe("rules", () => {
     expect(not.test(-4)).toBeFalsy();
     expect(not.test(3)).toBeTruthy();
     expect(not.test(4)).toBeTruthy();
+    expect(not.test(-Infinity)).toBeFalsy();
+    expect(not.test(Infinity)).toBeTruthy();
+
+    expect(
+      v8n()
+        .lessThan(-Infinity)
+        .test(-Infinity)
+    ).toBeFalsy();
+
+    expect(
+      v8n()
+        .lessThan(-Infinity)
+        .test(Infinity)
+    ).toBeFalsy();
+
+    expect(
+      v8n()
+        .lessThan(Infinity)
+        .test(-Infinity)
+    ).toBeTruthy();
+
+    expect(
+      v8n()
+        .lessThan(Number.MIN_SAFE_INTEGER)
+        .test(-Infinity)
+    ).toBeTruthy();
   });
 
   test("lessThanOrEqualTo", () => {
@@ -651,6 +679,8 @@ describe("rules", () => {
     expect(is.test(2)).toBeTruthy();
     expect(is.test(3)).toBeTruthy();
     expect(is.test(4)).toBeFalsy();
+    expect(is.test(-Infinity)).toBeTruthy();
+    expect(is.test(Infinity)).toBeFalsy();
 
     const not = v8n().not.lessThanOrEqual(3);
     expect(not.test(-4)).toBeFalsy();
@@ -659,6 +689,32 @@ describe("rules", () => {
     expect(not.test(2)).toBeFalsy();
     expect(not.test(3)).toBeFalsy();
     expect(not.test(4)).toBeTruthy();
+    expect(not.test(-Infinity)).toBeFalsy();
+    expect(not.test(Infinity)).toBeTruthy();
+
+    expect(
+      v8n()
+        .lessThanOrEqual(-Infinity)
+        .test(-Infinity)
+    ).toBeTruthy();
+
+    expect(
+      v8n()
+        .lessThanOrEqual(-Infinity)
+        .test(Infinity)
+    ).toBeFalsy();
+
+    expect(
+      v8n()
+        .lessThanOrEqual(Infinity)
+        .test(-Infinity)
+    ).toBeTruthy();
+
+    expect(
+      v8n()
+        .lessThanOrEqual(Number.MIN_SAFE_INTEGER)
+        .test(-Infinity)
+    ).toBeTruthy();
   });
 
   test("greaterThan", () => {
@@ -667,12 +723,46 @@ describe("rules", () => {
     expect(is.test(-3)).toBeFalsy();
     expect(is.test(3)).toBeFalsy();
     expect(is.test(4)).toBeTruthy();
+    expect(is.test(-Infinity)).toBeFalsy();
+    expect(is.test(Infinity)).toBeTruthy();
 
     const not = v8n().not.greaterThan(3);
     expect(not.test(2)).toBeTruthy();
     expect(not.test(-3)).toBeTruthy();
     expect(not.test(3)).toBeTruthy();
     expect(not.test(4)).toBeFalsy();
+    expect(not.test(-Infinity)).toBeTruthy();
+    expect(not.test(Infinity)).toBeFalsy();
+
+    expect(
+      v8n()
+        .greaterThan(-Infinity)
+        .test(-Infinity)
+    ).toBeFalsy();
+
+    expect(
+      v8n()
+        .greaterThan(-Infinity)
+        .test(Infinity)
+    ).toBeTruthy();
+
+    expect(
+      v8n()
+        .greaterThan(Infinity)
+        .test(-Infinity)
+    ).toBeFalsy();
+
+    expect(
+      v8n()
+        .greaterThan(Number.MIN_SAFE_INTEGER)
+        .test(-Infinity)
+    ).toBeFalsy();
+
+    expect(
+      v8n()
+        .greaterThan(Number.MAX_SAFE_INTEGER)
+        .test(Infinity)
+    ).toBeTruthy();
   });
 
   test("greaterThanOrEqual", () => {
@@ -681,12 +771,52 @@ describe("rules", () => {
     expect(is.test(-3)).toBeFalsy();
     expect(is.test(3)).toBeTruthy();
     expect(is.test(4)).toBeTruthy();
+    expect(is.test(-Infinity)).toBeFalsy();
+    expect(is.test(Infinity)).toBeTruthy();
 
     const not = v8n().not.greaterThanOrEqual(3);
     expect(not.test(2)).toBeTruthy();
     expect(not.test(-3)).toBeTruthy();
     expect(not.test(3)).toBeFalsy();
     expect(not.test(4)).toBeFalsy();
+    expect(not.test(-Infinity)).toBeTruthy();
+    expect(not.test(Infinity)).toBeFalsy();
+
+    expect(
+      v8n()
+        .greaterThanOrEqual(-Infinity)
+        .test(-Infinity)
+    ).toBeTruthy();
+
+    expect(
+      v8n()
+        .greaterThanOrEqual(-Infinity)
+        .test(Infinity)
+    ).toBeTruthy();
+
+    expect(
+      v8n()
+        .greaterThanOrEqual(Infinity)
+        .test(-Infinity)
+    ).toBeFalsy();
+
+    expect(
+      v8n()
+        .greaterThanOrEqual(Number.MIN_SAFE_INTEGER)
+        .test(-Infinity)
+    ).toBeFalsy();
+
+    expect(
+      v8n()
+        .greaterThanOrEqual(Number.MAX_SAFE_INTEGER)
+        .test(Infinity)
+    ).toBeTruthy();
+
+    expect(
+      v8n()
+        .greaterThanOrEqual(Infinity)
+        .test(Infinity)
+    ).toBeTruthy();
   });
 
   test("range", () => {

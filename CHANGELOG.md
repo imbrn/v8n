@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.2.2] - 2018-08-29
+
+### Fixed
+
+- Bug with polyfill for `integer` rule
+- Bug with `Infinity` values in range-based rules
+
 ## [1.2.1] - 2018-08-17
 
 ### Changed
@@ -63,7 +70,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Build process now properly transpiles modules from ES6 to ES5. ([#44](https://github.com/imbrn/v8n/issues/44))
 
-[unreleased]: https://github.com/imbrn/v8n/compare/v1.2.1...HEAD
+[unreleased]: https://github.com/imbrn/v8n/compare/v1.2.2...HEAD
+[1.2.2]: https://github.com/imbrn/v8n/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/imbrn/v8n/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/imbrn/v8n/compare/v1.1.2...v1.2.0
 [1.1.2]: https://github.com/imbrn/v8n/compare/v1.1.1...v1.1.2

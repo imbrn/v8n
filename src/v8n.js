@@ -147,7 +147,7 @@ const availableRules = {
     return testIncludes(expected);
   },
 
-  integer: () => value => Number.isInteger(value) || testIntegerPolyfill(value),
+  integer: () => testInteger(),
 
   schema: schema => testSchema(schema),
 
@@ -221,7 +221,12 @@ function testIncludes(expected) {
   return value => value.indexOf(expected) !== -1;
 }
 
-function testIntegerPolyfill(value) {
+function testInteger() {
+  const isInteger = Number.isInteger || isIntegerPolyfill;
+  return value => isInteger(value);
+}
+
+function isIntegerPolyfill(value) {
   return (
     typeof value === "number" && isFinite(value) && Math.floor(value) === value
   );

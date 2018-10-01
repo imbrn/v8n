@@ -485,7 +485,7 @@ sidebar: auto
 
 - **Usage:**
 
-  This rule verifies that the prototype of the tested value appears anywhere in the prototype chain of the provided costructor.
+  This rule verifies that the prototype of the tested value appears anywhere in the prototype chain of the provided constructor.
 
   ```js
   v8n()

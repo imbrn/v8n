@@ -484,7 +484,6 @@ describe("rules", () => {
 
     const validationObject = v8n().instanceOf(Object);
     expect(validationObject.test(new Date())).toBeTruthy();
-    expect(validationObject.test(new Date())).toBeTruthy();
     expect(validationObject.test({})).toBeTruthy();
     expect(validationObject.test(null)).toBeFalsy();
     expect(validationObject.test("string")).toBeFalsy();

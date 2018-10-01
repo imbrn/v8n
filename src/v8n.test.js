@@ -464,6 +464,17 @@ describe("rules", () => {
     expect(validation.test("string")).toBeFalsy();
   });
 
+  test("object", () => {
+    const validation = v8n().object();
+    expect(validation.test([])).toBeTruthy();
+    expect(validation.test({})).toBeTruthy();
+    expect(validation.test(null)).toBeTruthy();
+    expect(validation.test(() => {})).toBeFalsy();
+    expect(validation.test(undefined)).toBeFalsy();
+    expect(validation.test("string")).toBeFalsy();
+    expect(validation.test(2)).toBeFalsy();
+  });
+
   test("number", () => {
     const noFlag = v8n().number();
     expect(noFlag.test(34)).toBeTruthy();

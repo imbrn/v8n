@@ -92,6 +92,8 @@ const availableRules = {
 
   object: () => testType("object"),
 
+  instanceOf: instance => value => value instanceof instance,
+
   // Pattern
 
   pattern: expected => value => expected.test(value),

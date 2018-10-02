@@ -17,5 +17,6 @@
 
 - [ ] I have created my branch from a recent version of `master`
 - [ ] The code is clean and easy to understand
+- [ ] I have written tests to guarantee that everything is working properly
 - [ ] I have made corresponding changes to the documentation
 - [ ] I have added changes to the `Unreleased` section of the CHANGELOG

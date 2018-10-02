@@ -479,6 +479,24 @@ sidebar: auto
     .test({ key: "value" }); // true
   ```
 
+### instanceOf
+
+- **Signature:** `instanceOf()`
+
+- **Usage:**
+
+  This rule verifies that the prototype of the tested value appears anywhere in the prototype chain of the provided constructor.
+
+  ```js
+  v8n()
+    .instanceOf(Date)
+    .test("hello"); // false
+
+  v8n()
+    .instanceOf(Date)
+    .test(new Date()); // true
+  ```
+
 ### lowercase
 
 - **Signature:** `lowercase()`

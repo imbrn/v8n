@@ -464,6 +464,31 @@ describe("rules", () => {
     expect(validation.test("string")).toBeFalsy();
   });
 
+  test("object", () => {
+    const validation = v8n().object();
+    expect(validation.test([])).toBeTruthy();
+    expect(validation.test({})).toBeTruthy();
+    expect(validation.test(null)).toBeTruthy();
+    expect(validation.test(() => {})).toBeFalsy();
+    expect(validation.test(undefined)).toBeFalsy();
+    expect(validation.test("string")).toBeFalsy();
+    expect(validation.test(2)).toBeFalsy();
+  });
+
+  test("instanceOf", () => {
+    const validationDate = v8n().instanceOf(Date);
+    expect(validationDate.test(new Date())).toBeTruthy();
+    expect(validationDate.test({})).toBeFalsy();
+    expect(validationDate.test(null)).toBeFalsy();
+    expect(validationDate.test("string")).toBeFalsy();
+
+    const validationObject = v8n().instanceOf(Object);
+    expect(validationObject.test(new Date())).toBeTruthy();
+    expect(validationObject.test({})).toBeTruthy();
+    expect(validationObject.test(null)).toBeFalsy();
+    expect(validationObject.test("string")).toBeFalsy();
+  });
+
   test("number", () => {
     const noFlag = v8n().number();
     expect(noFlag.test(34)).toBeTruthy();

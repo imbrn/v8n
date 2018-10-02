@@ -548,12 +548,12 @@ sidebar: auto
 
   ```js
   v8n()
-    .uppercase()
-    .test("HELLO"); // true
+    .vowel()
+    .test("AEIOU"); // true
 
   v8n()
-    .uppercase()
-    .test("Hello"); // false
+    .vowel()
+    .test("AEIOUZ"); // false
   ```
 
 - **See also:** [ECMAScript Language Specification](http://www.ecma-international.org/ecma-262/5.1/#sec-15.10.2.6)

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Bug with `schema` rule when working with array-based modifiers ([#127](https://github.com/imbrn/v8n/issues/127))
+
 ## [1.2.2] - 2018-08-29
 
 ### Fixed

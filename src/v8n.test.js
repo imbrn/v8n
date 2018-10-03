@@ -325,12 +325,48 @@ describe("modifiers", () => {
   });
 
   describe("the 'some' modifier", () => {
-    it("expect that rule passes on some array value", () => {
+    it("expect that rule passes on some array value", async () => {
       const validation = v8n().some.positive();
       expect(validation.test([-1, -2, -3])).toBeFalsy();
       expect(validation.test(10)).toBeFalsy();
       expect(validation.test([-1, -2, 1])).toBeTruthy();
       expect(validation.test([1, 2, 3])).toBeTruthy();
+
+      expect(
+        v8n()
+          .some.schema({ str: v8n().string() })
+          .test([true, { str: "hello" }, 12])
+      ).toBeTruthy();
+
+      expect(
+        v8n()
+          .some.schema({ str: v8n().string() })
+          .test(["hello", { str: true }, 12])
+      ).toBeFalsy();
+
+      expect(() =>
+        v8n()
+          .some.schema({ str: v8n().string() })
+          .check([true, { str: "hello" }, 12])
+      ).not.toThrow();
+
+      expect(() =>
+        v8n()
+          .some.schema({ str: v8n().string() })
+          .check(["hello", { str: true }, 12])
+      ).toThrow();
+
+      await expect(
+        v8n()
+          .some.schema({ str: v8n().string() })
+          .testAsync([true, { str: "hello" }, 12])
+      ).resolves.toEqual([true, { str: "hello" }, 12]);
+
+      await expect(
+        v8n()
+          .some.schema({ str: v8n().string() })
+          .testAsync([false, { str: true }, 12])
+      ).rejects.toBeDefined();
     });
   });
 
@@ -340,6 +376,38 @@ describe("modifiers", () => {
       expect(validation.test([1, 2, 3, -1])).toBeFalsy();
       expect(validation.test(10)).toBeFalsy();
       expect(validation.test([1, 2, 3])).toBeTruthy();
+
+      expect(validation.test([1, 2, 3])).toBeTruthy();
+
+      expect(
+        v8n()
+          .every.schema({ str: v8n().string() })
+          .test([{ str: "Hello" }])
+      ).toBeTruthy();
+
+      expect(() =>
+        v8n()
+          .every.schema({ str: v8n().string() })
+          .check([{ str: "Hello" }])
+      ).not.toThrow();
+
+      expect(() =>
+        v8n()
+          .every.schema({ str: v8n().string() })
+          .check([{ str: true }])
+      ).toThrow();
+
+      expect(
+        v8n()
+          .every.schema({ str: v8n().string() })
+          .testAsync([{ str: "Hello" }])
+      ).resolves.toEqual([{ str: "Hello" }]);
+
+      expect(
+        v8n()
+          .every.schema({ str: v8n().string() })
+          .testAsync([{ str: true }])
+      ).rejects.toBeDefined();
     });
   });
 

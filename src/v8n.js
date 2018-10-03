@@ -44,9 +44,26 @@ const availableModifiers = {
   },
 
   some: {
-    simple: fn => value => split(value).some(fn),
-    async: fn => value =>
-      Promise.all(split(value).map(fn)).then(result => result.some(Boolean))
+    simple: fn => value => {
+      return split(value).some(item => {
+        try {
+          return fn(item);
+        } catch (ex) {
+          return false;
+        }
+      });
+    },
+    async: fn => value => {
+      return Promise.all(
+        split(value).map(item => {
+          try {
+            return fn(item);
+          } catch (ex) {
+            return false;
+          }
+        })
+      ).then(result => result.some(Boolean));
+    }
   },
 
   every: {

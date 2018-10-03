@@ -10,7 +10,7 @@ class Rule {
     let fn = this.fn;
 
     try {
-      fn(value);
+      testAux(this.modifiers.slice(), fn)(value);
     } catch (ex) {
       fn = () => false;
     }
@@ -24,7 +24,7 @@ class Rule {
 
   _check(value) {
     try {
-      this.fn(value);
+      testAux(this.modifiers.slice(), this.fn)(value);
     } catch (ex) {
       if (testAux(this.modifiers.slice(), it => it)(false)) {
         return;

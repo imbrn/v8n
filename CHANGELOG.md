@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.2.3] - 2018-10-03
+
 ### Fixed
 
 - Bug with `schema` rule when working with array-based modifiers ([#127](https://github.com/imbrn/v8n/issues/127))
@@ -74,7 +76,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Build process now properly transpiles modules from ES6 to ES5. ([#44](https://github.com/imbrn/v8n/issues/44))
 
-[unreleased]: https://github.com/imbrn/v8n/compare/v1.2.2...HEAD
+[unreleased]: https://github.com/imbrn/v8n/compare/v1.2.3...HEAD
+[1.2.3]: https://github.com/imbrn/v8n/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/imbrn/v8n/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/imbrn/v8n/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/imbrn/v8n/compare/v1.1.2...v1.2.0

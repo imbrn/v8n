@@ -1,7 +1,9 @@
 import Context from "./Context";
 
 function v8n() {
-  return proxyContext(new Context());
+  return typeof Proxy !== "undefined"
+    ? proxyContext(new Context())
+    : proxyContextEs5(new Context());
 }
 
 // Custom rules
@@ -35,6 +37,33 @@ function proxyContext(context) {
       }
     }
   });
+}
+
+function proxyContextEs5(context) {
+  Object.keys(availableRules).forEach(prop => {
+    context[prop] = (...args) => {
+      const newContext = proxyContextEs5(context._clone());
+      return newContext._applyRule(availableRules[prop], prop)(...args);
+    };
+  });
+
+  Object.keys(customRules).forEach(prop => {
+    context[prop] = (...args) => {
+      const newContext = proxyContextEs5(context._clone());
+      return newContext._applyRule(customRules[prop], prop)(...args);
+    };
+  });
+
+  Object.keys(availableModifiers).forEach(prop => {
+    Object.defineProperty(context, prop, {
+      get: () => {
+        const newContext = proxyContextEs5(context._clone());
+        return newContext._applyModifier(availableModifiers[prop], prop);
+      }
+    });
+  });
+
+  return context;
 }
 
 const availableModifiers = {

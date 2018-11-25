@@ -48,6 +48,7 @@
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.5",
+    "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.7.0",
     "eslint": "^5.0.1",
     "eslint-config-prettier": "^2.9.0",
@@ -60,7 +61,6 @@
     "rollup": "^0.62.0",
     "rollup-plugin-babel": "^3.0.5",
     "rollup-plugin-uglify": "^4.0.0",
-    "vuepress": "^0.12.0",
-    "babel-plugin-external-helpers": "^6.22.0"
+    "vuepress": "^0.12.0"
   }
 }

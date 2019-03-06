@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Rule `instanceOf()` to check inheritance of prototypes.
+- Rule `numeric()` to check for strings containing numbers
 
 ## [1.2.3] - 2018-10-03
 

@@ -97,6 +97,8 @@ const availableRules = {
     return isInteger(value);
   },
 
+  numeric: () => value => !isNaN(parseFloat(value)) && isFinite(value),
+
   string: () => testType("string"),
 
   boolean: () => testType("boolean"),

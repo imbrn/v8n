@@ -385,6 +385,34 @@ sidebar: auto
     .test(NaN); // false
   ```
 
+### numeric
+
+- **Signature:** `numeric()`
+
+- **Usage:**
+
+  This rule verifies that the tested value is numeric. A numeric value is any
+  string containing a finite number or a finite number. Notably `Infinity` and
+  `NaN` are not numeric.
+
+  ```js
+  v8n()
+    .numeric()
+    .test(123); // true
+
+  v8n()
+    .numeric()
+    .test("123"); // true
+
+  v8n()
+    .numeric()
+    .test("1.23"); // true
+
+  v8n()
+    .numeric()
+    .test(NaN); // false
+  ```
+
 ### boolean
 
 - **Signature:** `boolean()`

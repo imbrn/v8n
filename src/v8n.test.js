@@ -578,6 +578,26 @@ describe("rules", () => {
     expect(flag.test(-Infinity)).toBeFalsy();
   });
 
+  test("numeric", () => {
+    const validation = v8n().numeric();
+    expect(validation.test("-10")).toBeTruthy();
+    expect(validation.test("0")).toBeTruthy();
+    expect(validation.test(0xff)).toBeTruthy();
+    expect(validation.test("0xFF")).toBeTruthy();
+    expect(validation.test("8e5")).toBeTruthy();
+    expect(validation.test("3.1415")).toBeTruthy();
+    expect(validation.test(+10)).toBeTruthy();
+    expect(validation.test("-0x42")).toBeFalsy();
+    expect(validation.test("7.2acdgs")).toBeFalsy();
+    expect(validation.test("")).toBeFalsy();
+    expect(validation.test({})).toBeFalsy();
+    expect(validation.test(NaN)).toBeFalsy();
+    expect(validation.test(null)).toBeFalsy();
+    expect(validation.test(true)).toBeFalsy();
+    expect(validation.test(Infinity)).toBeFalsy();
+    expect(validation.test(undefined)).toBeFalsy();
+  });
+
   test("boolean", () => {
     const validation = v8n().boolean();
     expect(validation.test(true)).toBeTruthy();

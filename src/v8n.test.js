@@ -1164,16 +1164,78 @@ describe("rules", () => {
     });
   });
 
-  test("optional", () => {
-    const validation = v8n().optional(
-      v8n()
-        .number()
-        .positive()
-    );
-    expect(validation.test(-1)).toBeFalsy();
-    expect(validation.test(1)).toBeTruthy();
-    expect(validation.test(null)).toBeTruthy();
-    expect(validation.test(undefined)).toBeTruthy();
+  describe("optional", () => {
+    it("should pass when validation passes", () => {
+      const optional = v8n().optional(
+        v8n()
+          .number()
+          .positive()
+      );
+
+      expect(optional.test(1)).toBe(true);
+      expect(optional.test(2)).toBe(true);
+      expect(optional.test(1000)).toBe(true);
+    });
+
+    it("should fail when validation fails", () => {
+      const optional = v8n().optional(
+        v8n()
+          .number()
+          .positive()
+      );
+
+      expect(optional.test(-1)).toBe(false);
+      expect(optional.test(-2)).toBe(false);
+      expect(optional.test(-100)).toBe(false);
+    });
+
+    it("should pass for null and undefined", () => {
+      const optional = v8n().optional(
+        v8n()
+          .number()
+          .positive()
+      );
+
+      expect(optional.test(null)).toBe(true);
+      expect(optional.test(undefined)).toBe(true);
+    });
+
+    it("should not consider trimmed empty string valid by default", () => {
+      const optional = v8n().optional(
+        v8n()
+          .number()
+          .positive()
+      );
+
+      expect(optional.test("")).toBe(false);
+      expect(optional.test("  ")).toBe(false);
+    });
+
+    it("should consider trimmed empty string valid when it is set to true", () => {
+      const optional = v8n().optional(
+        v8n()
+          .number()
+          .positive(),
+        true
+      );
+
+      expect(optional.test("")).toBe(true);
+      expect(optional.test("  ")).toBe(true);
+      expect(optional.test(-1)).toBe(false);
+      expect(optional.test("hello")).toBe(false);
+    });
+
+    it("should not consider trimmed empty string valid when it is set to false", () => {
+      const optional = v8n().optional(
+        v8n()
+          .number()
+          .positive(),
+        false
+      );
+
+      expect(optional.test("")).toBe(false);
+      expect(optional.test("  ")).toBe(false);
+    });
   });
 });
 

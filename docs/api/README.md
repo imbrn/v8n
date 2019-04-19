@@ -1083,16 +1083,19 @@ sidebar: auto
 
 ### optional
 
-- **Signature:** `optional(validation)`
+- **Signature:** `optional(validation, considerTrimmedEmptyString = false)`
 
 - **Arguments:**
 
   - `validation: Validation`
+  - `considerTrimmedEmptyString: boolean`
 
 - **Usage:**
 
-  Validates and optional value to pass a validation. Will return `true` for any
-  `undefined` or `null` values regardless of the given Validation.
+  Validates an optional value to pass a validation. Will return `true` for any
+  `undefined` or `null` values regardless of the given Validation. If the
+  `considerTrimmedEmptyString` argument is set to true, it will also pass if
+  the value is a trimmed empty string.
 
   ::: tip
   When the `check()` is used on this rule, an exception resulting from within
@@ -1109,6 +1112,22 @@ sidebar: auto
   validation.test(-1); // false
   validation.test(1); // true
   validation.test(null); // true
+  ```
+
+  ```js
+  const validation = v8n().optional(
+    v8n()
+      .number()
+      .positive(),
+    true // consider trimmed empty strings
+  );
+
+  validation.test(-1); // false
+  validation.test(1); // true
+  validation.test(null); // true
+  validation.test(""); // true
+  validation.test("   "); // true
+  validation.test("hello"); // false
   ```
 
 ## Built-in modifiers

@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Rule `instanceOf()` to check inheritance of prototypes.
 - Rule `numeric()` to check for strings containing numbers
 
+### Changed
+
+- Rule `optional` now supports a flag to consider trimmed empty strings valid (`considerTrimmedEmptyString`) ([#140](https://github.com/imbrn/v8n/issues/140))
+
 ## [1.2.3] - 2018-10-03
 
 ### Fixed

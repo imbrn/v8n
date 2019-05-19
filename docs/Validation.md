@@ -64,7 +64,7 @@ validated, it is simply configuration for the rule.
 
 ```js
 v8n()
-  .min(2)
+  .greaterThan(2)
   .test(1); // False, 1 is not at least 2
 ```
 
@@ -269,11 +269,11 @@ values with the same set of rules.
 ```js
 const val = v8n()
   .not.null()
-  .min(2);
+  .greaterThan(2);
 
 val.test(3); // True
 val.test(null); // False
-val.max(5).test(7); // False
+val.lessThan(5).test(7); // False
 ```
 
 You can of course perform different validation strategies on the same set of

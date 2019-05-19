@@ -169,9 +169,9 @@ sidebar: auto
 
   v8n()
     .number()
-    .min(4)
+    .greaterThan(4)
     .test(3);
-  // [ ValidationError{ rule: { name: "min"...}, value: 3 ...} ... ]
+  // [ ValidationError{ rule: { name: "greaterThan"...}, value: 3 ...} ... ]
   ```
 
 - **See also:** [ValidationError](#validationerror)

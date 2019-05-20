@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.3.1] - 2019-05-20
+
 ### Fixed
 
 - Bug with `optional` rule that ignores validation when an empty string is passed ([#149](https://github.com/imbrn/v8n/issues/149))
@@ -91,7 +93,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Build process now properly transpiles modules from ES6 to ES5. ([#44](https://github.com/imbrn/v8n/issues/44))
 
-[unreleased]: https://github.com/imbrn/v8n/compare/v1.3.0...HEAD
+[unreleased]: https://github.com/imbrn/v8n/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/imbrn/v8n/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/imbrn/v8n/compare/v1.2.3...v1.3.0
 [1.2.3]: https://github.com/imbrn/v8n/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/imbrn/v8n/compare/v1.2.1...v1.2.2

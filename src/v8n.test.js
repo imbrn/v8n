@@ -1206,6 +1206,50 @@ describe("rules", () => {
       expect(optional.test(undefined)).toBe(true);
     });
 
+    it("should work with the 'string' rule", () => {
+      expect(
+        v8n()
+          .optional(v8n().string(), false)
+          .test("")
+      ).toBe(true);
+
+      expect(
+        v8n()
+          .optional(v8n().string(), false)
+          .test("hello")
+      ).toBe(true);
+
+      expect(
+        v8n()
+          .optional(v8n().string(), true)
+          .test("")
+      ).toBe(true);
+
+      expect(
+        v8n()
+          .optional(v8n().string(), true)
+          .test("hello")
+      ).toBe(true);
+
+      expect(
+        v8n()
+          .optional(v8n().string(), true)
+          .test("10")
+      ).toBe(true);
+
+      expect(
+        v8n()
+          .optional(v8n().string(), true)
+          .test(10)
+      ).toBe(false);
+
+      expect(
+        v8n()
+          .optional(v8n().string(), true)
+          .test()
+      ).toBe(true);
+    });
+
     it("should not consider trimmed empty string valid by default", () => {
       const optional = v8n().optional(
         v8n()

@@ -176,8 +176,9 @@ const availableRules = {
     validations.some(validation => validation.test(value)),
 
   optional: (validation, considerTrimmedEmptyString = false) => value => {
-    if (typeof value === "string" && value.trim() === "")
-      return considerTrimmedEmptyString;
+    if (considerTrimmedEmptyString)
+      return typeof value === "string" && value.trim() === "";
+
     if (value !== undefined && value !== null) validation.check(value);
     return true;
   }

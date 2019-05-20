@@ -1175,6 +1175,12 @@ describe("rules", () => {
       expect(optional.test(1)).toBe(true);
       expect(optional.test(2)).toBe(true);
       expect(optional.test(1000)).toBe(true);
+
+      expect(
+        v8n()
+          .optional(v8n().string())
+          .test("")
+      ).toBe(true);
     });
 
     it("should fail when validation fails", () => {

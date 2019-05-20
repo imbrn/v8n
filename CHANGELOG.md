@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Bug with `optional` rule that ignores validation when an empty string is passed ([#149](https://github.com/imbrn/v8n/issues/149))
+
 ## [1.3.0] - 2019-05-19
 
 ### Added

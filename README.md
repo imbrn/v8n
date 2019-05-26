@@ -20,6 +20,10 @@ Dead simple fluent API. Customizable. Reusable.
 <a href="https://imbrn.github.io/v8n/api/">API</a>
 </p>
 
+<p align="center">
+<a href="https://www.buymeacoffee.com/AbLqSXjW1" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+</p>
+
 ## Introducing v8n
 
 > **v8n** is an acronym for **v**_alidatio_**n**. Notice that it has exactly

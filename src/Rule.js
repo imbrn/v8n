@@ -51,13 +51,17 @@ class Rule {
   }
 }
 
+function pickFn(fn, variant = "simple") {
+  return typeof fn === "object" ? fn[variant] : fn;
+}
+
 function testAux(modifiers, fn) {
   if (modifiers.length) {
     const modifier = modifiers.shift();
     const nextFn = testAux(modifiers, fn);
     return modifier.perform(nextFn);
   } else {
-    return fn;
+    return pickFn(fn);
   }
 }
 
@@ -67,7 +71,7 @@ function testAsyncAux(modifiers, fn) {
     const nextFn = testAsyncAux(modifiers, fn);
     return modifier.performAsync(nextFn);
   } else {
-    return value => Promise.resolve(fn(value));
+    return value => Promise.resolve(pickFn(fn, "async")(value));
   }
 }
 

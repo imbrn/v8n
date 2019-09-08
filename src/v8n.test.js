@@ -220,6 +220,26 @@ describe("execution functions", () => {
       });
     });
 
+    describe("working with schema's", () => {
+      it("should handle async rule within a schema", async () => {
+        v8n.extend({ asyncRule });
+
+        const validation = v8n().schema({
+          item: v8n()
+            .number()
+            .asyncRule([10, 17, 20])
+        });
+
+        await expect(
+          validation.testAsync({ item: "10" })
+        ).rejects.toBeDefined();
+        await expect(validation.testAsync({ item: 11 })).rejects.toBeDefined();
+        await expect(validation.testAsync({ item: 17 })).resolves.toEqual({
+          item: 17
+        });
+      });
+    });
+
     describe("the returned Promise", () => {
       it("should resolves when valid", async () => {
         const validation = v8n()

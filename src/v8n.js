@@ -40,7 +40,10 @@ function proxyContext(context) {
 const availableModifiers = {
   not: {
     simple: fn => value => !fn(value),
-    async: fn => value => Promise.resolve(fn(value)).then(result => !result)
+    async: fn => value =>
+      Promise.resolve(fn(value))
+        .then(result => !result)
+        .catch(e => true)
   },
 
   some: {
@@ -57,7 +60,7 @@ const availableModifiers = {
       return Promise.all(
         split(value).map(item => {
           try {
-            return fn(item);
+            return fn(item).catch(e => false);
           } catch (ex) {
             return false;
           }
@@ -206,21 +209,40 @@ function isIntegerPolyfill(value) {
 }
 
 function testSchema(schema) {
-  return value => {
-    const causes = [];
-    Object.keys(schema).forEach(key => {
-      const nestedValidation = schema[key];
-      try {
-        nestedValidation.check((value || {})[key]);
-      } catch (ex) {
-        ex.target = key;
-        causes.push(ex);
+  return {
+    simple: value => {
+      const causes = [];
+      Object.keys(schema).forEach(key => {
+        const nestedValidation = schema[key];
+        try {
+          nestedValidation.check((value || {})[key]);
+        } catch (ex) {
+          ex.target = key;
+          causes.push(ex);
+        }
+      });
+      if (causes.length > 0) {
+        throw causes;
       }
-    });
-    if (causes.length > 0) {
-      throw causes;
+      return true;
+    },
+    async: value => {
+      const causes = [];
+      const nested = Object.keys(schema).map(key => {
+        const nestedValidation = schema[key];
+        return nestedValidation.testAsync((value || {})[key]).catch(ex => {
+          ex.target = key;
+          causes.push(ex);
+        });
+      });
+      return Promise.all(nested).then(values => {
+        if (causes.length > 0) {
+          throw causes;
+        }
+
+        return true;
+      });
     }
-    return true;
   };
 }
 

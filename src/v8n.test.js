@@ -429,6 +429,25 @@ describe("modifiers", () => {
           .testAsync([{ str: true }])
       ).rejects.toBeDefined();
     });
+
+    it("expect that error if formatted correctly", async () => {
+      const validation = v8n().schema({
+        item: v8n().every.schema({
+          a: v8n().string()
+        })
+      });
+
+      const data = { item: [{ a: 1 }] };
+      const result = validation.testAll(data);
+
+      expect(result[0].rule.name).toBe("schema");
+      expect(result[0].cause).toHaveLength(1);
+      expect(result[0].cause[0].rule.name).toBe("schema");
+      expect(result[0].cause[0].cause).toHaveLength(1);
+      expect(result[0].cause[0].target).toBe("item");
+      expect(result[0].cause[0].cause[0].rule.name).toBe("string");
+      expect(result[0].cause[0].cause[0].target).toBe("a");
+    });
   });
 
   test("should be able to mix modifiers", () => {

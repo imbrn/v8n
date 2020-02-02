@@ -70,7 +70,7 @@ const availableModifiers = {
   },
 
   every: {
-    simple: fn => value => split(value).every(fn),
+    simple: fn => value => value !== false && split(value).every(fn),
     async: fn => value =>
       Promise.all(split(value).map(fn)).then(result => result.every(Boolean))
   }

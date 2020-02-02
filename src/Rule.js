@@ -38,7 +38,10 @@ class Rule {
 
   _testAsync(value) {
     return new Promise((resolve, reject) => {
-      testAsyncAux(this.modifiers.slice(), this.fn)(value)
+      testAsyncAux(
+        this.modifiers.slice(),
+        this.fn
+      )(value)
         .then(valid => {
           if (valid) {
             resolve(value);

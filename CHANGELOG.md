@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Bug with schema validation ([#166](https://github.com/imbrn/v8n/pull/166))
+
 ## [1.3.3] - 2019-09-15
 
 ### Fixed

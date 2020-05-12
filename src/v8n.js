@@ -40,19 +40,16 @@ function proxyContext(context) {
 }
 
 function proxyContextEs5(context) {
-  Object.keys(availableRules).forEach(prop => {
-    context[prop] = (...args) => {
-      const newContext = proxyContextEs5(context._clone());
-      return newContext._applyRule(availableRules[prop], prop)(...args);
-    };
-  });
+  const buildRuleSet = ruleSet =>
+    Object.keys(ruleSet).forEach(prop => {
+      context[prop] = (...args) => {
+        const newContext = proxyContextEs5(context._clone());
+        return newContext._applyRule(ruleSet[prop], prop)(...args);
+      };
+    });
 
-  Object.keys(customRules).forEach(prop => {
-    context[prop] = (...args) => {
-      const newContext = proxyContextEs5(context._clone());
-      return newContext._applyRule(customRules[prop], prop)(...args);
-    };
-  });
+  buildRuleSet(availableRules);
+  buildRuleSet(customRules);
 
   Object.keys(availableModifiers).forEach(prop => {
     Object.defineProperty(context, prop, {

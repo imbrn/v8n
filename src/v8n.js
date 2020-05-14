@@ -44,7 +44,11 @@ function proxyContextEs5(context) {
     Object.keys(ruleSet).forEach(prop => {
       targetContext[prop] = (...args) => {
         const newContext = proxyContextEs5(targetContext._clone());
-        return newContext._applyRule(ruleSet[prop], prop)(...args);
+        const contextWithRuleApplied = newContext._applyRule(
+          ruleSet[prop],
+          prop
+        )(...args);
+        return contextWithRuleApplied;
       };
     });
 

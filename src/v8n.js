@@ -48,19 +48,22 @@ function proxyContextEs5(context) {
       };
     });
 
-  addRuleSet(availableRules, context);
-  addRuleSet(customRules, context);
+  const contextWithAvailableRules = addRuleSet(availableRules, context);
+  const contextWithAllRules = addRuleSet(
+    customRules,
+    contextWithAvailableRules
+  );
 
   Object.keys(availableModifiers).forEach(prop => {
-    Object.defineProperty(context, prop, {
+    Object.defineProperty(contextWithAllRules, prop, {
       get: () => {
-        const newContext = proxyContextEs5(context._clone());
+        const newContext = proxyContextEs5(contextWithAllRules._clone());
         return newContext._applyModifier(availableModifiers[prop], prop);
       }
     });
   });
 
-  return context;
+  return contextWithAllRules;
 }
 
 const availableModifiers = {

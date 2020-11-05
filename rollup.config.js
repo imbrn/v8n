@@ -23,14 +23,13 @@ function buildConfigBuilder({ name, input, dist = "dist" }) {
     format,
     transpiled = true,
     minified = false,
-    includeExtension = true,
-    extension = format,
+    extension = "",
     sourceMap = false
   }) => {
     function buildFileName() {
-      return `${name}${includeExtension ? `.${extension}` : ""}${
-        minified ? ".min" : ""
-      }.js`;
+      return `${name}.${format === "es" ? "esm" : format}${
+        !!extension ? `.${extension}` : ""
+      }${minified ? ".min" : ""}.js`;
     }
 
     function buildPlugins() {
@@ -60,15 +59,18 @@ const buildConfig = buildConfigBuilder({
 });
 
 const configs = [
+  // AMD″
   buildConfig({ format: "amd" }),
+  // CJS
   buildConfig({ format: "cjs" }),
+  // UMD
   buildConfig({ format: "umd" }),
   buildConfig({
     format: "umd",
     minified: true,
-    includeExtension: false,
     sourceMap: true
   }),
+  // IIFE
   buildConfig({ format: "iife", extension: "browser" }),
   buildConfig({
     format: "iife",
@@ -76,7 +78,14 @@ const configs = [
     minified: true,
     sourceMap: true
   }),
-  buildConfig({ format: "esm" }),
+  // ESM
+  buildConfig({ format: "es" }),
+  buildConfig({
+    format: "es",
+    extension: "browser",
+    transpiled: false
+  }),
+  // System
   buildConfig({ format: "system" })
 ];
 

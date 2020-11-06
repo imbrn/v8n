@@ -1,4 +1,4 @@
-import Context from "./Context";
+import Context from './Context';
 
 function v8n() {
   return proxyContext(new Context());
@@ -33,7 +33,7 @@ function proxyContext(context) {
       if (prop in availableRules) {
         return newContext._applyRule(availableRules[prop], prop);
       }
-    }
+    },
   });
 }
 
@@ -43,7 +43,7 @@ const availableModifiers = {
     async: fn => value =>
       Promise.resolve(fn(value))
         .then(result => !result)
-        .catch(e => true)
+        .catch(e => true),
   },
 
   some: {
@@ -64,21 +64,21 @@ const availableModifiers = {
           } catch (ex) {
             return false;
           }
-        })
+        }),
       ).then(result => result.some(Boolean));
-    }
+    },
   },
 
   every: {
     simple: fn => value => value !== false && split(value).every(fn),
     async: fn => value =>
-      Promise.all(split(value).map(fn)).then(result => result.every(Boolean))
-  }
+      Promise.all(split(value).map(fn)).then(result => result.every(Boolean)),
+  },
 };
 
 function split(value) {
-  if (typeof value === "string") {
-    return value.split("");
+  if (typeof value === 'string') {
+    return value.split('');
   }
   return value;
 }
@@ -93,7 +93,7 @@ const availableRules = {
   // Types
 
   number: (allowInfinite = true) => value =>
-    typeof value === "number" && (allowInfinite || isFinite(value)),
+    typeof value === 'number' && (allowInfinite || isFinite(value)),
 
   integer: () => value => {
     const isInteger = Number.isInteger || isIntegerPolyfill;
@@ -102,17 +102,17 @@ const availableRules = {
 
   numeric: () => value => !isNaN(parseFloat(value)) && isFinite(value),
 
-  string: () => testType("string"),
+  string: () => testType('string'),
 
-  boolean: () => testType("boolean"),
+  boolean: () => testType('boolean'),
 
-  undefined: () => testType("undefined"),
+  undefined: () => testType('undefined'),
 
-  null: () => testType("null"),
+  null: () => testType('null'),
 
-  array: () => testType("array"),
+  array: () => testType('array'),
 
-  object: () => testType("object"),
+  object: () => testType('object'),
 
   instanceOf: instance => value => value instanceof instance,
 
@@ -181,22 +181,22 @@ const availableRules = {
   optional: (validation, considerTrimmedEmptyString = false) => value => {
     if (
       considerTrimmedEmptyString &&
-      typeof value === "string" &&
-      value.trim() === ""
+      typeof value === 'string' &&
+      value.trim() === ''
     ) {
       return true;
     }
 
     if (value !== undefined && value !== null) validation.check(value);
     return true;
-  }
+  },
 };
 
 function testType(expected) {
   return value => {
     return (
-      (Array.isArray(value) && expected === "array") ||
-      (value === null && expected === "null") ||
+      (Array.isArray(value) && expected === 'array') ||
+      (value === null && expected === 'null') ||
       typeof value === expected
     );
   };
@@ -204,7 +204,7 @@ function testType(expected) {
 
 function isIntegerPolyfill(value) {
   return (
-    typeof value === "number" && isFinite(value) && Math.floor(value) === value
+    typeof value === 'number' && isFinite(value) && Math.floor(value) === value
   );
 }
 
@@ -242,7 +242,7 @@ function testSchema(schema) {
 
         return true;
       });
-    }
+    },
   };
 }
 

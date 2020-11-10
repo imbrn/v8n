@@ -1,13 +1,20 @@
+import {
+  V8nDefaultModifiers,
+  V8nDefaultRules,
+  V8nRules,
+  V8nValidator,
+} from '../types/v8n';
 import Context from './Context';
+import ValidationError from './ValidationError';
 
-function v8n() {
+function v8n(): V8nValidator {
   return proxyContext(new Context());
 }
 
 // Custom rules
-let customRules = {};
+let customRules: V8nRules = {};
 
-v8n.extend = function(newRules) {
+v8n.extend = function(newRules: V8nRules) {
   Object.assign(customRules, newRules);
 };
 
@@ -15,9 +22,9 @@ v8n.clearCustomRules = function() {
   customRules = {};
 };
 
-function proxyContext(context) {
+function proxyContext(context: Context): V8nValidator {
   return new Proxy(context, {
-    get(obj, prop) {
+    get(obj, prop: string) {
       if (prop in obj) {
         return obj[prop];
       }
@@ -34,21 +41,21 @@ function proxyContext(context) {
         return newContext._applyRule(availableRules[prop], prop);
       }
     },
-  });
+  }) as Context & V8nValidator;
 }
 
-const availableModifiers = {
+const availableModifiers: V8nDefaultModifiers = {
   not: {
     simple: fn => value => !fn(value),
     async: fn => value =>
       Promise.resolve(fn(value))
         .then(result => !result)
-        .catch(e => true),
+        .catch(() => true),
   },
 
   some: {
     simple: fn => value => {
-      return split(value).some(item => {
+      return split(value).some((item: any) => {
         try {
           return fn(item);
         } catch (ex) {
@@ -58,9 +65,9 @@ const availableModifiers = {
     },
     async: fn => value => {
       return Promise.all(
-        split(value).map(item => {
+        split(value).map((item: any) => {
           try {
-            return fn(item).catch(e => false);
+            return fn(item).catch(() => false);
           } catch (ex) {
             return false;
           }
@@ -76,14 +83,14 @@ const availableModifiers = {
   },
 };
 
-function split(value) {
+function split(value: any) {
   if (typeof value === 'string') {
     return value.split('');
   }
   return value;
 }
 
-const availableRules = {
+const availableRules: V8nDefaultRules = {
   // Value
 
   equal: expected => value => value == expected,
@@ -169,7 +176,7 @@ const availableRules = {
 
   odd: () => value => value % 2 !== 0,
 
-  includes: expected => value => ~value.indexOf(expected),
+  includes: expected => value => value.indexOf(expected) >= 0,
 
   schema: schema => testSchema(schema),
 
@@ -192,8 +199,8 @@ const availableRules = {
   },
 };
 
-function testType(expected) {
-  return value => {
+function testType(expected: any) {
+  return (value: any) => {
     return (
       (Array.isArray(value) && expected === 'array') ||
       (value === null && expected === 'null') ||
@@ -202,16 +209,16 @@ function testType(expected) {
   };
 }
 
-function isIntegerPolyfill(value) {
+function isIntegerPolyfill(value: any) {
   return (
     typeof value === 'number' && isFinite(value) && Math.floor(value) === value
   );
 }
 
-function testSchema(schema) {
+function testSchema(schema: { [key in string | number]: any }) {
   return {
-    simple: value => {
-      const causes = [];
+    simple: (value: { [key in string | number]: any }) => {
+      const causes: ValidationError[] = [];
       Object.keys(schema).forEach(key => {
         const nestedValidation = schema[key];
         try {
@@ -226,16 +233,18 @@ function testSchema(schema) {
       }
       return true;
     },
-    async: value => {
-      const causes = [];
+    async: (value: { [key in string | number]: any }) => {
+      const causes: ValidationError[] = [];
       const nested = Object.keys(schema).map(key => {
         const nestedValidation = schema[key];
-        return nestedValidation.testAsync((value || {})[key]).catch(ex => {
-          ex.target = key;
-          causes.push(ex);
-        });
+        return nestedValidation
+          .testAsync((value || {})[key])
+          .catch((ex: ValidationError) => {
+            ex.target = key;
+            causes.push(ex);
+          });
       });
-      return Promise.all(nested).then(values => {
+      return Promise.all(nested).then(() => {
         if (causes.length > 0) {
           throw causes;
         }

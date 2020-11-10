@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "module": "commonjs",
+    "importHelpers": true,
+    "removeComments": true,
+    "downlevelIteration": true,
+    "lib": ["es2015", "es2016", "es2017"],
+    "allowJs": false,
+
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "noUnusedParameters": true,
+    "strictFunctionTypes": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "esModuleInterop": true,
+    "preserveSymlinks": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "types": ["node", "jest"],
+    "allowSyntheticDefaultImports": true,
+
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+}

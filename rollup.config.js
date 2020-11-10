@@ -20,7 +20,7 @@ function buildBabelConfig() {
 
 function buildConfigBuilder({ name, input, dist = 'dist' }) {
   return ({
-    name,
+    filename,
     format,
     transpiled = true,
     minified = false,
@@ -38,7 +38,7 @@ function buildConfigBuilder({ name, input, dist = 'dist' }) {
       output: {
         name,
         format,
-        file: name,
+        file: filename,
         dir: dist,
         sourcemap: sourceMap,
       },
@@ -54,36 +54,36 @@ const buildConfig = buildConfigBuilder({
 
 const configs = [
   // AMD″
-  buildConfig({ name: 'v8n.amd.js', format: 'amd' }),
+  buildConfig({ filename: 'v8n.amd.js', format: 'amd' }),
   // CJS
-  buildConfig({ name: 'v8n.cjs.js', format: 'cjs' }),
+  buildConfig({ filename: 'v8n.cjs.js', format: 'cjs' }),
   // UMD
-  buildConfig({ name: 'v8n.umd.js', format: 'umd' }),
+  buildConfig({ filename: 'v8n.umd.js', format: 'umd' }),
   buildConfig({
-    name: 'v8n.min.js',
+    filename: 'v8n.min.js',
     format: 'umd',
     minified: true,
     sourceMap: true,
   }),
   // IIFE
-  buildConfig({ name: 'v8n.browser.js', format: 'iife' }),
+  buildConfig({ filename: 'v8n.browser.js', format: 'iife' }),
   buildConfig({
-    name: 'v8n.browser.min.js',
+    filename: 'v8n.browser.min.js',
     format: 'iife',
     extension: 'browser',
     minified: true,
     sourceMap: true,
   }),
   // ESM
-  buildConfig({ name: 'v8n.esm.js', format: 'es' }),
+  buildConfig({ filename: 'v8n.esm.js', format: 'es' }),
   buildConfig({
-    name: 'v8n.esm.browser.js',
+    filename: 'v8n.esm.browser.js',
     format: 'es',
     extension: 'browser',
     transpiled: false,
   }),
   // System
-  buildConfig({ name: 'v8n.system.js', format: 'system' }),
+  buildConfig({ filename: 'v8n.system.js', format: 'system' }),
 ];
 
 export default configs;

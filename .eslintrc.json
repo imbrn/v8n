@@ -5,9 +5,30 @@
     "es6": true,
     "node": true
   },
-  "extends": ["prettier"],
   "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": 2020
-  }
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "extends": ["eslint:recommended", "plugin:jest/recommended", "prettier"],
+  "plugins": ["jest"],
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:jest/recommended",
+        "prettier",
+        "prettier/@typescript-eslint"
+      ],
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["jest", "@typescript-eslint"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "jest/no-try-expect": "off",
+        "jest/no-conditional-expect": "off"
+      }
+    }
+  ]
 }

@@ -43,7 +43,7 @@ const availableModifiers = {
     async: fn => value =>
       Promise.resolve(fn(value))
         .then(result => !result)
-        .catch(e => true),
+        .catch(() => true),
   },
 
   some: {
@@ -60,7 +60,7 @@ const availableModifiers = {
       return Promise.all(
         split(value).map(item => {
           try {
-            return fn(item).catch(e => false);
+            return fn(item).catch(() => false);
           } catch (ex) {
             return false;
           }
@@ -235,7 +235,7 @@ function testSchema(schema) {
           causes.push(ex);
         });
       });
-      return Promise.all(nested).then(values => {
+      return Promise.all(nested).then(() => {
         if (causes.length > 0) {
           throw causes;
         }

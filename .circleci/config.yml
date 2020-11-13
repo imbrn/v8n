@@ -4,7 +4,7 @@ orbs:
   node: circleci/node@4.1.0
 
 jobs:
-  test_and_lint:
+  build:
     executor: node/default
     working_directory: ~/repo
     steps:
@@ -45,15 +45,15 @@ jobs:
           command: scripts/deploy-docs.sh
 
 workflows:
-  build-and-deploy:
+  build:
     jobs:
-      - test_and_lint:
+      - build:
           filters:
             tags:
               only: /^v[0-9]+.*/
       - deploy:
           requires:
-            - test_and_lint
+            - build
           filters:
             tags:
               only: /^v[0-9]+.*/

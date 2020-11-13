@@ -1,9 +1,13 @@
 {
+  "root": true,
   "env": {
     "browser": true,
     "es6": true,
     "node": true
   },
   "extends": ["prettier"],
-  "parser": "babel-eslint"
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2020
+  }
 }

@@ -1,49 +1,34 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
-version: 2
+version: 2.1
 
-defaults: &defaults
-  working_directory: ~/repo
-  docker:
-    - image: circleci/node:10.1
+orbs:
+  node: circleci/node@4.1.0
 
 jobs:
-  build:
-    <<: *defaults
+  test_and_lint:
+    executor: node/default
+    working_directory: ~/repo
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run:
-          name: Install dependencies
-          command: yarn
+      - node/install-packages:
+          pkg-manager: yarn
       - run:
           name: Lint code
           command: yarn lint
       - run:
           name: Test code
           command: yarn test
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
       - persist_to_workspace:
           root: ~/repo
           paths: .
-
   deploy:
-    <<: *defaults
+    executor: node/default
     steps:
       - attach_workspace:
           at: ~/repo
       - add_ssh_keys:
           fingerprints:
-            - "16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48"
-            - "9f:10:3c:f2:df:f4:93:d8:e7:b0:14:0e:42:74:8f:66"
+            - '16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48'
+            - '9f:10:3c:f2:df:f4:93:d8:e7:b0:14:0e:42:74:8f:66'
       - run:
           name: Authenticate NPM registry
           command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
@@ -60,10 +45,9 @@ jobs:
           command: scripts/deploy-docs.sh
 
 workflows:
-  version: 2
   build-and-deploy:
     jobs:
-      - build:
+      - test_and_lint:
           filters:
             tags:
               only: /^v[0-9]+.*/

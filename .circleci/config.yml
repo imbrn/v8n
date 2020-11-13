@@ -53,7 +53,7 @@ workflows:
               only: /^v[0-9]+.*/
       - deploy:
           requires:
-            - build
+            - test_and_lint
           filters:
             tags:
               only: /^v[0-9]+.*/

@@ -1,34 +1,18 @@
 {
   "root": true,
-  "env": {
-    "browser": true,
-    "es6": true,
-    "node": true
-  },
   "parserOptions": {
-    "ecmaVersion": 2020,
+    "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "extends": ["eslint:recommended", "plugin:jest/recommended", "prettier"],
+  "env": {
+    "es6": true,
+    "node": true,
+    "browser": true
+  },
   "plugins": ["jest"],
-  "overrides": [
-    {
-      "files": ["**/*.ts"],
-      "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:jest/recommended",
-        "prettier",
-        "prettier/@typescript-eslint"
-      ],
-      "parser": "@typescript-eslint/parser",
-      "plugins": ["jest", "@typescript-eslint"],
-      "rules": {
-        "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/explicit-module-boundary-types": "off",
-        "jest/no-try-expect": "off",
-        "jest/no-conditional-expect": "off"
-      }
-    }
-  ]
+  "extends": ["eslint:recommended", "plugin:jest/recommended", "prettier"],
+  "rules": {
+    "jest/no-try-expect": "off",
+    "jest/no-conditional-expect": "off"
+  }
 }

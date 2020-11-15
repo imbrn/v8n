@@ -1,31 +1,12 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import Modifier from './Modifier';
+import v8n from './v8n';
 import Rule from './Rule';
-import v8n, { Validator } from './v8n';
-import ValidationError from './ValidationError';
-
-declare module './v8n' {
-  // eslint-disable-next-line jest/no-export
-  export interface Validator {
-    asyncRule(
-      expected: any,
-      delay?: number,
-      exception?: ValidationError,
-    ): Validator;
-    asyncCompositeRule(): Validator;
-    newRule(): Validator;
-    one(): Validator;
-    two(): Validator;
-    or(a: any, b: any): Validator;
-  }
-}
 
 beforeEach(() => {
   v8n.clearCustomRules();
 });
 
 describe('chaining', () => {
-  let validation: Validator;
+  let validation;
 
   beforeEach(() => {
     validation = v8n()
@@ -63,7 +44,7 @@ describe("the 'validation' object", () => {
 
 describe('execution functions', () => {
   describe("the 'test' function", () => {
-    let validation: Validator;
+    let validation;
 
     beforeEach(() => {
       validation = v8n()
@@ -84,7 +65,7 @@ describe('execution functions', () => {
   });
 
   describe("the 'testAll' function", () => {
-    let validation: Validator;
+    let validation;
 
     beforeEach(() => {
       validation = v8n()
@@ -108,7 +89,7 @@ describe('execution functions', () => {
   });
 
   describe("the 'check' function", () => {
-    let validation: Validator;
+    let validation;
 
     beforeEach(() => {
       validation = v8n()
@@ -125,7 +106,7 @@ describe('execution functions', () => {
     });
 
     describe('the thrown exception', () => {
-      let exception: ValidationError;
+      let exception;
 
       beforeEach(() => {
         try {
@@ -303,8 +284,8 @@ describe('execution functions', () => {
 
       it('should get correct ValidationException from composite failure', async () => {
         function asyncCompositeRule() {
-          return (value: any) =>
-            new Promise<boolean>(resolve => {
+          return value =>
+            new Promise(resolve => {
               v8n()
                 .schema({
                   a: v8n().string(),
@@ -461,11 +442,11 @@ describe('modifiers', () => {
 
       expect(result[0].rule.name).toBe('schema');
       expect(result[0].cause).toHaveLength(1);
-      expect(result[0].cause![0].rule.name).toBe('schema');
-      expect(result[0].cause![0].cause).toHaveLength(1);
-      expect(result[0].cause![0].target).toBe('item');
-      expect(result[0].cause![0].cause![0].rule.name).toBe('string');
-      expect(result[0].cause![0].cause![0].target).toBe('a');
+      expect(result[0].cause[0].rule.name).toBe('schema');
+      expect(result[0].cause[0].cause).toHaveLength(1);
+      expect(result[0].cause[0].target).toBe('item');
+      expect(result[0].cause[0].cause[0].rule.name).toBe('string');
+      expect(result[0].cause[0].cause[0].target).toBe('a');
     });
   });
 
@@ -584,7 +565,7 @@ describe('rules', () => {
     const validation = v8n().array();
     expect(validation.test([])).toBeTruthy();
     expect(validation.test([1, 2])).toBeTruthy();
-    expect(validation.test([])).toBeTruthy();
+    expect(validation.test(new Array())).toBeTruthy();
     expect(validation.test(null)).toBeFalsy();
     expect(validation.test(undefined)).toBeFalsy();
     expect(validation.test('string')).toBeFalsy();
@@ -595,7 +576,6 @@ describe('rules', () => {
     expect(validation.test([])).toBeTruthy();
     expect(validation.test({})).toBeTruthy();
     expect(validation.test(null)).toBeTruthy();
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     expect(validation.test(() => {})).toBeFalsy();
     expect(validation.test(undefined)).toBeFalsy();
     expect(validation.test('string')).toBeFalsy();
@@ -1085,10 +1065,7 @@ describe('rules', () => {
   });
 
   describe('schema', () => {
-    let is: Validator;
-    let not: Validator;
-    let validObj: Record<string, any>;
-    let invalidObj: Record<string, any>;
+    let is, not, validObj, invalidObj;
 
     beforeEach(() => {
       is = v8n().schema({
@@ -1126,12 +1103,11 @@ describe('rules', () => {
     it('should work with validation', () => {
       const result = is.testAll(invalidObj);
       expect(result[0].cause).toHaveLength(2);
-      expect(result[0].cause![0].rule.name).toBe('equal');
-      expect(result[0].cause![1].rule.name).toBe('schema');
-      expect(result[0].cause![1].cause).toHaveLength(3);
-      expect(result[0].cause![1].cause![2].rule.name).toBe('schema');
-      expect(result[0].cause![1].cause![2].cause).toHaveLength(1);
-      expect(result[0].cause![1].cause![2].cause![0].target).toBe('six');
+      expect(result[0].cause[0].rule.name).toBe('equal');
+      expect(result[0].cause[1].rule.name).toBe('schema');
+      expect(result[0].cause[1].cause).toHaveLength(3);
+      expect(result[0].cause[1].cause[2].rule.name).toBe('schema');
+      expect(result[0].cause[1].cause[2].cause[0].target).toBe('six');
 
       expect(is.test(validObj)).toBeTruthy();
       expect(is.test(invalidObj)).toBeFalsy();
@@ -1354,10 +1330,7 @@ describe('rules', () => {
 });
 
 describe('validation composition', () => {
-  let complex: Validator;
-  let validObj: Record<string, any>;
-  let invalidObj: Record<string, any>;
-  let causes: ValidationError[];
+  let complex, validObj, invalidObj, causes;
 
   beforeEach(() => {
     // A complex schema
@@ -1411,25 +1384,14 @@ describe('validation composition', () => {
     };
 
     causes = [
-      new ValidationError(
-        v8n().equal('').chain[0],
-        'val',
-        [new ValidationError(v8n().equal('').chain[0], 'val', null, 'two_one')],
-        'two',
-      ),
-      new ValidationError(
-        v8n().equal('').chain[0],
-        'val',
-        [
-          new ValidationError(
-            v8n().equal('').chain[0],
-            'val',
-            null,
-            'three_two',
-          ),
-        ],
-        'three',
-      ),
+      {
+        target: 'two',
+        cause: [{ target: 'two_one', rule: { name: 'equal' } }],
+      },
+      {
+        target: 'three',
+        cause: [{ target: 'three_two', cause: null }],
+      },
     ];
   });
 
@@ -1746,31 +1708,23 @@ describe('random tests', () => {
   });
 });
 
-function debugRules(validation: Validator) {
+function debugRules(validation) {
   return validation.chain.map(ruleId);
 }
 
-function ruleId({
-  name,
-  modifiers,
-  args,
-}: {
-  name: string;
-  modifiers: Modifier[];
-  args: any[];
-}) {
+function ruleId({ name, modifiers, args }) {
   const modifiersStr = modifiers.map(it => it.name).join('.');
   const argsStr = args.map(parseArg).join(', ');
   return `${modifiersStr ? modifiersStr + '.' : ''}${name}(${argsStr})`;
 }
 
-function parseArg(arg: any) {
+function parseArg(arg) {
   return typeof arg === 'string' ? `"${arg}"` : `${arg}`;
 }
 
-function asyncRule(expected: any, delay = 50, exception?: ValidationError) {
-  return (value: any) =>
-    new Promise<boolean>(resolve => {
+function asyncRule(expected, delay = 50, exception) {
+  return value =>
+    new Promise(resolve => {
       setTimeout(() => {
         if (exception) {
           throw exception;

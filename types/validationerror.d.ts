@@ -1,8 +1,6 @@
-import Rule from './Rule';
+import { Rule } from './rule';
 
-export = ValidationError;
-
-declare class ValidationError extends Error {
+export class ValidationError extends Error {
   constructor(
     rule: Rule,
     value: any,

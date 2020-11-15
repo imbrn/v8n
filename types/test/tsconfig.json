@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "experimentalDecorators": true,
+    "lib": [
+      "dom",
+      "es2015"
+    ],
+    "module": "commonjs",
+    "strict": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "v8n": [
+        "../index.d.ts"
+      ]
+    }
+  },
+  "include": [
+    "../*.d.ts",
+    "*.ts"
+  ],
+  "compileOnSave": false
+}

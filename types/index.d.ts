@@ -1,6 +1,9 @@
 import { v8n } from './v8n';
+import './umd';
 
 export default v8n;
+
+export { V8nValidator, V8nExtend, V8nObject } from './v8n';
 
 export {
   SimpleValidator,

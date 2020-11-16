@@ -1,4 +1,4 @@
-import v8n, { RuleDefinition } from '../index';
+import v8n from '../index';
 
 declare module '../v8n' {
   interface V8nValidator {
@@ -6,7 +6,7 @@ declare module '../v8n' {
   }
 }
 
-const isOne: RuleDefinition = () => value => value === 1;
+const isOne = () => (value: any) => value === 1;
 
 v8n.extend({ isOne });
 

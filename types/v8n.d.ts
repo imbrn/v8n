@@ -52,10 +52,12 @@ export interface V8nValidator {
   ): V8nValidator;
 }
 
+export type V8nExtend = (newRules: { [name: string]: RuleDefinition }) => void;
+
 export interface V8nObject {
   (): V8nValidator;
-  extend(newRules: { [name: string]: RuleDefinition }): void;
-  clearCustomRules(): void;
+  extend: V8nExtend;
+  clearCustomRules: () => void;
 }
 
 export const v8n: V8nObject;

@@ -13,8 +13,7 @@ export type Validator = SimpleValidator | AsyncValidator | ObjectValidator;
 
 export type RuleDefinition = (...args: any[]) => Validator;
 
-export class Rule {
-  constructor(name: string, fn: Validator, args: any[], modifiers: Modifier[]);
+export interface Rule {
   name: string;
   fn: Validator;
   args: any[];

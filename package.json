@@ -19,7 +19,7 @@
     "build": "rimraf -r dist && rollup -c",
     "deploy": "yarn build && npm publish",
     "format": "prettier --write ./src/**/*.js",
-    "test": "jest && tsc -p ./types/test/tsconfig.json",
+    "test": "jest && yarn test:types",
     "test:types": "tsc -p ./types/test/tsconfig.json"
   },
   "keywords": [
@@ -59,7 +59,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "yarn test:types && lint-staged"
     }
   },
   "lint-staged": {

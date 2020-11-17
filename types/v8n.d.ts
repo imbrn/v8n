@@ -21,7 +21,7 @@ export interface V8nValidator {
   null(): V8nValidator;
   array(): V8nValidator;
   object(): V8nValidator;
-  instanceOf(instance: any): V8nValidator;
+  instanceOf(constructor: new (...args: any[]) => {}): V8nValidator;
   pattern(pattern: RegExp): V8nValidator;
   lowercase(): V8nValidator;
   uppercase(): V8nValidator;

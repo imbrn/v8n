@@ -41,9 +41,9 @@ library. If you're particularly futuristic, a native ES6 module is also
 included.
 
 ```js
-import v8n from "v8n";
+import v8n from 'v8n';
 // or
-const v8n = require("v8n");
+const v8n = require('v8n');
 ```
 
 ## Other builds

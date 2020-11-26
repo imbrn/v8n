@@ -1,4 +1,4 @@
-var v8n = (function() {
+var v8n = (function () {
   'use strict';
 
   var Rule = function Rule(name, fn, args, modifiers) {
@@ -8,15 +8,13 @@ var v8n = (function() {
     this.modifiers = modifiers;
   };
 
-  Rule.prototype._test = function _test(value) {
+  Rule.prototype._test = function _test (value) {
     var fn = this.fn;
 
     try {
       testAux(this.modifiers.slice(), fn)(value);
     } catch (ex) {
-      fn = function() {
-        return false;
-      };
+      fn = function () { return false; };
     }
 
     try {
@@ -26,15 +24,11 @@ var v8n = (function() {
     }
   };
 
-  Rule.prototype._check = function _check(value) {
+  Rule.prototype._check = function _check (value) {
     try {
       testAux(this.modifiers.slice(), this.fn)(value);
     } catch (ex) {
-      if (
-        testAux(this.modifiers.slice(), function(it) {
-          return it;
-        })(false)
-      ) {
+      if (testAux(this.modifiers.slice(), function (it) { return it; })(false)) {
         return;
       }
     }
@@ -44,29 +38,27 @@ var v8n = (function() {
     }
   };
 
-  Rule.prototype._testAsync = function _testAsync(value) {
-    var this$1 = this;
+  Rule.prototype._testAsync = function _testAsync (value) {
+      var this$1 = this;
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       testAsyncAux(
         this$1.modifiers.slice(),
-        this$1.fn,
+        this$1.fn
       )(value)
-        .then(function(valid) {
+        .then(function (valid) {
           if (valid) {
             resolve(value);
           } else {
             reject(null);
           }
         })
-        .catch(function(ex) {
-          return reject(ex);
-        });
+        .catch(function (ex) { return reject(ex); });
     });
   };
 
   function pickFn(fn, variant) {
-    if (variant === void 0) variant = 'simple';
+    if ( variant === void 0 ) variant = 'simple';
 
     return typeof fn === 'object' ? fn[variant] : fn;
   }
@@ -87,9 +79,7 @@ var v8n = (function() {
       var nextFn = testAsyncAux(modifiers, fn);
       return modifier.performAsync(nextFn);
     } else {
-      return function(value) {
-        return Promise.resolve(pickFn(fn, 'async')(value));
-      };
+      return function (value) { return Promise.resolve(pickFn(fn, 'async')(value)); };
     }
   }
 
@@ -99,11 +89,10 @@ var v8n = (function() {
     this.performAsync = performAsync;
   };
 
-  var ValidationError = /*@__PURE__*/ (function(Error) {
+  var ValidationError = /*@__PURE__*/(function (Error) {
     function ValidationError(rule, value, cause, target) {
-      var remaining = [],
-        len = arguments.length - 4;
-      while (len-- > 0) remaining[len] = arguments[len + 4];
+      var remaining = [], len = arguments.length - 4;
+      while ( len-- > 0 ) remaining[ len ] = arguments[ len + 4 ];
 
       Error.call(this, remaining);
       if (Error.captureStackTrace) {
@@ -115,62 +104,54 @@ var v8n = (function() {
       this.target = target;
     }
 
-    if (Error) ValidationError.__proto__ = Error;
-    ValidationError.prototype = Object.create(Error && Error.prototype);
+    if ( Error ) ValidationError.__proto__ = Error;
+    ValidationError.prototype = Object.create( Error && Error.prototype );
     ValidationError.prototype.constructor = ValidationError;
 
     return ValidationError;
-  })(Error);
+  }(Error));
 
   var Context = function Context(chain, nextRuleModifiers) {
-    if (chain === void 0) chain = [];
-    if (nextRuleModifiers === void 0) nextRuleModifiers = [];
+    if ( chain === void 0 ) chain = [];
+    if ( nextRuleModifiers === void 0 ) nextRuleModifiers = [];
 
     this.chain = chain;
     this.nextRuleModifiers = nextRuleModifiers;
   };
 
-  Context.prototype._applyRule = function _applyRule(ruleFn, name) {
-    var this$1 = this;
+  Context.prototype._applyRule = function _applyRule (ruleFn, name) {
+      var this$1 = this;
 
-    return function() {
-      var args = [],
-        len = arguments.length;
-      while (len--) args[len] = arguments[len];
+    return function () {
+        var args = [], len = arguments.length;
+        while ( len-- ) args[ len ] = arguments[ len ];
 
       this$1.chain.push(
-        new Rule(
-          name,
-          ruleFn.apply(this$1, args),
-          args,
-          this$1.nextRuleModifiers,
-        ),
+        new Rule(name, ruleFn.apply(this$1, args), args, this$1.nextRuleModifiers)
       );
       this$1.nextRuleModifiers = [];
       return this$1;
     };
   };
 
-  Context.prototype._applyModifier = function _applyModifier(modifier, name) {
+  Context.prototype._applyModifier = function _applyModifier (modifier, name) {
     this.nextRuleModifiers.push(
-      new Modifier(name, modifier.simple, modifier.async),
+      new Modifier(name, modifier.simple, modifier.async)
     );
     return this;
   };
 
-  Context.prototype._clone = function _clone() {
+  Context.prototype._clone = function _clone () {
     return new Context(this.chain.slice(), this.nextRuleModifiers.slice());
   };
 
-  Context.prototype.test = function test(value) {
-    return this.chain.every(function(rule) {
-      return rule._test(value);
-    });
+  Context.prototype.test = function test (value) {
+    return this.chain.every(function (rule) { return rule._test(value); });
   };
 
-  Context.prototype.testAll = function testAll(value) {
+  Context.prototype.testAll = function testAll (value) {
     var err = [];
-    this.chain.forEach(function(rule) {
+    this.chain.forEach(function (rule) {
       try {
         rule._check(value);
       } catch (ex) {
@@ -180,8 +161,8 @@ var v8n = (function() {
     return err;
   };
 
-  Context.prototype.check = function check(value) {
-    this.chain.forEach(function(rule) {
+  Context.prototype.check = function check (value) {
+    this.chain.forEach(function (rule) {
       try {
         rule._check(value);
       } catch (ex) {
@@ -190,10 +171,10 @@ var v8n = (function() {
     });
   };
 
-  Context.prototype.testAsync = function testAsync(value) {
-    var this$1 = this;
+  Context.prototype.testAsync = function testAsync (value) {
+      var this$1 = this;
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       executeAsyncRules(value, this$1.chain.slice(), resolve, reject);
     });
   };
@@ -202,12 +183,12 @@ var v8n = (function() {
     if (rules.length) {
       var rule = rules.shift();
       rule._testAsync(value).then(
-        function() {
+        function () {
           executeAsyncRules(value, rules, resolve, reject);
         },
-        function(cause) {
+        function (cause) {
           reject(new ValidationError(rule, value, cause));
-        },
+        }
       );
     } else {
       resolve(value);
@@ -253,68 +234,38 @@ var v8n = (function() {
 
   var availableModifiers = {
     not: {
-      simple: function(fn) {
-        return function(value) {
-          return !fn(value);
-        };
-      },
-      async: function(fn) {
-        return function(value) {
-          return Promise.resolve(fn(value))
-            .then(function(result) {
-              return !result;
-            })
-            .catch(function() {
-              return true;
-            });
-        };
-      },
+      simple: function (fn) { return function (value) { return !fn(value); }; },
+      async: function (fn) { return function (value) { return Promise.resolve(fn(value))
+          .then(function (result) { return !result; })
+          .catch(function () { return true; }); }; },
     },
 
     some: {
-      simple: function(fn) {
-        return function(value) {
-          return split(value).some(function(item) {
+      simple: function (fn) { return function (value) {
+        return split(value).some(function (item) {
+          try {
+            return fn(item);
+          } catch (ex) {
+            return false;
+          }
+        });
+      }; },
+      async: function (fn) { return function (value) {
+        return Promise.all(
+          split(value).map(function (item) {
             try {
-              return fn(item);
+              return fn(item).catch(function () { return false; });
             } catch (ex) {
               return false;
             }
-          });
-        };
-      },
-      async: function(fn) {
-        return function(value) {
-          return Promise.all(
-            split(value).map(function(item) {
-              try {
-                return fn(item).catch(function() {
-                  return false;
-                });
-              } catch (ex) {
-                return false;
-              }
-            }),
-          ).then(function(result) {
-            return result.some(Boolean);
-          });
-        };
-      },
+          })
+        ).then(function (result) { return result.some(Boolean); });
+      }; },
     },
 
     every: {
-      simple: function(fn) {
-        return function(value) {
-          return value !== false && split(value).every(fn);
-        };
-      },
-      async: function(fn) {
-        return function(value) {
-          return Promise.all(split(value).map(fn)).then(function(result) {
-            return result.every(Boolean);
-          });
-        };
-      },
+      simple: function (fn) { return function (value) { return value !== false && split(value).every(fn); }; },
+      async: function (fn) { return function (value) { return Promise.all(split(value).map(fn)).then(function (result) { return result.every(Boolean); }); }; },
     },
   };
 
@@ -328,254 +279,124 @@ var v8n = (function() {
   var availableRules = {
     // Value
 
-    equal: function(expected) {
-      return function(value) {
-        return value == expected;
-      };
-    },
+    equal: function (expected) { return function (value) { return value == expected; }; },
 
-    exact: function(expected) {
-      return function(value) {
-        return value === expected;
-      };
-    },
+    exact: function (expected) { return function (value) { return value === expected; }; },
 
     // Types
 
-    number: function(allowInfinite) {
-      if (allowInfinite === void 0) allowInfinite = true;
+    number: function (allowInfinite) {
+      if ( allowInfinite === void 0 ) allowInfinite = true;
 
-      return function(value) {
-        return typeof value === 'number' && (allowInfinite || isFinite(value));
-      };
-    },
+      return function (value) { return typeof value === 'number' && (allowInfinite || isFinite(value)); };
+  },
 
-    integer: function() {
-      return function(value) {
-        var isInteger = Number.isInteger || isIntegerPolyfill;
-        return isInteger(value);
-      };
-    },
+    integer: function () { return function (value) {
+      var isInteger = Number.isInteger || isIntegerPolyfill;
+      return isInteger(value);
+    }; },
 
-    numeric: function() {
-      return function(value) {
-        return !isNaN(parseFloat(value)) && isFinite(value);
-      };
-    },
+    numeric: function () { return function (value) { return !isNaN(parseFloat(value)) && isFinite(value); }; },
 
-    string: function() {
-      return testType('string');
-    },
+    string: function () { return testType('string'); },
 
-    boolean: function() {
-      return testType('boolean');
-    },
+    boolean: function () { return testType('boolean'); },
 
-    undefined: function() {
-      return testType('undefined');
-    },
+    undefined: function () { return testType('undefined'); },
 
-    null: function() {
-      return testType('null');
-    },
+    null: function () { return testType('null'); },
 
-    array: function() {
-      return testType('array');
-    },
+    array: function () { return testType('array'); },
 
-    object: function() {
-      return testType('object');
-    },
+    object: function () { return testType('object'); },
 
-    instanceOf: function(instance) {
-      return function(value) {
-        return value instanceof instance;
-      };
-    },
+    instanceOf: function (instance) { return function (value) { return value instanceof instance; }; },
 
     // Pattern
 
-    pattern: function(expected) {
-      return function(value) {
-        return expected.test(value);
-      };
-    },
+    pattern: function (expected) { return function (value) { return expected.test(value); }; },
 
-    lowercase: function() {
-      return function(value) {
-        return /^([a-z]+\s*)+$/.test(value);
-      };
-    },
+    lowercase: function () { return function (value) { return /^([a-z]+\s*)+$/.test(value); }; },
 
-    uppercase: function() {
-      return function(value) {
-        return /^([A-Z]+\s*)+$/.test(value);
-      };
-    },
+    uppercase: function () { return function (value) { return /^([A-Z]+\s*)+$/.test(value); }; },
 
-    vowel: function() {
-      return function(value) {
-        return /^[aeiou]+$/i.test(value);
-      };
-    },
+    vowel: function () { return function (value) { return /^[aeiou]+$/i.test(value); }; },
 
-    consonant: function() {
-      return function(value) {
-        return /^(?=[^aeiou])([a-z]+)$/i.test(value);
-      };
-    },
+    consonant: function () { return function (value) { return /^(?=[^aeiou])([a-z]+)$/i.test(value); }; },
 
     // Value at
 
-    first: function(expected) {
-      return function(value) {
-        return value[0] == expected;
-      };
-    },
+    first: function (expected) { return function (value) { return value[0] == expected; }; },
 
-    last: function(expected) {
-      return function(value) {
-        return value[value.length - 1] == expected;
-      };
-    },
+    last: function (expected) { return function (value) { return value[value.length - 1] == expected; }; },
 
     // Length
 
-    empty: function() {
-      return function(value) {
-        return value.length === 0;
-      };
-    },
+    empty: function () { return function (value) { return value.length === 0; }; },
 
-    length: function(min, max) {
-      return function(value) {
-        return value.length >= min && value.length <= (max || min);
-      };
-    },
+    length: function (min, max) { return function (value) { return value.length >= min && value.length <= (max || min); }; },
 
-    minLength: function(min) {
-      return function(value) {
-        return value.length >= min;
-      };
-    },
+    minLength: function (min) { return function (value) { return value.length >= min; }; },
 
-    maxLength: function(max) {
-      return function(value) {
-        return value.length <= max;
-      };
-    },
+    maxLength: function (max) { return function (value) { return value.length <= max; }; },
 
     // Range
 
-    negative: function() {
-      return function(value) {
-        return value < 0;
-      };
-    },
+    negative: function () { return function (value) { return value < 0; }; },
 
-    positive: function() {
-      return function(value) {
-        return value >= 0;
-      };
-    },
+    positive: function () { return function (value) { return value >= 0; }; },
 
-    between: function(a, b) {
-      return function(value) {
-        return value >= a && value <= b;
-      };
-    },
+    between: function (a, b) { return function (value) { return value >= a && value <= b; }; },
 
-    range: function(a, b) {
-      return function(value) {
-        return value >= a && value <= b;
-      };
-    },
+    range: function (a, b) { return function (value) { return value >= a && value <= b; }; },
 
-    lessThan: function(n) {
-      return function(value) {
-        return value < n;
-      };
-    },
+    lessThan: function (n) { return function (value) { return value < n; }; },
 
-    lessThanOrEqual: function(n) {
-      return function(value) {
-        return value <= n;
-      };
-    },
+    lessThanOrEqual: function (n) { return function (value) { return value <= n; }; },
 
-    greaterThan: function(n) {
-      return function(value) {
-        return value > n;
-      };
-    },
+    greaterThan: function (n) { return function (value) { return value > n; }; },
 
-    greaterThanOrEqual: function(n) {
-      return function(value) {
-        return value >= n;
-      };
-    },
+    greaterThanOrEqual: function (n) { return function (value) { return value >= n; }; },
 
     // Divisible
 
-    even: function() {
-      return function(value) {
-        return value % 2 === 0;
-      };
-    },
+    even: function () { return function (value) { return value % 2 === 0; }; },
 
-    odd: function() {
-      return function(value) {
-        return value % 2 !== 0;
-      };
-    },
+    odd: function () { return function (value) { return value % 2 !== 0; }; },
 
-    includes: function(expected) {
-      return function(value) {
-        return ~value.indexOf(expected);
-      };
-    },
+    includes: function (expected) { return function (value) { return ~value.indexOf(expected); }; },
 
-    schema: function(schema) {
-      return testSchema(schema);
-    },
+    schema: function (schema) { return testSchema(schema); },
 
     // branching
 
-    passesAnyOf: function() {
-      var validations = [],
-        len = arguments.length;
-      while (len--) validations[len] = arguments[len];
+    passesAnyOf: function () {
+      var validations = [], len = arguments.length;
+      while ( len-- ) validations[ len ] = arguments[ len ];
 
-      return function(value) {
-        return validations.some(function(validation) {
-          return validation.test(value);
-        });
-      };
-    },
+      return function (value) { return validations.some(function (validation) { return validation.test(value); }); };
+  },
 
-    optional: function(validation, considerTrimmedEmptyString) {
-      if (considerTrimmedEmptyString === void 0)
-        considerTrimmedEmptyString = false;
+    optional: function (validation, considerTrimmedEmptyString) {
+      if ( considerTrimmedEmptyString === void 0 ) considerTrimmedEmptyString = false;
 
-      return function(value) {
-        if (
-          considerTrimmedEmptyString &&
-          typeof value === 'string' &&
-          value.trim() === ''
-        ) {
-          return true;
-        }
-
-        if (value !== undefined && value !== null) {
-          validation.check(value);
-        }
+      return function (value) {
+      if (
+        considerTrimmedEmptyString &&
+        typeof value === 'string' &&
+        value.trim() === ''
+      ) {
         return true;
-      };
-    },
+      }
+
+      if (value !== undefined && value !== null) { validation.check(value); }
+      return true;
+    };
+  },
   };
 
   function testType(expected) {
-    return function(value) {
+    return function (value) {
       return (
         (Array.isArray(value) && expected === 'array') ||
         (value === null && expected === 'null') ||
@@ -586,17 +407,15 @@ var v8n = (function() {
 
   function isIntegerPolyfill(value) {
     return (
-      typeof value === 'number' &&
-      isFinite(value) &&
-      Math.floor(value) === value
+      typeof value === 'number' && isFinite(value) && Math.floor(value) === value
     );
   }
 
   function testSchema(schema) {
     return {
-      simple: function(value) {
+      simple: function (value) {
         var causes = [];
-        Object.keys(schema).forEach(function(key) {
+        Object.keys(schema).forEach(function (key) {
           var nestedValidation = schema[key];
           try {
             nestedValidation.check((value || {})[key]);
@@ -610,18 +429,16 @@ var v8n = (function() {
         }
         return true;
       },
-      async: function(value) {
+      async: function (value) {
         var causes = [];
-        var nested = Object.keys(schema).map(function(key) {
+        var nested = Object.keys(schema).map(function (key) {
           var nestedValidation = schema[key];
-          return nestedValidation
-            .testAsync((value || {})[key])
-            .catch(function(ex) {
-              ex.target = key;
-              causes.push(ex);
-            });
+          return nestedValidation.testAsync((value || {})[key]).catch(function (ex) {
+            ex.target = key;
+            causes.push(ex);
+          });
         });
-        return Promise.all(nested).then(function() {
+        return Promise.all(nested).then(function () {
           if (causes.length > 0) {
             throw causes;
           }
@@ -633,4 +450,5 @@ var v8n = (function() {
   }
 
   return v8n;
-})();
+
+}());

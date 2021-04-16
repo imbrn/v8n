@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Bug with schema validation ([#166](https://github.com/imbrn/v8n/pull/166))
+- Bug with environments that cannot use the Proxy object ([#45](https://github.com/imbrn/v8n/issues/45))
 
 ## [1.3.3] - 2019-09-15
 

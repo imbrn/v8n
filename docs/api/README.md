@@ -10,7 +10,7 @@ sidebar: auto
 
 - **Signature:** `v8n()`
 
-- **Returns:** `Proxy`
+- **Returns:** `Proxy` or `Object` in environments where `Proxy` is unavailable.
 
 - **Usage:**
 

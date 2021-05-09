@@ -6,7 +6,7 @@ export interface V8nValidator {
   test(value?: any): boolean;
   testAll(value?: any): ValidationError[];
   check(value?: any): boolean;
-  testAsync(value?: any): boolean;
+  testAsync(value?: any): Promise<boolean>;
   not: V8nValidator;
   some: V8nValidator;
   every: V8nValidator;

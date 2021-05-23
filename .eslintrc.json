@@ -1,9 +1,18 @@
 {
-  "env": {
-    "browser": true,
-    "es6": true,
-    "node": true
+  "root": true,
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
   },
-  "extends": ["plugin:prettier/recommended"],
-  "parser": "babel-eslint"
+  "env": {
+    "es6": true,
+    "node": true,
+    "browser": true
+  },
+  "plugins": ["jest"],
+  "extends": ["eslint:recommended", "plugin:jest/recommended", "prettier"],
+  "rules": {
+    "jest/no-try-expect": "off",
+    "jest/no-conditional-expect": "off"
+  }
 }

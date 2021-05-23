@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Untranspiled build `v8n.esm.browser.js` for modern browsers ([#165](https://github.com/imbrn/v8n/issues/165))
+- TypeScript support through bundled type definitions ([#28](https://github.com/imbrn/v8n/issues/28))
+
 ### Fixed
 
 - Bug with schema validation ([#166](https://github.com/imbrn/v8n/pull/166))

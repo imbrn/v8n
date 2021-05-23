@@ -1,6 +1,6 @@
-import Rule from "./Rule";
-import Modifier from "./Modifier";
-import ValidationError from "./ValidationError";
+import Rule from './Rule';
+import Modifier from './Modifier';
+import ValidationError from './ValidationError';
 
 class Context {
   constructor(chain = [], nextRuleModifiers = []) {
@@ -11,7 +11,7 @@ class Context {
   _applyRule(ruleFn, name) {
     return (...args) => {
       this.chain.push(
-        new Rule(name, ruleFn.apply(this, args), args, this.nextRuleModifiers)
+        new Rule(name, ruleFn.apply(this, args), args, this.nextRuleModifiers),
       );
       this.nextRuleModifiers = [];
       return this;
@@ -20,7 +20,7 @@ class Context {
 
   _applyModifier(modifier, name) {
     this.nextRuleModifiers.push(
-      new Modifier(name, modifier.simple, modifier.async)
+      new Modifier(name, modifier.simple, modifier.async),
     );
     return this;
   }
@@ -71,7 +71,7 @@ function executeAsyncRules(value, rules, resolve, reject) {
       },
       cause => {
         reject(new ValidationError(rule, value, cause));
-      }
+      },
     );
   } else {
     resolve(value);

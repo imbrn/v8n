@@ -41,11 +41,20 @@ library. If you're particularly futuristic, a native ES6 module is also
 included.
 
 ```js
-import v8n from "v8n";
+import v8n from 'v8n';
 // or
-const v8n = require("v8n");
+const v8n = require('v8n');
 ```
 
-## Other builds
+## Builds
 
-Aside from the approaches above, UMD and AMD versions are also available.
+All builds are available from the `dist/` folder in source control or through
+the npm module at `v8n/dist/...`.
+
+- AMD (`v8n.amd.js`)
+- CommonJS (`v8n.cjs.js`) - _default import from `v8n` npm module_
+- UMD (`v8n.umd.js`, `v8n.min.js`)
+- IIFE (`v8n.browser.js`, `v8n.browser.min.js`)
+- ES-Module (`v8n.esm.js`)
+- Untranspiled ES6 (`v8n.esm.browser.js`, `v8n.esm.browser.min.js`)
+- System (`v8n.system.js`)

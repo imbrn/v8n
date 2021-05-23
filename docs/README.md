@@ -20,6 +20,7 @@ _validation_ to the very nice looking acronym **v8n**.
 - Custom validations rules
 - Asynchronous validation
 - Reusability
+- TypeScript support
 
 ## Getting started
 
@@ -45,7 +46,7 @@ After you've included v8n in some way you can use it very easily.
 ```js
 v8n()
   .string()
-  .test("My string!"); //true
+  .test('My string!'); //true
 ```
 
 ## Overview
@@ -61,15 +62,23 @@ same way. Make sure to check out all the
 ```javascript
 v8n()
   .string()
-  .first("H")
-  .last("o")
-  .test("Hello"); //true
+  .first('H')
+  .last('o')
+  .test('Hello'); //true
 ```
 
 The code above simply validates that the given value is a string, it's first
 character is `H` and the last is `o`. Doesn't that look really readable? Be sure
 to read up on [validation strategies](#validation-strategies) after you wrote
 your validations, so that you can leverage them to their full extent.
+
+### TypeScript support
+
+The v8n library comes with TypeScript support built in. When you import v8n in a
+TypeScript project, you will get full autocompletion and type support. This
+support also works in any other environments if your code editor supports it.
+This means that intellisense works in everywhere, including places without any
+module loaders (like browsers importing the script from a CDN).
 
 ### Custom rules
 

@@ -1,9 +1,182 @@
-import Context from './Context';
+class Rule {
+  constructor(name, fn, args, modifiers) {
+    this.name = name;
+    this.fn = fn;
+    this.args = args;
+    this.modifiers = modifiers;
+  }
+
+  _test(value) {
+    let fn = this.fn;
+
+    try {
+      testAux(this.modifiers.slice(), fn)(value);
+    } catch (ex) {
+      fn = () => false;
+    }
+
+    try {
+      return testAux(this.modifiers.slice(), fn)(value);
+    } catch (ex) {
+      return false;
+    }
+  }
+
+  _check(value) {
+    try {
+      testAux(this.modifiers.slice(), this.fn)(value);
+    } catch (ex) {
+      if (testAux(this.modifiers.slice(), it => it)(false)) {
+        return;
+      }
+    }
+
+    if (!testAux(this.modifiers.slice(), this.fn)(value)) {
+      throw null;
+    }
+  }
+
+  _testAsync(value) {
+    return new Promise((resolve, reject) => {
+      testAsyncAux(
+        this.modifiers.slice(),
+        this.fn,
+      )(value)
+        .then(valid => {
+          if (valid) {
+            resolve(value);
+          } else {
+            reject(null);
+          }
+        })
+        .catch(ex => reject(ex));
+    });
+  }
+}
+
+function pickFn(fn, variant = 'simple') {
+  return typeof fn === 'object' ? fn[variant] : fn;
+}
+
+function testAux(modifiers, fn) {
+  if (modifiers.length) {
+    const modifier = modifiers.shift();
+    const nextFn = testAux(modifiers, fn);
+    return modifier.perform(nextFn);
+  } else {
+    return pickFn(fn);
+  }
+}
+
+function testAsyncAux(modifiers, fn) {
+  if (modifiers.length) {
+    const modifier = modifiers.shift();
+    const nextFn = testAsyncAux(modifiers, fn);
+    return modifier.performAsync(nextFn);
+  } else {
+    return value => Promise.resolve(pickFn(fn, 'async')(value));
+  }
+}
+
+class Modifier {
+  constructor(name, perform, performAsync) {
+    this.name = name;
+    this.perform = perform;
+    this.performAsync = performAsync;
+  }
+}
+
+class ValidationError extends Error {
+  constructor(rule, value, cause, target, ...remaining) {
+    super(remaining);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ValidationError);
+    }
+    this.rule = rule;
+    this.value = value;
+    this.cause = cause;
+    this.target = target;
+  }
+}
+
+class Context {
+  constructor(chain = [], nextRuleModifiers = []) {
+    this.chain = chain;
+    this.nextRuleModifiers = nextRuleModifiers;
+  }
+
+  _applyRule(ruleFn, name) {
+    return (...args) => {
+      this.chain.push(
+        new Rule(name, ruleFn.apply(this, args), args, this.nextRuleModifiers),
+      );
+      this.nextRuleModifiers = [];
+      return this;
+    };
+  }
+
+  _applyModifier(modifier, name) {
+    this.nextRuleModifiers.push(
+      new Modifier(name, modifier.simple, modifier.async),
+    );
+    return this;
+  }
+
+  _clone() {
+    return new Context(this.chain.slice(), this.nextRuleModifiers.slice());
+  }
+
+  test(value) {
+    return this.chain.every(rule => rule._test(value));
+  }
+
+  testAll(value) {
+    const err = [];
+    this.chain.forEach(rule => {
+      try {
+        rule._check(value);
+      } catch (ex) {
+        err.push(new ValidationError(rule, value, ex));
+      }
+    });
+    return err;
+  }
+
+  check(value) {
+    this.chain.forEach(rule => {
+      try {
+        rule._check(value);
+      } catch (ex) {
+        throw new ValidationError(rule, value, ex);
+      }
+    });
+  }
+
+  testAsync(value) {
+    return new Promise((resolve, reject) => {
+      executeAsyncRules(value, this.chain.slice(), resolve, reject);
+    });
+  }
+}
+
+function executeAsyncRules(value, rules, resolve, reject) {
+  if (rules.length) {
+    const rule = rules.shift();
+    rule._testAsync(value).then(
+      () => {
+        executeAsyncRules(value, rules, resolve, reject);
+      },
+      cause => {
+        reject(new ValidationError(rule, value, cause));
+      },
+    );
+  } else {
+    resolve(value);
+  }
+}
 
 function v8n() {
-  return typeof Proxy !== undefined
-    ? proxyContext(new Context())
-    : proxylessContext(new Context());
+  return proxyContext(new Context());
 }
 
 // Custom rules
@@ -37,39 +210,6 @@ function proxyContext(context) {
       }
     },
   });
-}
-
-function proxylessContext(context) {
-  const addRuleSet = (ruleSet, targetContext) => {
-    Object.keys(ruleSet).forEach(prop => {
-      targetContext[prop] = (...args) => {
-        const newContext = proxylessContext(targetContext._clone());
-        const contextWithRuleApplied = newContext._applyRule(
-          ruleSet[prop],
-          prop
-        )(...args);
-        return contextWithRuleApplied;
-      };
-    });
-    return targetContext;
-  };
-
-  const contextWithAvailableRules = addRuleSet(availableRules, context);
-  const contextWithAllRules = addRuleSet(
-    customRules,
-    contextWithAvailableRules
-  );
-
-  Object.keys(availableModifiers).forEach(prop => {
-    Object.defineProperty(contextWithAllRules, prop, {
-      get: () => {
-        const newContext = proxylessContext(contextWithAllRules._clone());
-        return newContext._applyModifier(availableModifiers[prop], prop);
-      }
-    });
-  });
-
-  return contextWithAllRules;
 }
 
 const availableModifiers = {

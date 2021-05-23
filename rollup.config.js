@@ -1,83 +1,58 @@
-import project from "./package.json";
-import babel from "rollup-plugin-babel";
-import { uglify } from "rollup-plugin-uglify";
+import project from './package.json';
+import buble from '@rollup/plugin-buble';
+import { terser } from 'rollup-plugin-terser';
 
-function buildBabelConfig() {
+function buildConfig({ filename, format, transpile = true }) {
+  // Enforces the '.min.js' naming standard
+  const minify = filename.endsWith('.min.js');
+
+  const plugins = [];
+  if (transpile) plugins.push(buble());
+  if (minify) plugins.push(terser());
+
   return {
-    babelrc: false,
-    presets: [
-      [
-        "env",
-        {
-          modules: false,
-          exclude: ["transform-es2015-typeof-symbol"]
-        }
-      ]
-    ],
-    plugins: ["external-helpers"]
+    input: './src/v8n.js',
+    output: {
+      name: project.name,
+      format,
+      file: './dist/' + filename,
+      sourcemap: minify,
+      exports: 'default',
+    },
+    plugins,
   };
 }
-
-function buildConfigBuilder({ name, input, dist = "dist" }) {
-  return ({
-    format,
-    transpiled = true,
-    minified = false,
-    includeExtension = true,
-    extension = format,
-    sourceMap = false
-  }) => {
-    function buildFileName() {
-      return `${name}${includeExtension ? `.${extension}` : ""}${
-        minified ? ".min" : ""
-      }.js`;
-    }
-
-    function buildPlugins() {
-      const plugins = [];
-      if (transpiled) plugins.push(babel(buildBabelConfig()));
-      if (minified) plugins.push(uglify());
-      return plugins;
-    }
-
-    return {
-      input: input,
-      output: {
-        name,
-        format,
-        file: buildFileName(),
-        dir: dist,
-        sourcemap: sourceMap
-      },
-      plugins: buildPlugins()
-    };
-  };
-}
-
-const buildConfig = buildConfigBuilder({
-  name: project.name,
-  input: "./src/v8n.js"
-});
 
 const configs = [
-  buildConfig({ format: "amd" }),
-  buildConfig({ format: "cjs" }),
-  buildConfig({ format: "umd" }),
+  // AMD″
+  buildConfig({ filename: 'v8n.amd.js', format: 'amd' }),
+
+  // CJS
+  buildConfig({ filename: 'v8n.cjs.js', format: 'cjs' }),
+
+  // UMD
+  buildConfig({ filename: 'v8n.umd.js', format: 'umd' }),
+  buildConfig({ filename: 'v8n.min.js', format: 'umd' }),
+
+  // IIFE
+  buildConfig({ filename: 'v8n.browser.js', format: 'iife' }),
+  buildConfig({ filename: 'v8n.browser.min.js', format: 'iife' }),
+
+  // ESM
+  buildConfig({ filename: 'v8n.esm.js', format: 'es' }),
   buildConfig({
-    format: "umd",
-    minified: true,
-    includeExtension: false,
-    sourceMap: true
+    filename: 'v8n.esm.browser.js',
+    format: 'es',
+    transpile: false,
   }),
-  buildConfig({ format: "iife", extension: "browser" }),
   buildConfig({
-    format: "iife",
-    extension: "browser",
-    minified: true,
-    sourceMap: true
+    filename: 'v8n.esm.browser.min.js',
+    format: 'es',
+    transpile: false,
   }),
-  buildConfig({ format: "esm" }),
-  buildConfig({ format: "system" })
+
+  // System
+  buildConfig({ filename: 'v8n.system.js', format: 'system' }),
 ];
 
 export default configs;

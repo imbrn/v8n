@@ -40,7 +40,7 @@ class Rule {
     return new Promise((resolve, reject) => {
       testAsyncAux(
         this.modifiers.slice(),
-        this.fn
+        this.fn,
       )(value)
         .then(valid => {
           if (valid) {
@@ -54,8 +54,8 @@ class Rule {
   }
 }
 
-function pickFn(fn, variant = "simple") {
-  return typeof fn === "object" ? fn[variant] : fn;
+function pickFn(fn, variant = 'simple') {
+  return typeof fn === 'object' ? fn[variant] : fn;
 }
 
 function testAux(modifiers, fn) {
@@ -74,7 +74,7 @@ function testAsyncAux(modifiers, fn) {
     const nextFn = testAsyncAux(modifiers, fn);
     return modifier.performAsync(nextFn);
   } else {
-    return value => Promise.resolve(pickFn(fn, "async")(value));
+    return value => Promise.resolve(pickFn(fn, 'async')(value));
   }
 }
 

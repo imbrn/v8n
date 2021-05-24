@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.4.0] - 2021-05-24
+
 ### Added
 
 - Untranspiled build `v8n.esm.browser.js` for modern browsers ([#165](https://github.com/imbrn/v8n/issues/165))
@@ -14,8 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Bug with schema validation ([#166](https://github.com/imbrn/v8n/pull/166))
-- Bug with environments that cannot use the Proxy object ([#45](https://github.com/imbrn/v8n/issues/45))
+- Bug with schema validation ([#166](https://github.com/imbrn/v8n/pull/166)) - thanks @havelaer
+- Bug with environments that cannot use the Proxy object ([#45](https://github.com/imbrn/v8n/issues/45)) - thanks @akarel and @NoemiRozpara
 
 ## [1.3.3] - 2019-09-15
 
@@ -115,7 +117,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Build process now properly transpiles modules from ES6 to ES5. ([#44](https://github.com/imbrn/v8n/issues/44))
 
-[unreleased]: https://github.com/imbrn/v8n/compare/v1.3.3...HEAD
+[unreleased]: https://github.com/imbrn/v8n/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/imbrn/v8n/compare/v1.3.3...v1.4.0
 [1.3.3]: https://github.com/imbrn/v8n/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/imbrn/v8n/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/imbrn/v8n/compare/v1.3.0...v1.3.1

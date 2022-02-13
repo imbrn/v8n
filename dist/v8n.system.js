@@ -200,7 +200,9 @@ System.register('v8n', [], function (exports) {
       }
 
       function v8n() {
-        return proxyContext(new Context());
+        return typeof Proxy !== undefined
+          ? proxyContext(new Context())
+          : proxylessContext(new Context());
       }
 
       // Custom rules
@@ -234,6 +236,42 @@ System.register('v8n', [], function (exports) {
             }
           },
         });
+      }
+
+      function proxylessContext(context) {
+        var addRuleSet = function (ruleSet, targetContext) {
+          Object.keys(ruleSet).forEach(function (prop) {
+            targetContext[prop] = function () {
+              var args = [], len = arguments.length;
+              while ( len-- ) args[ len ] = arguments[ len ];
+
+              var newContext = proxylessContext(targetContext._clone());
+              var contextWithRuleApplied = newContext._applyRule(
+                ruleSet[prop],
+                prop
+              ).apply(void 0, args);
+              return contextWithRuleApplied;
+            };
+          });
+          return targetContext;
+        };
+
+        var contextWithAvailableRules = addRuleSet(availableRules, context);
+        var contextWithAllRules = addRuleSet(
+          customRules,
+          contextWithAvailableRules
+        );
+
+        Object.keys(availableModifiers).forEach(function (prop) {
+          Object.defineProperty(contextWithAllRules, prop, {
+            get: function () {
+              var newContext = proxylessContext(contextWithAllRules._clone());
+              return newContext._applyModifier(availableModifiers[prop], prop);
+            }
+          });
+        });
+
+        return contextWithAllRules;
       }
 
       var availableModifiers = {

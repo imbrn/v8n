@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- New rule `optionalAsync` for asynchronous, optional validation ([#206](https://github.com/imbrn/v8n/issues/206))
+
 ## [1.4.0] - 2022-02-17
 
 ### Added

@@ -23,7 +23,7 @@ sidebar: auto
   ```js
   v8n()
     .string()
-    .test("Test");
+    .test('Test');
   ```
 
 - **See also:** [Extending](/Extending.md)
@@ -134,7 +134,7 @@ sidebar: auto
   ```js
   v8n()
     .string()
-    .test("Test"); // True
+    .test('Test'); // True
 
   v8n()
     .number()
@@ -164,8 +164,8 @@ sidebar: auto
   ```js
   v8n()
     .string()
-    .first("T")
-    .testAll("Test"); // []
+    .first('T')
+    .testAll('Test'); // []
 
   v8n()
     .number()
@@ -196,7 +196,7 @@ sidebar: auto
   ```js
   v8n()
     .string()
-    .check("Test"); // (no return value)
+    .check('Test'); // (no return value)
 
   v8n()
     .string()
@@ -231,7 +231,7 @@ sidebar: auto
   ```js
   v8n()
     .myAsyncRule()
-    .testAsync("Test") // Promise
+    .testAsync('Test') // Promise
     .then(validatedValue => {
       // Validation passed
     })
@@ -241,13 +241,13 @@ sidebar: auto
 
   v8n()
     .myAsyncRule()
-    .test("Test"); // Unexpected result because the async rule is not resolved
+    .test('Test'); // Unexpected result because the async rule is not resolved
 
   v8n()
     .string() // This works even though it's not async
     .myAsyncRule()
-    .first("T") // This also works
-    .testAsync("Test"); // Promise
+    .first('T') // This also works
+    .testAsync('Test'); // Promise
   ```
 
 - **See also:** [ValidationError](#validationerror)
@@ -269,11 +269,11 @@ sidebar: auto
   ```js
   v8n()
     .pattern(/[a-z]+/)
-    .test("hello"); // true
+    .test('hello'); // true
 
   v8n()
     .pattern(/[0-9]/)
-    .test("hello"); // false
+    .test('hello'); // false
   ```
 
 - **See also:** [RegExp](https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/RegExp)
@@ -298,11 +298,11 @@ sidebar: auto
   ```js
   v8n()
     .equal(10)
-    .test("10"); // true
+    .test('10'); // true
 
   v8n()
-    .equal("Hello")
-    .test("Another"); // false
+    .equal('Hello')
+    .test('Another'); // false
   ```
 
 - **See also:** [Equality comparisons and sameness](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Equality_comparisons_and_sameness)
@@ -322,11 +322,11 @@ sidebar: auto
   ```js
   v8n()
     .exact(10)
-    .test("10"); // false
+    .test('10'); // false
 
   v8n()
-    .exact("Hello")
-    .test("Hello"); // true
+    .exact('Hello')
+    .test('Hello'); // true
   ```
 
 ### string
@@ -340,7 +340,7 @@ sidebar: auto
   ```js
   v8n()
     .string()
-    .test("Hello"); // true
+    .test('Hello'); // true
 
   v8n()
     .string()
@@ -374,7 +374,7 @@ sidebar: auto
 
   v8n()
     .number()
-    .test("Hello"); // false
+    .test('Hello'); // false
 
   v8n()
     .number()
@@ -402,11 +402,11 @@ sidebar: auto
 
   v8n()
     .numeric()
-    .test("123"); // true
+    .test('123'); // true
 
   v8n()
     .numeric()
-    .test("1.23"); // true
+    .test('1.23'); // true
 
   v8n()
     .numeric()
@@ -442,7 +442,7 @@ sidebar: auto
   ```js
   v8n()
     .undefined()
-    .test("something"); // false
+    .test('something'); // false
 
   v8n()
     .undefined()
@@ -482,7 +482,7 @@ sidebar: auto
   ```js
   v8n()
     .array()
-    .test("hello"); // false
+    .test('hello'); // false
 
   v8n()
     .array()
@@ -500,11 +500,11 @@ sidebar: auto
   ```js
   v8n()
     .object()
-    .test("hello"); // false
+    .test('hello'); // false
 
   v8n()
     .object()
-    .test({ key: "value" }); // true
+    .test({ key: 'value' }); // true
   ```
 
 ### instanceOf
@@ -518,7 +518,7 @@ sidebar: auto
   ```js
   v8n()
     .instanceOf(Date)
-    .test("hello"); // false
+    .test('hello'); // false
 
   v8n()
     .instanceOf(Date)
@@ -536,11 +536,11 @@ sidebar: auto
   ```js
   v8n()
     .lowercase()
-    .test("hello"); // true
+    .test('hello'); // true
 
   v8n()
     .lowercase()
-    .test("Hello"); // false
+    .test('Hello'); // false
   ```
 
 ### uppercase
@@ -554,11 +554,11 @@ sidebar: auto
   ```js
   v8n()
     .uppercase()
-    .test("HELLO"); // true
+    .test('HELLO'); // true
 
   v8n()
     .uppercase()
-    .test("Hello"); // false
+    .test('Hello'); // false
   ```
 
 ### vowel
@@ -577,11 +577,11 @@ sidebar: auto
   ```js
   v8n()
     .vowel()
-    .test("AEIOU"); // true
+    .test('AEIOU'); // true
 
   v8n()
     .vowel()
-    .test("AEIOUZ"); // false
+    .test('AEIOUZ'); // false
   ```
 
 - **See also:** [ECMAScript Language Specification](http://www.ecma-international.org/ecma-262/5.1/#sec-15.10.2.6)
@@ -602,11 +602,11 @@ sidebar: auto
   ```js
   v8n()
     .consonant()
-    .test("vn"); // true
+    .test('vn'); // true
 
   v8n()
     .consonant()
-    .test("me"); // false
+    .test('me'); // false
   ```
 
 - **See also:** [ECMAScript Language Specification](http://www.ecma-international.org/ecma-262/5.1/#sec-15.10.2.6)
@@ -626,18 +626,18 @@ sidebar: auto
 
   ```js
   v8n()
-    .first("H")
-    .test("Hello"); // true
+    .first('H')
+    .test('Hello'); // true
 
   v8n()
-    .first("A")
-    .test("Hello"); // false
+    .first('A')
+    .test('Hello'); // false
   ```
 
   ```js
   v8n()
-    .first("One")
-    .test(["One", "Two", "Three"]); // true
+    .first('One')
+    .test(['One', 'Two', 'Three']); // true
 
   v8n()
     .first(10)
@@ -659,18 +659,18 @@ sidebar: auto
 
   ```js
   v8n()
-    .last("o")
-    .test("Hello"); // true
+    .last('o')
+    .test('Hello'); // true
 
   v8n()
-    .last("A")
-    .test("Hello"); // false
+    .last('A')
+    .test('Hello'); // false
   ```
 
   ```js
   v8n()
-    .last("Three")
-    .test(["One", "Two", "Three"]); // true
+    .last('Three')
+    .test(['One', 'Two', 'Three']); // true
 
   v8n()
     .last(10)
@@ -692,7 +692,7 @@ sidebar: auto
   ```js
   v8n()
     .empty()
-    .test(""); // true
+    .test(''); // true
 
   v8n()
     .empty()
@@ -1000,8 +1000,8 @@ sidebar: auto
     .test([1, 2, 3]); // true
 
   v8n()
-    .includes("a")
-    .test("Hello"); // false
+    .includes('a')
+    .test('Hello'); // false
   ```
 
 ### integer
@@ -1044,17 +1044,17 @@ sidebar: auto
       .positive(),
     name: v8n()
       .string()
-      .minLength(4)
+      .minLength(4),
   });
 
   validation.test({
     id: 1,
-    name: "Luke"
+    name: 'Luke',
   }); // true
 
   validation.test({
     id: -1,
-    name: "Luke"
+    name: 'Luke',
   }); // false
   ```
 
@@ -1073,12 +1073,16 @@ sidebar: auto
   But if all of them fail, the rule fails, too. If no validation is given as the
   argument, the rule fails.
 
+  ::: warning
+  This rule cannot be used for asynchronous validations.
+  :::
+
   ```js
   const validation = v8n().passesAnyOf(v8n().number(), v8n().null());
 
   validation.test(12); // true
   validation.test(null); // true
-  validation.test("Hello"); // false
+  validation.test('Hello'); // false
   ```
 
 ### optional
@@ -1102,11 +1106,16 @@ sidebar: auto
   will have the failed rule as in its `cause.rule` parameter.
   :::
 
+  ::: warning
+  This rule cannot be used for asynchronous validations. See the nearly identical rule
+  [`optionalAsync`](#optionalasync) to optionally validate your async rules.
+  :::
+
   ```js
   const validation = v8n().optional(
     v8n()
       .number()
-      .positive()
+      .positive(),
   );
 
   validation.test(-1); // false
@@ -1119,15 +1128,52 @@ sidebar: auto
     v8n()
       .number()
       .positive(),
-    true // consider trimmed empty strings
+    true, // consider trimmed empty strings
   );
 
   validation.test(-1); // false
   validation.test(1); // true
   validation.test(null); // true
-  validation.test(""); // true
-  validation.test("   "); // true
-  validation.test("hello"); // false
+  validation.test(''); // true
+  validation.test('   '); // true
+  validation.test('hello'); // false
+  ```
+
+### optionalAsync
+
+::: danger
+This rule is asynchronous and requires the [`testAsync` validation strategy](#testasync).
+:::
+
+- **Signature:** `optionalAsync(validation, considerTrimmedEmptyString = false)`
+
+- **Arguments:**
+
+  - `validation: Validation`
+  - `considerTrimmedEmptyString: boolean`
+
+- **Usage:**
+
+  Validates an optional value to pass an asynchronous validation. The only difference
+  to [`optional`](#optional) is the ability to use asynchronous rules and the
+  requirement for the [`testAsync()` validation strategy](#testasync). You may check
+  the documentation for the [`optional`](#optional) rule for details about parameters
+  and further examples.
+
+  ```js
+  const validation = v8n().optionalAsync(
+    v8n()
+      .email()
+      .checkEmailAvailable(),
+  );
+
+  validation.testAsync('taken-email@example.com'); // Promise => ValidationError
+  validation.testAsync('available-email@example.com'); // Promise => true
+  validation.testAsync(123); // Promise => ValidationError
+  validation.testAsync(null); // Promise => true
+
+  // This will unexpectedly return true due to the validation strategy being non-async
+  validation.test('taken-email@example.com');
   ```
 
 ## Built-in modifiers
@@ -1144,11 +1190,11 @@ sidebar: auto
   ```js
   v8n()
     .string()
-    .test("Hello"); // true
+    .test('Hello'); // true
 
   v8n()
     .not.string()
-    .test("Hello"); // false
+    .test('Hello'); // false
   ```
 
 ### some

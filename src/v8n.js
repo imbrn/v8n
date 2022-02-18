@@ -46,7 +46,7 @@ function proxylessContext(context) {
         const newContext = proxylessContext(targetContext._clone());
         const contextWithRuleApplied = newContext._applyRule(
           ruleSet[prop],
-          prop
+          prop,
         )(...args);
         return contextWithRuleApplied;
       };
@@ -57,7 +57,7 @@ function proxylessContext(context) {
   const contextWithAvailableRules = addRuleSet(availableRules, context);
   const contextWithAllRules = addRuleSet(
     customRules,
-    contextWithAvailableRules
+    contextWithAvailableRules,
   );
 
   Object.keys(availableModifiers).forEach(prop => {
@@ -65,7 +65,7 @@ function proxylessContext(context) {
       get: () => {
         const newContext = proxylessContext(contextWithAllRules._clone());
         return newContext._applyModifier(availableModifiers[prop], prop);
-      }
+      },
     });
   });
 
@@ -213,7 +213,12 @@ const availableRules = {
   passesAnyOf: (...validations) => value =>
     validations.some(validation => validation.test(value)),
 
-  optional: (validation, considerTrimmedEmptyString = false) => value => {
+  optional: createOptionalRule(false),
+  optionalAsync: createOptionalRule(true),
+};
+
+function createOptionalRule(asynchronous) {
+  return (validation, considerTrimmedEmptyString = false) => value => {
     if (
       considerTrimmedEmptyString &&
       typeof value === 'string' &&
@@ -222,10 +227,16 @@ const availableRules = {
       return true;
     }
 
-    if (value !== undefined && value !== null) validation.check(value);
+    if (value !== undefined && value !== null) {
+      if (!asynchronous) {
+        validation.check(value);
+      } else {
+        return validation.testAsync(value);
+      }
+    }
     return true;
-  },
-};
+  };
+}
 
 function testType(expected) {
   return value => {

@@ -1,5 +1,6 @@
 import v8n from './v8n';
 import Rule from './Rule';
+import ValidationError from './ValidationError';
 
 beforeEach(() => {
   v8n.clearCustomRules();
@@ -1325,6 +1326,27 @@ describe('rules', () => {
 
       expect(optional.test('')).toBe(false);
       expect(optional.test('  ')).toBe(false);
+    });
+  });
+
+  describe('asyncOptional', () => {
+    it('should correctly validate asynchronous rules', async () => {
+      v8n.extend({ asyncRule });
+
+      const optional = v8n().optionalAsync(
+        v8n()
+          .number()
+          .asyncRule([10, 20]),
+      );
+
+      await expect(optional.testAsync(10)).resolves.toBe(10);
+      await expect(optional.testAsync('abc')).rejects.toBeInstanceOf(
+        ValidationError,
+      );
+      await expect(optional.testAsync(15)).rejects.toBeInstanceOf(
+        ValidationError,
+      );
+      await expect(optional.testAsync(undefined)).resolves.toBe(undefined);
     });
   });
 });

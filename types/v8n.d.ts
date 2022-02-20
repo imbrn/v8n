@@ -50,6 +50,10 @@ export interface V8nValidator {
     validation: V8nValidator,
     considerTrimmedEmptyString?: boolean,
   ): V8nValidator;
+  optionalAsync(
+    validation: V8nValidator,
+    considerTrimmedEmptyString?: boolean,
+  ): V8nValidator;
 }
 
 export type V8nExtend = (newRules: { [name: string]: RuleDefinition }) => void;

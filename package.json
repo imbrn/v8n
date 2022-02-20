@@ -19,7 +19,8 @@
     "build": "rimraf -r dist && rollup -c",
     "deploy": "yarn build && npm publish",
     "format": "prettier --write ./src/**/*.js",
-    "test": "jest && yarn test:types",
+    "test": "yarn test:unit && yarn test:types",
+    "test:unit": "jest",
     "test:types": "tsc -p ./types/test/tsconfig.json"
   },
   "keywords": [

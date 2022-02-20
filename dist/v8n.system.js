@@ -267,7 +267,7 @@ System.register('v8n', [], function (exports) {
             get: function () {
               var newContext = proxylessContext(contextWithAllRules._clone());
               return newContext._applyModifier(availableModifiers[prop], prop);
-            }
+            },
           });
         });
 
@@ -419,7 +419,12 @@ System.register('v8n', [], function (exports) {
           return function (value) { return validations.some(function (validation) { return validation.test(value); }); };
       },
 
-        optional: function (validation, considerTrimmedEmptyString) {
+        optional: createOptionalRule(false),
+        optionalAsync: createOptionalRule(true),
+      };
+
+      function createOptionalRule(asynchronous) {
+        return function (validation, considerTrimmedEmptyString) {
           if ( considerTrimmedEmptyString === void 0 ) considerTrimmedEmptyString = false;
 
           return function (value) {
@@ -431,11 +436,17 @@ System.register('v8n', [], function (exports) {
             return true;
           }
 
-          if (value !== undefined && value !== null) { validation.check(value); }
+          if (value !== undefined && value !== null) {
+            if (!asynchronous) {
+              validation.check(value);
+            } else {
+              return validation.testAsync(value);
+            }
+          }
           return true;
         };
-      },
-      };
+        };
+      }
 
       function testType(expected) {
         return function (value) {

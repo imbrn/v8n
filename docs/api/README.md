@@ -79,15 +79,16 @@ sidebar: auto
 
 - **Properties:**
 
-  - `fork: Function`
-  - `exec: Function`
+  - `name: string`
+  - `perform: Function`
+  - `performAsync: Function`
 
 - **Details:**
 
   This class represents a modifier. It is contained in an array within the
-  `modifiers` property of a [`Rule`](#rule). `fork` is a helper function for
-  mapping the value to the function correctly. `exec` performs the actual
-  modification of the modifier.
+  `modifiers` property of a [`Rule`](#rule). The functions `perform` and
+  `performAsync` are used to apply the modifier to a rule depending on the
+  validation strategy required.
 
 - **See also:** [Rule](#rule)
 
@@ -1037,6 +1038,12 @@ sidebar: auto
   values of the given object are then validated based on the validation
   specified for it's key in the schema.
 
+  ::: info
+  Schemas are validated like interfaces. That means, while they enforce that the
+  given schema is met, it also allows additional properties on the object. This
+  behaviour can be changed by using the [`strict`](#strict) modifier.
+  :::
+
   ```js
   const validation = v8n().schema({
     id: v8n()
@@ -1233,4 +1240,34 @@ This rule is asynchronous and requires the [`testAsync` validation strategy](#te
   v8n()
     .every.positive()
     .test(1, 2, -3); // false
+  ```
+
+### strict
+
+- **Applicable Types:** `object`
+
+- **Applicable Rules:** `schema`
+
+- **Usage:**
+
+  This modifier makes checks for object schemas strict. This means that
+  the schema must match the object exactly and no extraneous properties
+  may be included. For other rules this modifier will not have any effect.
+
+  ```js
+  v8n()
+    .strict.schema({
+      id: v8n()
+        .number()
+        .positive(),
+    })
+    .test({ id: 2 }); // true
+
+  v8n()
+    .strict.schema({
+      id: v8n()
+        .number()
+        .positive(),
+    })
+    .test({ id: 2, name: 'Luke' }); // false
   ```

@@ -12,13 +12,13 @@ var v8n = (function () {
     var fn = this.fn;
 
     try {
-      testAux(this.modifiers.slice(), fn)(value);
+      testAux(this.modifiers.slice(), fn, this)(value);
     } catch (ex) {
       fn = function () { return false; };
     }
 
     try {
-      return testAux(this.modifiers.slice(), fn)(value);
+      return testAux(this.modifiers.slice(), fn, this)(value);
     } catch (ex$1) {
       return false;
     }
@@ -26,14 +26,14 @@ var v8n = (function () {
 
   Rule.prototype._check = function _check (value) {
     try {
-      testAux(this.modifiers.slice(), this.fn)(value);
+      testAux(this.modifiers.slice(), this.fn, this)(value);
     } catch (ex) {
-      if (testAux(this.modifiers.slice(), function (it) { return it; })(false)) {
+      if (testAux(this.modifiers.slice(), function (it) { return it; }, this)(false)) {
         return;
       }
     }
 
-    if (!testAux(this.modifiers.slice(), this.fn)(value)) {
+    if (!testAux(this.modifiers.slice(), this.fn, this)(value)) {
       throw null;
     }
   };
@@ -44,7 +44,8 @@ var v8n = (function () {
     return new Promise(function (resolve, reject) {
       testAsyncAux(
         this$1.modifiers.slice(),
-        this$1.fn
+        this$1.fn,
+        this$1
       )(value)
         .then(function (valid) {
           if (valid) {
@@ -63,21 +64,21 @@ var v8n = (function () {
     return typeof fn === 'object' ? fn[variant] : fn;
   }
 
-  function testAux(modifiers, fn) {
+  function testAux(modifiers, fn, rule) {
     if (modifiers.length) {
       var modifier = modifiers.shift();
       var nextFn = testAux(modifiers, fn);
-      return modifier.perform(nextFn);
+      return modifier.perform(nextFn, rule);
     } else {
       return pickFn(fn);
     }
   }
 
-  function testAsyncAux(modifiers, fn) {
+  function testAsyncAux(modifiers, fn, rule) {
     if (modifiers.length) {
       var modifier = modifiers.shift();
       var nextFn = testAsyncAux(modifiers, fn);
-      return modifier.performAsync(nextFn);
+      return modifier.performAsync(nextFn, rule);
     } else {
       return function (value) { return Promise.resolve(pickFn(fn, 'async')(value)); };
     }
@@ -305,7 +306,39 @@ var v8n = (function () {
       simple: function (fn) { return function (value) { return value !== false && split(value).every(fn); }; },
       async: function (fn) { return function (value) { return Promise.all(split(value).map(fn)).then(function (result) { return result.every(Boolean); }); }; },
     },
+
+    strict: {
+      simple: function (fn, rule) { return function (value) {
+        if (isSchemaRule(rule) && value && typeof value === 'object') {
+          return (
+            Object.keys(rule.args[0]).length === Object.keys(value).length &&
+            fn(value)
+          );
+        }
+        return fn(value);
+      }; },
+      async: function (fn, rule) { return function (value) { return Promise.resolve(fn(value))
+          .then(function (result) {
+            if (isSchemaRule(rule) && value && typeof value === 'object') {
+              return (
+                Object.keys(rule.args[0]).length === Object.keys(value).length &&
+                result
+              );
+            }
+            return result;
+          })
+          .catch(function () { return false; }); }; },
+    },
   };
+
+  function isSchemaRule(rule) {
+    return (
+      rule &&
+      rule.name === 'schema' &&
+      rule.args.length > 0 &&
+      typeof rule.args[0] === 'object'
+    );
+  }
 
   function split(value) {
     if (typeof value === 'string') {

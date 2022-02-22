@@ -431,6 +431,71 @@ describe('modifiers', () => {
       ).rejects.toBeDefined();
     });
 
+    describe("the 'strict' modifier", () => {
+      it('makes the schema rule strict', () => {
+        const validation = v8n().strict.schema({
+          id: v8n()
+            .number()
+            .positive(),
+          name: v8n()
+            .string()
+            .minLength(4),
+        });
+
+        expect(
+          validation.test({
+            id: 1,
+            name: 'Luke',
+          }),
+        ).toBeTruthy();
+
+        expect(
+          validation.test({
+            id: 1,
+          }),
+        ).toBeFalsy();
+
+        expect(
+          validation.test({
+            id: 1,
+            name: 'Luke',
+            lastname: 'Skywalker',
+          }),
+        ).toBeFalsy();
+      });
+
+      it('makes the schema rule strict asynchronously', async () => {
+        v8n.extend({ asyncRule });
+
+        const validation = v8n().strict.schema({
+          id: v8n()
+            .number()
+            .asyncRule([10, 20]),
+        });
+
+        const valid = {
+          id: 10,
+        };
+
+        const invalidValue = {
+          id: 1,
+        };
+
+        const invalidExtraProp = {
+          id: 1,
+          name: 'Luke',
+        };
+
+        await expect(validation.testAsync(valid)).resolves.toBe(valid);
+        await expect(validation.testAsync(invalidValue)).rejects.toBeInstanceOf(
+          ValidationError,
+        );
+        await expect(
+          validation.testAsync(invalidExtraProp),
+        ).rejects.toBeInstanceOf(ValidationError);
+      });
+    });
+
     it('expect that error if formatted correctly', async () => {
       const validation = v8n().schema({
         item: v8n().every.schema({

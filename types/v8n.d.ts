@@ -10,6 +10,7 @@ export interface V8nValidator {
   not: V8nValidator;
   some: V8nValidator;
   every: V8nValidator;
+  strict: V8nValidator;
   equal(expected: any): V8nValidator;
   exact(expected: any): V8nValidator;
   number(allowInfinite?: boolean): V8nValidator;

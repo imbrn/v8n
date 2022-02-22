@@ -1,6 +1,6 @@
-import { AsyncValidator, SimpleValidator } from './rule';
+import { AsyncValidator, SimpleValidator, Rule } from './rule';
 
-export type Performer<T> = (fn: T) => T;
+export type Performer<T> = (fn: T, rule?: Rule) => T;
 
 export interface Modifier {
   name: string;

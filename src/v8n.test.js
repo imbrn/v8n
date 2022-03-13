@@ -1327,13 +1327,11 @@ describe('rules', () => {
       expect(optional.test('')).toBe(false);
       expect(optional.test('  ')).toBe(false);
     });
-  });
 
-  describe('asyncOptional', () => {
     it('should correctly validate asynchronous rules', async () => {
       v8n.extend({ asyncRule });
 
-      const optional = v8n().optionalAsync(
+      const optional = v8n().optional(
         v8n()
           .number()
           .asyncRule([10, 20]),

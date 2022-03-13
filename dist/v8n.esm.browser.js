@@ -175,6 +175,27 @@ function executeAsyncRules(value, rules, resolve, reject) {
   }
 }
 
+const consideredEmpty = (value, considerTrimmedEmptyString) => {
+  if (
+    considerTrimmedEmptyString &&
+    typeof value === 'string' &&
+    value.trim().length === 0
+  ) {
+    return true;
+  }
+
+  return value === undefined || value === null;
+};
+
+var optional = (validation, considerTrimmedEmptyString = false) => ({
+  simple: value =>
+    consideredEmpty(value, considerTrimmedEmptyString) ||
+    validation.check(value) === undefined,
+  async: value =>
+    consideredEmpty(value, considerTrimmedEmptyString) ||
+    validation.testAsync(value),
+});
+
 function v8n() {
   return typeof Proxy !== undefined
     ? proxyContext(new Context())
@@ -388,30 +409,8 @@ const availableRules = {
   passesAnyOf: (...validations) => value =>
     validations.some(validation => validation.test(value)),
 
-  optional: createOptionalRule(false),
-  optionalAsync: createOptionalRule(true),
+  optional,
 };
-
-function createOptionalRule(asynchronous) {
-  return (validation, considerTrimmedEmptyString = false) => value => {
-    if (
-      considerTrimmedEmptyString &&
-      typeof value === 'string' &&
-      value.trim() === ''
-    ) {
-      return true;
-    }
-
-    if (value !== undefined && value !== null) {
-      if (!asynchronous) {
-        validation.check(value);
-      } else {
-        return validation.testAsync(value);
-      }
-    }
-    return true;
-  };
-}
 
 function testType(expected) {
   return value => {

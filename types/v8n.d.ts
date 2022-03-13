@@ -5,7 +5,7 @@ export interface V8nValidator {
   chain: Rule[];
   test(value?: any): boolean;
   testAll(value?: any): ValidationError[];
-  check(value?: any): boolean;
+  check(value?: any): void;
   testAsync(value?: any): Promise<boolean>;
   not: V8nValidator;
   some: V8nValidator;
@@ -47,10 +47,6 @@ export interface V8nValidator {
   schema(schema: { [key in string | number]: any }): V8nValidator;
   passesAnyOf(...validations: V8nValidator[]): V8nValidator;
   optional(
-    validation: V8nValidator,
-    considerTrimmedEmptyString?: boolean,
-  ): V8nValidator;
-  optionalAsync(
     validation: V8nValidator,
     considerTrimmedEmptyString?: boolean,
   ): V8nValidator;

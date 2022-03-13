@@ -1,4 +1,5 @@
 import Context from './Context';
+import optional from './rules/optional';
 
 function v8n() {
   return typeof Proxy !== undefined
@@ -213,30 +214,8 @@ const availableRules = {
   passesAnyOf: (...validations) => value =>
     validations.some(validation => validation.test(value)),
 
-  optional: createOptionalRule(false),
-  optionalAsync: createOptionalRule(true),
+  optional,
 };
-
-function createOptionalRule(asynchronous) {
-  return (validation, considerTrimmedEmptyString = false) => value => {
-    if (
-      considerTrimmedEmptyString &&
-      typeof value === 'string' &&
-      value.trim() === ''
-    ) {
-      return true;
-    }
-
-    if (value !== undefined && value !== null) {
-      if (!asynchronous) {
-        validation.check(value);
-      } else {
-        return validation.testAsync(value);
-      }
-    }
-    return true;
-  };
-}
 
 function testType(expected) {
   return value => {

@@ -60,7 +60,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn test:types && lint-staged && yarn build && git add dist"
+      "pre-commit": "yarn test:types && lint-staged"
     }
   },
   "lint-staged": {

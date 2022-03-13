@@ -71,7 +71,7 @@ System.register('v8n', [], function (exports) {
       function testAux(modifiers, fn, rule) {
         if (modifiers.length) {
           var modifier = modifiers.shift();
-          var nextFn = testAux(modifiers, fn);
+          var nextFn = testAux(modifiers, fn, rule);
           return modifier.perform(nextFn, rule);
         } else {
           return pickFn(fn);
@@ -81,7 +81,7 @@ System.register('v8n', [], function (exports) {
       function testAsyncAux(modifiers, fn, rule) {
         if (modifiers.length) {
           var modifier = modifiers.shift();
-          var nextFn = testAsyncAux(modifiers, fn);
+          var nextFn = testAsyncAux(modifiers, fn, rule);
           return modifier.performAsync(nextFn, rule);
         } else {
           return function (value) { return Promise.resolve(pickFn(fn, 'async')(value)); };

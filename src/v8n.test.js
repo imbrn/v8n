@@ -431,71 +431,6 @@ describe('modifiers', () => {
       ).rejects.toBeDefined();
     });
 
-    describe("the 'strict' modifier", () => {
-      it('makes the schema rule strict', () => {
-        const validation = v8n().strict.schema({
-          id: v8n()
-            .number()
-            .positive(),
-          name: v8n()
-            .string()
-            .minLength(4),
-        });
-
-        expect(
-          validation.test({
-            id: 1,
-            name: 'Luke',
-          }),
-        ).toBeTruthy();
-
-        expect(
-          validation.test({
-            id: 1,
-          }),
-        ).toBeFalsy();
-
-        expect(
-          validation.test({
-            id: 1,
-            name: 'Luke',
-            lastname: 'Skywalker',
-          }),
-        ).toBeFalsy();
-      });
-
-      it('makes the schema rule strict asynchronously', async () => {
-        v8n.extend({ asyncRule });
-
-        const validation = v8n().strict.schema({
-          id: v8n()
-            .number()
-            .asyncRule([10, 20]),
-        });
-
-        const valid = {
-          id: 10,
-        };
-
-        const invalidValue = {
-          id: 1,
-        };
-
-        const invalidExtraProp = {
-          id: 1,
-          name: 'Luke',
-        };
-
-        await expect(validation.testAsync(valid)).resolves.toBe(valid);
-        await expect(validation.testAsync(invalidValue)).rejects.toBeInstanceOf(
-          ValidationError,
-        );
-        await expect(
-          validation.testAsync(invalidExtraProp),
-        ).rejects.toBeInstanceOf(ValidationError);
-      });
-    });
-
     it('expect that error if formatted correctly', async () => {
       const validation = v8n().schema({
         item: v8n().every.schema({
@@ -513,6 +448,160 @@ describe('modifiers', () => {
       expect(result[0].cause[0].target).toBe('item');
       expect(result[0].cause[0].cause[0].rule.name).toBe('string');
       expect(result[0].cause[0].cause[0].target).toBe('a');
+    });
+  });
+
+  describe("the 'strict' modifier", () => {
+    it('makes the schema rule strict', () => {
+      const validation = v8n().strict.schema({
+        id: v8n()
+          .number()
+          .positive(),
+        name: v8n()
+          .string()
+          .minLength(4),
+      });
+
+      expect(
+        validation.test({
+          id: 1,
+          name: 'Luke',
+        }),
+      ).toBeTruthy();
+
+      expect(
+        validation.test({
+          id: 1,
+        }),
+      ).toBeFalsy();
+
+      expect(
+        validation.test({
+          id: 1,
+          name: 'Luke',
+          lastname: 'Skywalker',
+        }),
+      ).toBeFalsy();
+    });
+
+    it('makes the schema rule strict asynchronously', async () => {
+      v8n.extend({ asyncRule });
+
+      const validation = v8n().strict.schema({
+        id: v8n()
+          .number()
+          .asyncRule([10, 20]),
+      });
+
+      const valid = {
+        id: 10,
+      };
+
+      const invalidValue = {
+        id: 1,
+      };
+
+      const invalidExtraProp = {
+        id: 1,
+        name: 'Luke',
+      };
+
+      await expect(validation.testAsync(valid)).resolves.toBe(valid);
+      await expect(validation.testAsync(invalidValue)).rejects.toBeInstanceOf(
+        ValidationError,
+      );
+      await expect(
+        validation.testAsync(invalidExtraProp),
+      ).rejects.toBeInstanceOf(ValidationError);
+    });
+
+    it('does not affect non-schema validations', () => {
+      expect(
+        v8n()
+          .strict.number()
+          .test(1),
+      ).toEqual(
+        v8n()
+          .number()
+          .test(1),
+      );
+
+      expect(
+        v8n()
+          .strict.lowercase()
+          .test('abc'),
+      ).toEqual(
+        v8n()
+          .lowercase()
+          .test('abc'),
+      );
+    });
+
+    it('can be chained with other modifiers', () => {
+      const schema = {
+        id: v8n()
+          .number()
+          .positive(),
+      };
+
+      expect(
+        v8n()
+          .not.strict.schema(schema)
+          .test({
+            id: 1,
+          }),
+      ).toBeFalsy();
+
+      expect(
+        v8n()
+          .not.strict.schema(schema)
+          .test({
+            id: 1,
+            name: 'abc',
+          }),
+      ).toBeTruthy();
+
+      expect(
+        v8n()
+          .some.strict.schema(schema)
+          .test([
+            {
+              id: 1,
+              name: 'abc',
+            },
+            {
+              id: 1,
+            },
+          ]),
+      ).toBeTruthy();
+
+      expect(
+        v8n()
+          .some.strict.schema(schema)
+          .test([
+            {
+              id: 1,
+              name: 'abc',
+            },
+            {
+              id: -1,
+            },
+          ]),
+      ).toBeFalsy();
+
+      expect(
+        v8n()
+          .not.some.strict.schema(schema)
+          .test([
+            {
+              id: 1,
+              name: 'abc',
+            },
+            {
+              id: 1,
+            },
+          ]),
+      ).toBeFalsy();
     });
   });
 

@@ -62,7 +62,7 @@ function pickFn(fn, variant = 'simple') {
 function testAux(modifiers, fn, rule) {
   if (modifiers.length) {
     const modifier = modifiers.shift();
-    const nextFn = testAux(modifiers, fn);
+    const nextFn = testAux(modifiers, fn, rule);
     return modifier.perform(nextFn, rule);
   } else {
     return pickFn(fn);
@@ -72,7 +72,7 @@ function testAux(modifiers, fn, rule) {
 function testAsyncAux(modifiers, fn, rule) {
   if (modifiers.length) {
     const modifier = modifiers.shift();
-    const nextFn = testAsyncAux(modifiers, fn);
+    const nextFn = testAsyncAux(modifiers, fn, rule);
     return modifier.performAsync(nextFn, rule);
   } else {
     return value => Promise.resolve(pickFn(fn, 'async')(value));

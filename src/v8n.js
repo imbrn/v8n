@@ -110,7 +110,40 @@ const availableModifiers = {
     async: fn => value =>
       Promise.all(split(value).map(fn)).then(result => result.every(Boolean)),
   },
+
+  strict: {
+    simple: (fn, rule) => value => {
+      if (isSchemaRule(rule) && value && typeof value === 'object') {
+        return (
+          Object.keys(rule.args[0]).length === Object.keys(value).length &&
+          fn(value)
+        );
+      }
+      return fn(value);
+    },
+    async: (fn, rule) => value =>
+      Promise.resolve(fn(value))
+        .then(result => {
+          if (isSchemaRule(rule) && value && typeof value === 'object') {
+            return (
+              Object.keys(rule.args[0]).length === Object.keys(value).length &&
+              result
+            );
+          }
+          return result;
+        })
+        .catch(() => false),
+  },
 };
+
+function isSchemaRule(rule) {
+  return (
+    rule &&
+    rule.name === 'schema' &&
+    rule.args.length > 0 &&
+    typeof rule.args[0] === 'object'
+  );
+}
 
 function split(value) {
   if (typeof value === 'string') {

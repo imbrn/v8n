@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Support async validation within the `optional` rule ([#206](https://github.com/imbrn/v8n/issues/206))
+- New modifier `strict` for schema validation ([#191](https://github.com/imbrn/v8n/issues/191), [#179](https://github.com/imbrn/v8n/issues/179))
 
 ### Fixed
 

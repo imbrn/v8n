@@ -35,7 +35,7 @@ v8n()
   .even()
   .odd()
   .includes('test')
-  .schema({ test: 2 })
+  .strict.schema({ test: 2 })
   .passesAnyOf()
   .optional(v8n().string())
   .test(12);

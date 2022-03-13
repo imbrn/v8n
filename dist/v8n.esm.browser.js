@@ -10,13 +10,13 @@ class Rule {
     let fn = this.fn;
 
     try {
-      testAux(this.modifiers.slice(), fn)(value);
+      testAux(this.modifiers.slice(), fn, this)(value);
     } catch (ex) {
       fn = () => false;
     }
 
     try {
-      return testAux(this.modifiers.slice(), fn)(value);
+      return testAux(this.modifiers.slice(), fn, this)(value);
     } catch (ex) {
       return false;
     }
@@ -24,14 +24,14 @@ class Rule {
 
   _check(value) {
     try {
-      testAux(this.modifiers.slice(), this.fn)(value);
+      testAux(this.modifiers.slice(), this.fn, this)(value);
     } catch (ex) {
-      if (testAux(this.modifiers.slice(), it => it)(false)) {
+      if (testAux(this.modifiers.slice(), it => it, this)(false)) {
         return;
       }
     }
 
-    if (!testAux(this.modifiers.slice(), this.fn)(value)) {
+    if (!testAux(this.modifiers.slice(), this.fn, this)(value)) {
       throw null;
     }
   }
@@ -41,6 +41,7 @@ class Rule {
       testAsyncAux(
         this.modifiers.slice(),
         this.fn,
+        this,
       )(value)
         .then(valid => {
           if (valid) {
@@ -58,21 +59,21 @@ function pickFn(fn, variant = 'simple') {
   return typeof fn === 'object' ? fn[variant] : fn;
 }
 
-function testAux(modifiers, fn) {
+function testAux(modifiers, fn, rule) {
   if (modifiers.length) {
     const modifier = modifiers.shift();
-    const nextFn = testAux(modifiers, fn);
-    return modifier.perform(nextFn);
+    const nextFn = testAux(modifiers, fn, rule);
+    return modifier.perform(nextFn, rule);
   } else {
     return pickFn(fn);
   }
 }
 
-function testAsyncAux(modifiers, fn) {
+function testAsyncAux(modifiers, fn, rule) {
   if (modifiers.length) {
     const modifier = modifiers.shift();
-    const nextFn = testAsyncAux(modifiers, fn);
-    return modifier.performAsync(nextFn);
+    const nextFn = testAsyncAux(modifiers, fn, rule);
+    return modifier.performAsync(nextFn, rule);
   } else {
     return value => Promise.resolve(pickFn(fn, 'async')(value));
   }
@@ -305,7 +306,40 @@ const availableModifiers = {
     async: fn => value =>
       Promise.all(split(value).map(fn)).then(result => result.every(Boolean)),
   },
+
+  strict: {
+    simple: (fn, rule) => value => {
+      if (isSchemaRule(rule) && value && typeof value === 'object') {
+        return (
+          Object.keys(rule.args[0]).length === Object.keys(value).length &&
+          fn(value)
+        );
+      }
+      return fn(value);
+    },
+    async: (fn, rule) => value =>
+      Promise.resolve(fn(value))
+        .then(result => {
+          if (isSchemaRule(rule) && value && typeof value === 'object') {
+            return (
+              Object.keys(rule.args[0]).length === Object.keys(value).length &&
+              result
+            );
+          }
+          return result;
+        })
+        .catch(() => false),
+  },
 };
+
+function isSchemaRule(rule) {
+  return (
+    rule &&
+    rule.name === 'schema' &&
+    rule.args.length > 0 &&
+    typeof rule.args[0] === 'object'
+  );
+}
 
 function split(value) {
   if (typeof value === 'string') {

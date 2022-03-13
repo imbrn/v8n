@@ -1109,13 +1109,8 @@ sidebar: auto
   the value is a trimmed empty string.
 
   ::: tip
-  When the `check()` is used on this rule, an exception resulting from within
+  When the `check()` strategy is used on this rule, an exception resulting from within
   will have the failed rule as in its `cause.rule` parameter.
-  :::
-
-  ::: warning
-  This rule cannot be used for asynchronous validations. See the nearly identical rule
-  [`optionalAsync`](#optionalasync) to optionally validate your async rules.
   :::
 
   ```js
@@ -1146,29 +1141,8 @@ sidebar: auto
   validation.test('hello'); // false
   ```
 
-### optionalAsync
-
-::: danger
-This rule is asynchronous and requires the [`testAsync` validation strategy](#testasync).
-:::
-
-- **Signature:** `optionalAsync(validation, considerTrimmedEmptyString = false)`
-
-- **Arguments:**
-
-  - `validation: Validation`
-  - `considerTrimmedEmptyString: boolean`
-
-- **Usage:**
-
-  Validates an optional value to pass an asynchronous validation. The only difference
-  to [`optional`](#optional) is the ability to use asynchronous rules and the
-  requirement for the [`testAsync()` validation strategy](#testasync). You may check
-  the documentation for the [`optional`](#optional) rule for details about parameters
-  and further examples.
-
   ```js
-  const validation = v8n().optionalAsync(
+  const validation = v8n().optional(
     v8n()
       .email()
       .checkEmailAvailable(),

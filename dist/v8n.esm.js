@@ -193,6 +193,29 @@ function executeAsyncRules(value, rules, resolve, reject) {
   }
 }
 
+var consideredEmpty = function (value, considerTrimmedEmptyString) {
+  if (
+    considerTrimmedEmptyString &&
+    typeof value === 'string' &&
+    value.trim().length === 0
+  ) {
+    return true;
+  }
+
+  return value === undefined || value === null;
+};
+
+function optional (validation, considerTrimmedEmptyString) {
+  if ( considerTrimmedEmptyString === void 0 ) considerTrimmedEmptyString = false;
+
+  return ({
+  simple: function (value) { return consideredEmpty(value, considerTrimmedEmptyString) ||
+    validation.check(value) === undefined; },
+  async: function (value) { return consideredEmpty(value, considerTrimmedEmptyString) ||
+    validation.testAsync(value); },
+});
+}
+
 function v8n() {
   return typeof Proxy !== undefined
     ? proxyContext(new Context())
@@ -445,34 +468,8 @@ var availableRules = {
     return function (value) { return validations.some(function (validation) { return validation.test(value); }); };
 },
 
-  optional: createOptionalRule(false),
-  optionalAsync: createOptionalRule(true),
+  optional: optional,
 };
-
-function createOptionalRule(asynchronous) {
-  return function (validation, considerTrimmedEmptyString) {
-    if ( considerTrimmedEmptyString === void 0 ) considerTrimmedEmptyString = false;
-
-    return function (value) {
-    if (
-      considerTrimmedEmptyString &&
-      typeof value === 'string' &&
-      value.trim() === ''
-    ) {
-      return true;
-    }
-
-    if (value !== undefined && value !== null) {
-      if (!asynchronous) {
-        validation.check(value);
-      } else {
-        return validation.testAsync(value);
-      }
-    }
-    return true;
-  };
-  };
-}
 
 function testType(expected) {
   return function (value) {

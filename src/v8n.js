@@ -2,7 +2,7 @@ import Context from './Context';
 import optional from './rules/optional';
 
 function v8n() {
-  return typeof Proxy !== undefined
+  return typeof Proxy !== 'undefined'
     ? proxyContext(new Context())
     : proxylessContext(new Context());
 }

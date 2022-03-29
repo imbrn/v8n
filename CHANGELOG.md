@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Correct incorrect return type of `check` validation strategy (boolean -> void)
+- Bug with `Proxy` check where it always returned `true`
 
 ## [1.4.0] - 2022-02-17
 

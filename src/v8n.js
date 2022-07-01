@@ -189,9 +189,15 @@ const availableRules = {
 
   pattern: expected => value => expected.test(value),
 
-  lowercase: () => value => /^([a-z]+\s*)+$/.test(value),
+  lowercase: () => value => {
+    return (
+      typeof value === 'boolean' ||
+      (value === value.toLowerCase() && value.trim() !== '')
+    );
+  },
 
-  uppercase: () => value => /^([A-Z]+\s*)+$/.test(value),
+  uppercase: () => value =>
+    value === value.toUpperCase() && value.trim() !== '',
 
   vowel: () => value => /^[aeiou]+$/i.test(value),
 

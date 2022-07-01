@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.5.1] - 2022-06-30
+
 ### Fixed
 
 - Inefficient regular expression complexity of lowercase() and uppercase() rules
@@ -133,7 +135,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Build process now properly transpiles modules from ES6 to ES5. ([#44](https://github.com/imbrn/v8n/issues/44))
 
-[unreleased]: https://github.com/imbrn/v8n/compare/v1.5.0...HEAD
+[unreleased]: https://github.com/imbrn/v8n/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/imbrn/v8n/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/imbrn/v8n/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/imbrn/v8n/compare/v1.3.3...v1.4.0
 [1.3.3]: https://github.com/imbrn/v8n/compare/v1.3.2...v1.3.3

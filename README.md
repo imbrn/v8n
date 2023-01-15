@@ -7,8 +7,8 @@ The ultimate JavaScript validation library you've ever needed.<br/>
 Dead simple fluent API. Customizable. Reusable.
 </p>
 <p align="center">
-  <a href="https://circleci.com/gh/imbrn/v8n/tree/master">
-    <img src="https://circleci.com/gh/imbrn/v8n/tree/master.svg?style=svg" alt="CircleCI" />
+  <a href="https://github.com/imbrn/v8n/actions/workflows/push.yml">
+    <img src="https://github.com/imbrn/v8n/actions/workflows/push.yml/badge.svg" alt="Build" />
   </a>
   <img src="https://img.shields.io/npm/v/v8n.svg" alt="npm version" />
   <img src="https://img.shields.io/bundlephobia/minzip/v8n.svg" alt="npm bundle size (minified + gzip)" />

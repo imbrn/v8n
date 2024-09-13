@@ -38,7 +38,7 @@ right away.
 ```
 
 This is just the most straightforward approach without any build setup or
-complex imports. The [Installation](/Installation.md) page gives you an overview
+complex imports. The [Installation](/docs/Installation.md) page gives you an overview
 of all the available installation methods.
 
 After you've included v8n in some way you can use it very easily.
@@ -57,7 +57,7 @@ One of the main goals of v8n is its simple and fluent usage. You simply chain
 your rules and build even incredibly complex rules with easy. You can chain any
 number of built-in rules and even combine them with your own custom rules in the
 same way. Make sure to check out all the
-[built-in rules](/api/#built-in-rules) and how you can add your own.
+[built-in rules](/docs/api/#built-in-rules) and how you can add your own.
 
 ```javascript
 v8n()
@@ -86,12 +86,12 @@ Extending is at the core of v8n. And it's easy, too. All you do is pack your own
 validation into a function that returns a `boolean`. You can do as much logic
 in your rule as you like, all that matters is the boolean return and you're good
 to go. Once you created your function just add it using `extend()`. Take a look
-at the [Extending](/Extending.md) page for more details and different types of
+at the [Extending](/docs/Extending.md) page for more details and different types of
 rules you might want to add.
 
 ::: tip
 You can also create
-[Promise based validation rules](/Validation.md#Asynchronous-validation).
+[Promise based validation rules](/docs/Validation.md#Asynchronous-validation).
 :::
 
 ### Validation strategies
@@ -101,4 +101,4 @@ try-catch or you need to know which rules failed for the given value. You're
 in luck, v8n offers multiple validation strategies that give you great
 flexibility when writing your code and give your more than just true or false.
 If you want to know more read up about all the
-[validation strategies](/Validation.md#strategies) and how to use them.
+[validation strategies](/docs/Validation.md#strategies) and how to use them.
